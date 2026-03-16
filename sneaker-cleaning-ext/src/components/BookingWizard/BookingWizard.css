@@ -1,0 +1,17 @@
+.booking-wizard {
+    width: 100%;
+    max-width: 900px;
+}
+
+.booking-wizard__body {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 32px 28px;
+}
+
+@media (max-width: 600px) {
+    .booking-wizard__body {
+        padding: 20px 16px;
+    }
+}

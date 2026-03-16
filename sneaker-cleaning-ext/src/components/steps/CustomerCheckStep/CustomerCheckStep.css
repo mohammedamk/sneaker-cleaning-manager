@@ -1,0 +1,16 @@
+.customer-check__message {
+    font-size: 14px;
+    color: #555;
+}
+
+.customer-check__options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+}
+
+.customer-check__options .btn {
+    width: 100%;
+    justify-content: center;
+}

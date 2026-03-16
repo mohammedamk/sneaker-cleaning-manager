@@ -1,0 +1,13 @@
+.size-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.size-selector .select {
+    width: 90px;
+    flex-shrink: 0;
+}
+
+.size-selector .input {
+    flex: 1;
+}
