@@ -1,18 +1,78 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import './HandoffMethodStep.css';
+import { PROXY_SUB_PATH } from '../../../utils/global.js';
 
-function HandoffMethodStep({ handoffMethod, onHandoffChange, onNext, onPrev }) {
-  const handleNext = () => {
+function HandoffMethodStep({ handoffMethod, onHandoffChange, onNext, onPrev, bookingData }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleNext = async () => {
     if (!handoffMethod) {
       alert('Please select a handoff method to continue.');
       return;
     }
-    onNext();
+
+    setIsSubmitting(true);
+
+    try {
+      // converting all sneaker image files to base64
+      const sneakersWithBase64Images = await Promise.all(
+        bookingData.sneakers.map(async (sneaker) => {
+          const base64Images = await Promise.all(
+            sneaker.images.map((img) => {
+              return new Promise((resolve, reject) => {
+                // if it's already a string/URL somehow, ignoring
+                if (!img.file) return resolve(img.preview || '');
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(img.file);
+              });
+            })
+          );
+          // returning the sneaker clone with base64 images string array
+          return { ...sneaker, images: base64Images };
+        })
+      );
+
+      const payload = {
+        ...bookingData,
+        sneakers: sneakersWithBase64Images,
+        handoffMethod,
+        submittedAt: new Date().toISOString()
+      };
+
+      console.log('Final Data ready to be sent to API:', payload);
+      const response = await fetch(`/apps/${PROXY_SUB_PATH}/api/create/booking`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      console.log("result .........", result)
+      onNext();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error saving your booking. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <StepLayout title="How Will You Send Your Sneakers?" onNext={handleNext} onPrev={onPrev} nextLabel="Confirm Booking">
+    <StepLayout
+      title="How Will You Send Your Sneakers?"
+      onNext={handleNext}
+      onPrev={onPrev}
+      nextLabel="Confirm Booking"
+      isLoading={isSubmitting}
+    >
       <div className="handoff-options">
         <div
           className={`handoff-card ${handoffMethod === 'dropoff' ? 'handoff-card--selected' : ''}`}

@@ -215,6 +215,12 @@ function BookingWizard() {
           <HandoffMethodStep
             handoffMethod={handoffMethod}
             onHandoffChange={setHandoffMethod}
+            bookingData={{
+              customerID,
+              guestInfo,
+              sneakers,
+              services
+            }}
             onNext={goNext}
             onPrev={goPrev}
           />
