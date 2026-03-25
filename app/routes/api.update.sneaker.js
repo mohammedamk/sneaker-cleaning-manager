@@ -1,0 +1,40 @@
+import { authenticate } from "../shopify.server";
+import SneakerModel from "../MongoDB/models/Sneaker";
+
+export const action = async ({ request }) => {
+  try {
+    const { admin } = await authenticate.public.appProxy(request);
+    const body = await request.json();
+    const { id, ...updateData } = body;
+
+    if (!id) {
+      return new Response(JSON.stringify({ success: false, message: "Sneaker ID is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const updatedSneaker = await SneakerModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updatedSneaker) {
+      return new Response(JSON.stringify({ success: false, message: "Sneaker not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify({ success: true, sneaker: updatedSneaker }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error in api.update.sneaker:", error);
+    return new Response(JSON.stringify({ success: false, message: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};
