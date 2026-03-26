@@ -1,0 +1,50 @@
+.shoe-rack-sneaker-form {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+}
+
+.shoe-rack-sneaker-form__header {
+  margin-bottom: 6px;
+  padding-bottom: 1rem;
+}
+
+.form-field__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 16px;
+  margin-bottom: 2px;
+}
+
+.shoe-rack-sneaker-form__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.shoe-rack-sneaker-form__body {
+  margin-bottom: 2rem;
+}
+
+.shoe-rack-sneaker-form__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1.5rem;
+}
+
+.size-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.size-selector .select {
+  width: auto;
+  min-width: 80px;
+}
+
+.size-selector .input {
+  flex: 1;
+}

@@ -51,7 +51,7 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
               {sneaker.images.slice(0, 3).map((img, i) => (
                 <img
                   key={i}
-                  src={img.preview}
+                  src={img.preview || img.url || img}
                   alt={`${sneaker.nickname} ${i + 1}`}
                   className="sneaker-card__thumbnail"
                 />

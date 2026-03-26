@@ -18,11 +18,24 @@ const EMPTY_SNEAKER = {
 };
 
 function SneakerRegistrationStep({ editingSneaker, onSave, onPrev }) {
-  const initial = editingSneaker
-    ? { ...editingSneaker }
-    : { ...EMPTY_SNEAKER, id: Date.now() };
+  const initial = React.useMemo(() => {
+    if (editingSneaker) {
+      return {
+        ...editingSneaker,
+        images: (editingSneaker.images || []).map(img =>
+          typeof img === 'string' ? { preview: img, url: img } : { ...img, preview: img.url }
+        )
+      };
+    }
+    return { ...EMPTY_SNEAKER, id: Date.now() };
+  }, [editingSneaker]);
 
   const [form, setForm] = useState(initial);
+
+  // syncing form if editingSneaker changes while component is mounted
+  React.useEffect(() => {
+    setForm(initial);
+  }, [initial]);
   const [errors, setErrors] = useState({});
 
   const setField = (field, value) => {

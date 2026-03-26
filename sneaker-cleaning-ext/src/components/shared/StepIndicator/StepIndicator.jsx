@@ -2,8 +2,8 @@ import React from 'react';
 import './StepIndicator.css';
 
 const STEP_LABELS = [
-  'Start', 'Account', 'Sneakers', 'History', 'Notes',
-  'Review', 'Services', 'Summary', 'Handoff', 'Done',
+  'Account', 'Sneakers', 'History', 'Notes', 'Review',
+  'Services', 'Summary', 'Handoff', 'Done',
 ];
 
 function StepIndicator({ currentStep, totalSteps = 10 }) {
@@ -20,10 +20,10 @@ function StepIndicator({ currentStep, totalSteps = 10 }) {
           return (
             <li
               key={stepNumber}
-              className={`stepper__item ${isCompleted ? 'is-completed' : ''} ${isActive ? 'is-active' : ''}`}
+              className={`stepper__item ${isCompleted || currentStep === 9 ? 'is-completed' : ''} ${isActive ? 'is-active' : ''}`}
             >
               <div className="stepper__icon">
-                {isCompleted ? <span className="stepper__check">✓</span> : stepNumber}
+                {isCompleted || currentStep === 9 ? <span className="stepper__check">✓</span> : stepNumber}
               </div>
               <span className="stepper__label">{label}</span>
             </li>

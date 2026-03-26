@@ -22,7 +22,9 @@ function HandoffMethodStep({ handoffMethod, onHandoffChange, onNext, onPrev, boo
             sneaker.images.map((img) => {
               return new Promise((resolve, reject) => {
                 // if it's already a string/URL somehow, ignoring
-                if (!img.file) return resolve(img.preview || '');
+                if (typeof img === 'string') return resolve(img);
+                if (img.id && !img.file) return resolve(img.id);
+                if (!img.file) return resolve(img.url || img.preview || '');
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
                 reader.onerror = reject;

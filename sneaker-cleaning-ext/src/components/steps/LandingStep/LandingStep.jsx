@@ -1,16 +1,22 @@
 import React from 'react';
 import './LandingStep.css';
 
-function LandingStep({ onStart, customerID, onViewShoeRack }) {
+function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings }) {
   return (
     <div className="landing-step">
       {customerID && (
         <div className="landing-step__top-right">
-          <button 
-            className="btn btn--secondary btn--shoe-rack-top" 
+          <button
+            className="btn btn--secondary btn--shoe-rack-top"
             onClick={onViewShoeRack}
           >
             👟 My Shoe Rack
+          </button>
+          <button
+            className="btn btn--secondary btn--shoe-rack-top"
+            onClick={onViewBookings}
+          >
+            📅 My Bookings
           </button>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import StepIndicator from '../shared/StepIndicator/StepIndicator.jsx';
 import './BookingWizard.css';
 
@@ -14,6 +14,7 @@ import HandoffMethodStep from '../steps/HandoffMethodStep/HandoffMethodStep.jsx'
 import ConfirmationStep from '../steps/ConfirmationStep/ConfirmationStep.jsx';
 import ShoeRackSelectionStep from '../steps/ShoeRackSelectionStep/ShoeRackSelectionStep.jsx';
 import ShoeRackManagement from '../ShoeRackManagement/ShoeRackManagement.jsx';
+import BookingsManagement from '../BookingsManagement/BookingsManagement.jsx';
 
 // reading shopify customer id if available
 function getCustomerID() {
@@ -24,16 +25,16 @@ function getCustomerID() {
   }
 }
 
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 9;
 
 function BookingWizard() {
-  const customerID = getCustomerID();
-
-  // top-level view management: 'landing', 'wizard', 'shoe-rack'
+  const [customerID, setCustomerID] = useState(null);
+  // top-level view management: 'landing', 'wizard', 'shoe-rack', 'bookings'
   const [currentView, setCurrentView] = useState('landing');
 
   // navigation within the wizard
   const [step, setStep] = useState(1);
+  const [isAddingNew, setIsAddingNew] = useState(false);
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const goPrev = () => {
     if (step === 1) {
@@ -44,6 +45,10 @@ function BookingWizard() {
   };
 
   const [guestInfo, setGuestInfo] = useState({ name: '', email: '', phone: '' });
+
+  useEffect(() => {
+    console.log("step...........", step)
+  }, [step])
 
   // sneaker registry
   const [sneakers, setSneakers] = useState([]);
@@ -61,18 +66,25 @@ function BookingWizard() {
 
   const [handoffMethod, setHandoffMethod] = useState('');
 
+  useEffect(() => {
+    const id = getCustomerID();
+    setCustomerID(id);
+  }, []);
+
   const handleSneakerSave = (sneakerData) => {
     if (editingSneaker) {
       setSneakers((prev) =>
         prev.map((s) =>
-          s.id === sneakerData.id ? { ...s, ...sneakerData } : s
+          (s._id || s.id) === (sneakerData._id || sneakerData.id) ? { ...s, ...sneakerData } : s
         )
       );
       setEditingSneaker(null);
       // jumping back to manage step if we came from there
       if (returningToManage) {
         setReturningToManage(false);
-        setStep(6);
+        setEditingSneaker(null);
+        setIsAddingNew(false);
+        setStep(5);
         return;
       }
     } else {
@@ -93,7 +105,7 @@ function BookingWizard() {
   const handleEditSneaker = (sneaker) => {
     setEditingSneaker(sneaker);
     setReturningToManage(true);
-    setStep(3);
+    setStep(2);
   };
 
   const handleRemoveSneaker = (sneakerId) => {
@@ -108,9 +120,10 @@ function BookingWizard() {
 
   const handleAddAnotherSneaker = () => {
     setEditingSneaker(null);
+    setIsAddingNew(false);
     setCurrentSneakerHistory({ professionallyCleaned: '', alterations: [] });
     setCurrentSneakerNotes('');
-    setStep(3);
+    setStep(2);
   };
 
   const handleServiceChange = (sneakerId, serviceData) => {
@@ -123,7 +136,7 @@ function BookingWizard() {
   // however, when editing from step 6, we skip history/notes and go straight back
   const handleRegistrationNext = (sneakerData) => handleSneakerSave(sneakerData);
 
-  const showIndicator = currentView === 'wizard' && step > 1 && step < TOTAL_STEPS;
+  const showIndicator = currentView === 'wizard'
 
   return (
     <div className="booking-wizard">
@@ -140,11 +153,19 @@ function BookingWizard() {
             }}
             customerID={customerID}
             onViewShoeRack={() => setCurrentView('shoe-rack')}
+            onViewBookings={() => setCurrentView('bookings')}
           />
         )}
 
         {currentView === 'shoe-rack' && (
           <ShoeRackManagement
+            customerID={customerID}
+            onBack={() => setCurrentView('landing')}
+          />
+        )}
+
+        {currentView === 'bookings' && (
+          <BookingsManagement
             customerID={customerID}
             onBack={() => setCurrentView('landing')}
           />
@@ -162,41 +183,45 @@ function BookingWizard() {
               />
             )}
 
-            {step === 3 && (
-              customerID ? (
+            {step === 2 && (
+              (customerID && !isAddingNew && !editingSneaker) ? (
                 <ShoeRackSelectionStep
                   customerID={customerID}
                   sneakers={sneakers}
                   onAddExisting={(snk) => {
-                    if (sneakers.some(s => s._id === snk._id)) {
-                      setSneakers(prev => prev.filter(s => s._id !== snk._id));
+                    if (sneakers.some(s => (s._id || s.id) === (snk._id || snk.id))) {
+                      handleRemoveSneaker(snk._id || snk.id);
                     } else {
                       setSneakers(prev => [...prev, snk]);
                     }
                   }}
-                  onAddNew={(full) => setSneakers(prev => [...prev, full])}
+                  onAddNew={() => setIsAddingNew(true)}
                   onEditExisting={handleEditSneaker}
-                  onNext={() => setStep(6)}
-                  onPrev={() => setStep(1)}
+                  onNext={() => setStep(5)} // skipping History/Notes for saved shoes as they have them
+                  onPrev={goPrev}
                 />
               ) : (
                 <SneakerRegistrationStep
                   editingSneaker={editingSneaker}
-                  onSave={handleRegistrationNext}
+                  onSave={(data) => {
+                    handleRegistrationNext(data);
+                    setIsAddingNew(false);
+                    // if editing, handleRegistrationNext already handled step 5 return via returningToManage
+                    // else it goes to step 3 via goNext inside handleSneakerSave
+                  }}
                   onPrev={() => {
-                    if (returningToManage) {
-                      setReturningToManage(false);
+                    if (customerID && (isAddingNew || editingSneaker)) {
+                      setIsAddingNew(false);
                       setEditingSneaker(null);
-                      setStep(6);
-                    } else {
-                      goPrev();
+                      return;
                     }
+                    goPrev();
                   }}
                 />
               )
             )}
 
-            {step === 4 && (
+            {step === 3 && (
               <SneakerHistoryStep
                 history={currentSneakerHistory}
                 onHistoryChange={setCurrentSneakerHistory}
@@ -205,12 +230,11 @@ function BookingWizard() {
               />
             )}
 
-            {step === 5 && (
+            {step === 4 && (
               <AdditionalNotesStep
                 notes={currentSneakerNotes}
                 onNotesChange={setCurrentSneakerNotes}
                 onNext={() => {
-                  // committing the last sneaker with accumulated history + notes
                   const lastPending = sneakers[sneakers.length - 1];
                   if (lastPending && !lastPending.history) {
                     setSneakers((prev) =>
@@ -227,7 +251,7 @@ function BookingWizard() {
               />
             )}
 
-            {step === 6 && (
+            {step === 5 && (
               <AddMoreSneakersStep
                 sneakers={sneakers}
                 onAddAnother={handleAddAnotherSneaker}
@@ -236,15 +260,15 @@ function BookingWizard() {
                 onNext={sneakers.length > 0 ? goNext : null}
                 onPrev={() => {
                   if (customerID) {
-                    setStep(3);
+                    setStep(2);
                   } else {
-                    goPrev();
+                    setStep(4);
                   }
                 }}
               />
             )}
 
-            {step === 7 && (
+            {step === 6 && (
               <ServiceSelectionStep
                 sneakers={sneakers}
                 services={services}
@@ -254,7 +278,7 @@ function BookingWizard() {
               />
             )}
 
-            {step === 8 && (
+            {step === 7 && (
               <SummaryStep
                 sneakers={sneakers}
                 services={services}
@@ -264,7 +288,7 @@ function BookingWizard() {
               />
             )}
 
-            {step === 9 && (
+            {step === 8 && (
               <HandoffMethodStep
                 handoffMethod={handoffMethod}
                 onHandoffChange={setHandoffMethod}
@@ -279,7 +303,7 @@ function BookingWizard() {
               />
             )}
 
-            {step === 10 && <ConfirmationStep handoffMethod={handoffMethod} />}
+            {step === 9 && <ConfirmationStep handoffMethod={handoffMethod} />}
           </>
         )}
       </div>

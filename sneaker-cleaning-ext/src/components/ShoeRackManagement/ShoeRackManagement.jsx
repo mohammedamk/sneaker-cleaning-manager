@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import './ShoeRackManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
-import SneakerRegistrationStep from '../steps/SneakerRegistrationStep/SneakerRegistrationStep.jsx';
-import SneakerHistoryStep from '../steps/SneakerHistoryStep/SneakerHistoryStep.jsx';
-import AdditionalNotesStep from '../steps/AdditionalNotesStep/AdditionalNotesStep.jsx';
+import ShoeRackSneakerStep from '../steps/ShoeRackSneakerStep/ShoeRackSneakerStep.jsx';
+
+const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
+};
 
 function ShoeRackManagement({ customerID, onBack }) {
     const [sneakers, setSneakers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [editingSneaker, setEditingSneaker] = useState(null);
-    const [formStep, setFormStep] = useState('registration'); // registration, history, notes
 
     // Temporary state for the form
     const [tempSneaker, setTempSneaker] = useState(null);
-    const [tempHistory, setTempHistory] = useState({ professionallyCleaned: '', alterations: [] });
-    const [tempNotes, setTempNotes] = useState('');
 
     useEffect(() => {
         if (customerID) {
@@ -40,10 +45,11 @@ function ShoeRackManagement({ customerID, onBack }) {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this sneaker from your rack?")) return;
-        
+
         try {
             const res = await fetch(`/apps/${PROXY_SUB_PATH}/api/delete/sneaker`, {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
             });
             const data = await res.json();
@@ -58,59 +64,57 @@ function ShoeRackManagement({ customerID, onBack }) {
     const handleAddClick = () => {
         setEditingSneaker(null);
         setTempSneaker(null);
-        setTempHistory({ professionallyCleaned: '', alterations: [] });
-        setTempNotes('');
-        setFormStep('registration');
         setShowForm(true);
     };
 
     const handleEditClick = (sneaker) => {
         setEditingSneaker(sneaker);
         setTempSneaker(sneaker);
-        setTempHistory(sneaker.history || { professionallyCleaned: '', alterations: [] });
-        setTempNotes(sneaker.notes || '');
-        setFormStep('registration');
         setShowForm(true);
     };
 
-    const handleRegistrationSave = (data) => {
-        setTempSneaker(data);
-        setFormStep('history');
-    };
-
-    const handleHistoryNext = () => {
-        setFormStep('notes');
-    };
-
-    const handleFinalSave = async () => {
+    const handleFinalSave = async (data) => {
         setIsLoading(true);
+
+        const processedImages = [];
+
+        if (data.images && Array.isArray(data.images)) {
+            for (const img of data.images) {
+                if (img.file) {
+                    const base64 = await convertToBase64(img.file);
+                    processedImages.push(base64);
+                }
+                else if (img.id && !img.file) {
+                    processedImages.push(img.id);
+                }
+                else if (typeof img === "string") {
+                    processedImages.push(img);
+                }
+            }
+        }
+
         const payload = {
-            ...tempSneaker,
-            history: tempHistory,
-            notes: tempNotes,
+            ...data,
+            images: processedImages,
+            // preserving history and notes from editingSneaker if it exists
+            history: editingSneaker?.history || { professionallyCleaned: '', alterations: [] },
+            notes: editingSneaker?.notes || '',
             customerID,
             id: editingSneaker?._id
         };
 
-        const endpoint = editingSneaker ? 'update' : 'create/booking'; // Using create/booking logic if they don't have a direct create endpoint that just saves to rack. 
-        // Actually, let's assume api.create.booking handles it if we send it in a specific way OR we should have a dedicated create sneaker API.
-        // Given api.create.booking exists and saves sneakers if customerID is present, but it also creates a booking.
-        // The user might want a direct "Save to Rack" API. I'll use api.update.sneaker for updates.
-        // For NEW ones, I'll need a new API or reuse booking if that's what's expected.
-        // Let's create api.create.sneaker.js to be safe.
-
         try {
-            const url = editingSneaker 
-                ? `/apps/${PROXY_SUB_PATH}/api/update/sneaker` 
+            const url = editingSneaker
+                ? `/apps/${PROXY_SUB_PATH}/api/update/sneaker`
                 : `/apps/${PROXY_SUB_PATH}/api/create/sneaker`;
-            
+
             const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            const data = await res.json();
-            if (data.success) {
+            const resData = await res.json();
+            if (resData.success) {
                 setShowForm(false);
                 fetchSneakers();
             }
@@ -125,30 +129,11 @@ function ShoeRackManagement({ customerID, onBack }) {
         return (
             <div className="shoe-rack-form-overlay">
                 <div className="shoe-rack-form-container">
-                    <button className="btn btn--ghost btn--close" onClick={() => setShowForm(false)}>✕ Close</button>
-                    {formStep === 'registration' && (
-                        <SneakerRegistrationStep 
-                            editingSneaker={tempSneaker} 
-                            onSave={handleRegistrationSave} 
-                            onPrev={() => setShowForm(false)} 
-                        />
-                    )}
-                    {formStep === 'history' && (
-                        <SneakerHistoryStep 
-                            history={tempHistory} 
-                            onHistoryChange={setTempHistory} 
-                            onNext={handleHistoryNext} 
-                            onPrev={() => setFormStep('registration')} 
-                        />
-                    )}
-                    {formStep === 'notes' && (
-                        <AdditionalNotesStep 
-                            notes={tempNotes} 
-                            onNotesChange={setTempNotes} 
-                            onNext={handleFinalSave} 
-                            onPrev={() => setFormStep('history')} 
-                        />
-                    )}
+                    <ShoeRackSneakerStep
+                        editingSneaker={tempSneaker}
+                        onSave={handleFinalSave}
+                        onCancel={() => setShowForm(false)}
+                    />
                 </div>
             </div>
         );
@@ -189,7 +174,7 @@ function ShoeRackManagement({ customerID, onBack }) {
                                     <tr key={snk._id}>
                                         <td>
                                             {snk.images && snk.images[0] && (
-                                                <img src={snk.images[0]} alt={snk.nickname} className="table-img" />
+                                                <img src={snk.images[0].url || snk.images[0]} alt={snk.nickname} className="table-img" />
                                             )}
                                         </td>
                                         <td><strong>{snk.nickname}</strong></td>

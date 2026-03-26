@@ -1,0 +1,201 @@
+.bookings-management {
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+}
+
+.bookings-management__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.bookings-management__title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.bookings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.booking-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  background: #fdfdfd;
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: #1a1a1a;
+}
+
+.booking-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.booking-card__id {
+  font-size: 13px;
+  color: #666;
+  font-family: monospace;
+}
+
+.booking-card__status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.booking-card__status--Received { background: #e3f2fd; color: #1976d2; }
+.booking-card__status--Completed { background: #e8f5e9; color: #2e7d32; }
+.booking-card__status--Canceled { background: #ffebee; color: #c62828; }
+
+.booking-card__body {
+  margin-bottom: 12px;
+}
+
+.booking-card__sneakers {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.booking-card__date {
+  font-size: 13px;
+  color: #777;
+}
+
+.booking-card__footer {
+  display: flex;
+  gap: 2px;
+}
+
+.booking-card__thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+/* Details Page */
+.booking-details {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.booking-details__section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.booking-details__section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.booking-details__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item__label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.detail-item__value {
+  font-weight: 600;
+  color: #333;
+}
+
+.booking-details__sneaker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sneaker-item {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.sneaker-item__img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.sneaker-item__info {
+  flex: 1;
+}
+
+.sneaker-item__name {
+  font-weight: 600;
+  display: block;
+}
+
+.sneaker-item__brand {
+  font-size: 13px;
+  color: #666;
+}
+
+.sneaker-item__service {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.booking-details__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}

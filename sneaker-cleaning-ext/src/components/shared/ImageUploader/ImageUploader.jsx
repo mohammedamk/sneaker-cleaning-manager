@@ -26,7 +26,7 @@ function ImageUploader({ images, onImagesChange }) {
         {images.map((img, index) => (
           <div key={index} className="image-uploader__preview-item">
             <img
-              src={img.preview}
+              src={img.preview || img.url || img}
               alt={`Sneaker ${index + 1}`}
               className="image-uploader__preview-img"
             />

@@ -1,6 +1,14 @@
 .landing-step {
     text-align: center;
     padding: 20px 0;
+    position: relative;
+}
+
+.landing-step__top-right {
+    display: flex;
+    justify-content: flex-end;
+    margin: auto auto 38px auto;
+    gap: 12px;
 }
 
 .landing-step__title {
@@ -15,6 +23,23 @@
     color: #444;
     max-width: 540px;
     margin: 0 auto 16px;
+}
+
+.btn--shoe-rack-top {
+    background: #fff;
+    color: #1a1a1a;
+    border: 1px solid #1a1a1a;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    width: auto;
+}
+
+.btn--shoe-rack-top:hover {
+    background: #f8f8f8;
+    transform: translateY(-1px);
 }
 
 .landing-step__features {
