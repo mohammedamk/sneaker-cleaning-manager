@@ -58,7 +58,12 @@ function HandoffMethodStep({ handoffMethod, onHandoffChange, onNext, onPrev, boo
       }
       const result = await response.json();
       console.log("result .........", result)
-      onNext();
+
+      if (result.success && result.invoiceUrl) {
+        window.location.href = result.invoiceUrl;
+      } else {
+        onNext();
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('There was an error saving your booking. Please try again.');
@@ -85,10 +90,14 @@ function HandoffMethodStep({ handoffMethod, onHandoffChange, onNext, onPrev, boo
           <p className="handoff-card__desc">Bring your sneakers directly to our location.</p>
           {handoffMethod === 'dropoff' && (
             <div className="handoff-card__instructions">
-              <p><strong>Our Location:</strong></p>
+              <p><strong>Drop-off Location:</strong></p>
               <p>123 Sneaker Lane, Suite 4<br />New York, NY 10001</p>
               <p><strong>Hours:</strong> Mon–Sat, 9 AM – 6 PM</p>
-              <p>Please bring your sneakers in a bag and mention your booking reference at the counter.</p>
+              <div className="handoff-policy-info">
+                <p><strong>Time Window:</strong> Please drop off your sneakers within 48 hours of booking. <b>Orders not completed within this window will be automatically canceled.</b></p>
+                <p><strong>Pickup Policy:</strong> Once cleaned, sneakers must be picked up by the customer from our location. <b>Items will be held for up to 6 months before being disposed of.</b></p>
+              </div>
+              <p><strong>Next Steps:</strong> Bring your sneakers in any bag and mention your booking reference at the counter. <b>No scheduling is required;</b> just drop by during our opening hours.</p>
             </div>
           )}
         </div>

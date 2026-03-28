@@ -20,7 +20,7 @@ function ConfirmationStep({ handoffMethod }) {
               <li>Pack all pairs into one box and ship to our address.</li>
             </>
           ) : (
-            <li>Bring your sneakers to our location during business hours.</li>
+            <li>Bring your sneakers to our location within 48 hours (during business hours) to avoid automatic cancellation.</li>
           )}
           <li>Our team will inspect each sneaker upon arrival.</li>
           <li>
@@ -28,6 +28,7 @@ function ConfirmationStep({ handoffMethod }) {
             email, along with a secure payment link.
           </li>
           <li>The cleaning service begins once your payment is approved.</li>
+          <li>We will notify you when your sneakers are ready for pickup. Items will be held for up to 6 months before disposal.</li>
         </ol>
       </div>
 

@@ -18,7 +18,12 @@ function BookingDetails({ booking, onBack, onDelete }) {
                     </div>
                     <div className="detail-item">
                         <span className="detail-item__label">Status</span>
-                        <span className={`booking-card__status booking-card__status--${booking.status}`}>
+                        <span
+                            className={`booking-card__status booking-card__status--${booking.status
+                                .toLowerCase()
+                                .replace(/\s+/g, "-")
+                                .replace(/\//g, "-")}`}
+                        >
                             {booking.status}
                         </span>
                     </div>
@@ -85,19 +90,19 @@ function BookingDetails({ booking, onBack, onDelete }) {
             </div>
 
             {/* <div className="booking-details__actions">
-                <button 
-                    className="btn btn--secondary" 
-                    onClick={() => alert("Edit feature coming soon. Please contact us for changes.")}
-                >
-                    Edit Booking
-                </button>
-                <button 
-                    className="btn btn--danger" 
-                    onClick={() => onDelete(booking._id)}
-                >
-                    Delete Booking
-                </button>
-            </div> */}
+                    <button 
+                        className="btn btn--secondary" 
+                        onClick={() => alert("Edit feature coming soon. Please contact us for changes.")}
+                    >
+                        Edit Booking
+                    </button>
+                    <button 
+                        className="btn btn--danger" 
+                        onClick={() => onDelete(booking._id)}
+                    >
+                        Delete Booking
+                    </button>
+                </div> */}
         </div>
     );
 }

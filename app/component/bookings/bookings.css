@@ -1,0 +1,85 @@
+.bookings-header {
+    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-container {
+    width: 400px;
+    display: flex;
+    gap: 8px;
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    padding: 4rem;
+}
+
+.order-id-code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.customer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.actions-container {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-controls {
+    background: #fff;
+    padding: 4px 16px;
+    border-radius: 20px;
+    border: 1px solid #e1e3e5;
+}
+
+.modal-content {
+    padding: 1.5rem;
+}
+
+.current-status-banner {
+    margin-bottom: 1.5rem;
+    padding: 12px;
+    border: 1px solid #e1e3e5;
+    border-radius: 8px;
+}
+
+.modal-header-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.delete-modal-content {
+    padding: 1rem;
+}
+
+.delete-modal-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+}

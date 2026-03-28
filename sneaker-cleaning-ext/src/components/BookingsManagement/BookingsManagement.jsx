@@ -90,7 +90,12 @@ function BookingsManagement({ customerID, onBack }) {
                                 >
                                     <div className="booking-card__header">
                                         <span className="booking-card__id">#{booking._id.slice(-6).toUpperCase()}</span>
-                                        <span className={`booking-card__status booking-card__status--${booking.status}`}>
+                                        <span
+                                            className={`booking-card__status booking-card__status--${booking.status
+                                                .toLowerCase()
+                                                .replace(/\s+/g, "-")
+                                                .replace(/\//g, "-")}`}
+                                        >
                                             {booking.status}
                                         </span>
                                     </div>

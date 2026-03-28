@@ -11,6 +11,7 @@ const bookingSchema = mongoose.Schema({
     status: {
         type: String,
         enum: [
+            'Pending',
             'Received',
             'Under Inspection',
             'In Cleaning',
@@ -20,10 +21,11 @@ const bookingSchema = mongoose.Schema({
             'Completed',
             'Canceled'
         ],
-        default: 'Received'
+        default: 'Pending'
     },
     sneakers: [mongoose.Schema.Types.Mixed],
     fullPayload: mongoose.Schema.Types.Mixed,
+    shopifyOrderID: { type: String, required: false },
     submittedAt: { type: Date, default: Date.now }
 });
 

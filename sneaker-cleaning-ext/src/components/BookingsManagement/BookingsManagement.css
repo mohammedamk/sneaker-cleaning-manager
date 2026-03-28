@@ -53,18 +53,83 @@
 }
 
 .booking-card__status {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: #f0f0f0;
-  color: #333;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+
+  width: fit-content;
+  max-width: max-content;
 }
 
-.booking-card__status--Received { background: #e3f2fd; color: #1976d2; }
-.booking-card__status--Completed { background: #e8f5e9; color: #2e7d32; }
-.booking-card__status--Canceled { background: #ffebee; color: #c62828; }
+.booking-card__status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+
+.booking-card__status--received {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+.booking-card__status--under-inspection {
+  background: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffe0b2;
+}
+
+.booking-card__status--in-cleaning {
+  background: #ede7f6;
+  color: #5e35b1;
+  border: 1px solid #d1c4e9;
+}
+
+.booking-card__status--awaiting-customer-approval {
+  background: #fff8e1;
+  color: #f9a825;
+  border: 1px solid #ffecb3;
+}
+
+.booking-card__status--cleaning-complete {
+  background: #e0f7fa;
+  color: #00838f;
+  border: 1px solid #b2ebf2;
+}
+
+.booking-card__status--ready-for-pickup---shipment {
+  background: #f3e5f5;
+  color: #8e24aa;
+  border: 1px solid #e1bee7;
+}
+
+.booking-card__status--completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.booking-card__status--canceled {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.booking-card__status--pending {
+  background: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffe0b2;
+}
 
 .booking-card__body {
   margin-bottom: 12px;
@@ -111,8 +176,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .booking-details__section {

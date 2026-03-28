@@ -19,6 +19,7 @@ const sneakerSchema = mongoose.Schema({
     status: {
         type: String,
         enum: [
+            'Pending',
             'Received',
             'Under Inspection',
             'In Cleaning',
@@ -28,7 +29,7 @@ const sneakerSchema = mongoose.Schema({
             'Completed',
             'Canceled'
         ],
-        default: 'Received'
+        default: 'Pending'
     },
     submittedAt: { type: Date, default: Date.now }
 });

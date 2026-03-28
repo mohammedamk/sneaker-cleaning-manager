@@ -1,33 +1,12 @@
-import mongoose from "mongoose";
 import { authenticate } from "../shopify.server";
-import BookingModel from "../MongoDB/models/Booking";
-import SneakerModel from "../MongoDB/models/Sneaker";
+import TempBookingModel from "../MongoDB/models/TempBooking";
 
-const STAGED_UPLOADS_URL_QUERY = `
-mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
-  stagedUploadsCreate(input: $input) {
-    stagedTargets {
-      resourceUrl
-      url
-      parameters {
-        name
-        value
-      }
-    }
-    userErrors {
-      field
-      message
-    }
-  }
-}
-`;
-
-const FILE_CREATE_MUTATION = `
-mutation fileCreate($files: [FileCreateInput!]!) {
-  fileCreate(files: $files) {
-    files {
+const DRAFT_ORDER_CREATE_MUTATION = `
+mutation draftOrderCreate($input: DraftOrderInput!) {
+  draftOrderCreate(input: $input) {
+    draftOrder {
       id
-      fileStatus
+      invoiceUrl
     }
     userErrors {
       field
@@ -37,90 +16,26 @@ mutation fileCreate($files: [FileCreateInput!]!) {
 }
 `;
 
-async function uploadImageToShopify(admin, base64Data, mimeType = "image/jpeg", filename = "sneaker.jpg") {
-    try {
-        const stagedRes = await admin.graphql(STAGED_UPLOADS_URL_QUERY, {
-            variables: {
-                input: [
-                    {
-                        filename,
-                        mimeType,
-                        resource: "IMAGE",
-                        httpMethod: "POST",
-                    },
-                ],
-            },
-        });
+const SERVICE_TIERS = [
+    { id: 'standard', label: 'Standard Cleaning', price: 25 },
+    { id: 'deep', label: 'Deep Cleaning', price: 45 },
+    { id: 'extreme', label: 'Extreme Cleaning', price: 70 },
+];
 
-        const stagedData = await stagedRes.json();
-        if (stagedData?.data?.stagedUploadsCreate?.userErrors?.length) {
-            console.error("Staged upload error:", stagedData.data.stagedUploadsCreate.userErrors);
-            return null;
-        }
+const ADD_ONS = [
+    { id: 'deoxidation', label: 'Deoxidation', price: 15 },
+    { id: 'deodorization', label: 'Deodorization', price: 10 },
+    { id: 'waterproofing', label: 'Waterproofing', price: 12 },
+    { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
+    { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
+];
 
-        const target = stagedData.data.stagedUploadsCreate.stagedTargets[0];
+function getTierPrice(tierId) {
+    return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
+}
 
-        const formData = new FormData();
-        target.parameters.forEach(({ name, value }) => {
-            formData.append(name, value);
-        });
-
-        if (typeof base64Data !== "string") {
-            console.error("Invalid base64:", base64Data);
-            return null;
-        }
-
-        const base64Content = base64Data.includes("base64,")
-            ? base64Data.split("base64,")[1]
-            : base64Data;
-
-        const buffer = Buffer.from(base64Content, "base64");
-        const blob = new Blob([buffer], { type: mimeType });
-        formData.append("file", blob, filename);
-
-        const uploadRes = await fetch(target.url, {
-            method: "POST",
-            body: formData,
-        });
-
-        if (!uploadRes.ok) {
-            console.error("Upload failed:", uploadRes.statusText);
-            return null;
-        }
-
-        const fileRes = await admin.graphql(FILE_CREATE_MUTATION, {
-            variables: {
-                files: [
-                    {
-                        alt: "Sneaker image",
-                        contentType: "IMAGE",
-                        originalSource: target.resourceUrl,
-                    },
-                ],
-            },
-        });
-
-        const fileData = await fileRes.json();
-        if (fileData?.data?.fileCreate?.userErrors?.length) {
-            console.error("File create error:", fileData.data.fileCreate.userErrors);
-            return null;
-        }
-
-        const createdFile = fileData?.data?.fileCreate?.files?.[0];
-
-        if (!createdFile?.id) {
-            console.error("No file ID returned:", createdFile);
-            return null;
-        }
-
-        return {
-            id: createdFile.id,
-            status: createdFile.fileStatus,
-        };
-    } catch (err) {
-        console.error("Upload exception:", err);
-        return null;
-    }
+function getAddonPrice(addonId) {
+    return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
 }
 
 export const action = async ({ request }) => {
@@ -128,111 +43,74 @@ export const action = async ({ request }) => {
         const { admin } = await authenticate.public.appProxy(request);
         const body = await request.json();
 
-        console.log("create booking body received");
+        console.log("Saving temporary booking data for post-payment processing");
 
-        const strippedPayload = { ...body };
-        const allProcessedSneakersInputs = [];
+        // storing the raw payload (with base64 images) in temporary storage
+        const tempBooking = new TempBookingModel({
+            payload: body
+        });
+        await tempBooking.save();
 
+        const lineItems = [];
         if (body.sneakers && Array.isArray(body.sneakers)) {
-            strippedPayload.sneakers = [];
             for (let i = 0; i < body.sneakers.length; i++) {
                 const sneakerData = body.sneakers[i];
-                const uploadedImageIds = [];
 
-                if (sneakerData.images && Array.isArray(sneakerData.images)) {
-                    for (let j = 0; j < sneakerData.images.length; j++) {
-                        const b64OrGid = sneakerData.images[j];
-                        if (!b64OrGid) continue;
+                // calculating price for this sneaker
+                const service = body.services ? body.services[sneakerData.id || sneakerData._id] : null;
+                const tierPrice = getTierPrice(service?.tier);
+                const addonsPrice = (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id), 0);
+                const itemTotal = tierPrice + addonsPrice;
 
-                        if (typeof b64OrGid === "string" && b64OrGid.startsWith("gid://shopify/")) {
-                            uploadedImageIds.push(b64OrGid);
-                            continue;
-                        }
-
-                        const result = await uploadImageToShopify(
-                            admin,
-                            b64OrGid,
-                            "image/jpeg",
-                            `sneaker-${Date.now()}-${j}.jpg`
-                        );
-
-                        if (result?.id) {
-                            uploadedImageIds.push(result.id);
-                        } else {
-                            console.error("Image upload failed at index:", j);
-                        }
-                    }
-                }
-
-                const cleanSneakerData = {
-                    ...sneakerData,
-                    images: uploadedImageIds,
-                };
-
-                strippedPayload.sneakers.push(cleanSneakerData);
-                allProcessedSneakersInputs.push(cleanSneakerData);
+                lineItems.push({
+                    title: `Sneaker Cleaning - ${sneakerData.nickname || 'Pair #' + (i + 1)}`,
+                    originalUnitPrice: itemTotal,
+                    quantity: 1,
+                    customAttributes: [
+                        { key: "Nickname", value: sneakerData.nickname || 'N/A' },
+                        { key: "Brand", value: sneakerData.brand || 'N/A' }
+                    ]
+                });
             }
         }
 
-        const bookingData = {
-            customerID: body.customerID || null,
-            guestInfo: body.guestInfo || {},
-            handoffMethod: body.handoffMethod,
-            fullPayload: strippedPayload,
-            sneakers: strippedPayload.sneakers,
-            submittedAt: body.submittedAt ? new Date(body.submittedAt) : new Date(),
-            status: "Received",
+        const draftOrderInput = {
+            lineItems,
+            customAttributes: [
+                { key: "temp_booking_id", value: tempBooking._id.toString() },
+                { key: "is_sneaker_booking", value: "true" }
+            ],
+            useCustomerDefaultAddress: true
         };
 
-        const bookingDoc = new BookingModel(bookingData);
-        await bookingDoc.save();
-
-        const createdSneakersIds = [];
-
         if (body.customerID) {
-            for (let i = 0; i < allProcessedSneakersInputs.length; i++) {
-                const cleanData = allProcessedSneakersInputs[i];
-                const sneakerId = cleanData.id;
-
-                const sneakerFields = {
-                    customerID: body.customerID,
-                    bookingID: bookingDoc._id,
-                    nickname: cleanData.nickname,
-                    brand: cleanData.brand,
-                    model: cleanData.model,
-                    colorway: cleanData.colorway,
-                    size: cleanData.size,
-                    sizeUnit: cleanData.sizeUnit,
-                    history: cleanData.history,
-                    notes: cleanData.notes,
-                    services: body.services ? body.services[cleanData.id] : null,
-                    images: cleanData.images,
-                    status: "Received",
-                    submittedAt: body.submittedAt ? new Date(body.submittedAt) : new Date(),
-                };
-
-                if (sneakerId && mongoose.Types.ObjectId.isValid(sneakerId)) {
-                    // updating existing sneaker
-                    const updatedSneaker = await SneakerModel.findOneAndUpdate(
-                        { _id: sneakerId, customerID: body.customerID },
-                        { $set: sneakerFields },
-                        { returnDocument: 'after', upsert: true }
-                    );
-                    createdSneakersIds.push(updatedSneaker._id);
-                } else {
-                    // creating new sneaker
-                    const newSneaker = new SneakerModel(sneakerFields);
-                    await newSneaker.save();
-                    createdSneakersIds.push(newSneaker._id);
-                }
-            }
+            const customerIdStr = String(body.customerID);
+            draftOrderInput.purchasingEntity.customerId = customerIdStr.startsWith("gid://")
+                ? customerIdStr
+                : `gid://shopify/Customer/${customerIdStr}`;
+        } else if (body.guestInfo?.email) {
+            draftOrderInput.email = body.guestInfo.email;
         }
+
+        const draftRes = await admin.graphql(DRAFT_ORDER_CREATE_MUTATION, {
+            variables: { input: draftOrderInput }
+        });
+
+        const draftData = await draftRes.json();
+
+        if (draftData?.data?.draftOrderCreate?.userErrors?.length) {
+            console.error("Draft order errors:", draftData.data.draftOrderCreate.userErrors);
+            throw new Error(draftData.data.draftOrderCreate.userErrors[0].message);
+        }
+
+        const draftOrder = draftData.data.draftOrderCreate.draftOrder;
 
         return new Response(
             JSON.stringify({
                 success: true,
-                message: "Booking created successfully",
-                bookingId: bookingDoc._id,
+                message: "Draft order created successfully",
+                invoiceUrl: draftOrder.invoiceUrl,
+                draftOrderId: draftOrder.id
             })
         );
     } catch (error) {
@@ -241,7 +119,7 @@ export const action = async ({ request }) => {
         return new Response(
             JSON.stringify({
                 success: false,
-                message: "Error occured while creating booking",
+                message: "Error occured while creating checkout",
                 error: error.message,
             }),
             {

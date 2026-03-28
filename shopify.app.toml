@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://cbs-supervisors-paso-guest.trycloudflare.com"
+application_url = "https://stolen-harmony-offline-touch.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,16 +19,20 @@ api_version = "2026-04"
   topics = [ "app/scopes_update" ]
   uri = "/webhooks/app/scopes_update"
 
+  [[webhooks.subscriptions]]
+  topics = [ "orders/create" ]
+  uri = "/webhooks/orders/create"
+
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products,write_files"
+scopes = "write_products,write_files,read_orders,write_draft_orders"
 
 [auth]
 redirect_urls = [
-  "https://cbs-supervisors-paso-guest.trycloudflare.com/api/auth"
+  "https://stolen-harmony-offline-touch.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://cbs-supervisors-paso-guest.trycloudflare.com"
+url = "https://stolen-harmony-offline-touch.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"
