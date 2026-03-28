@@ -19,6 +19,8 @@ export const action = async ({ request }) => {
                     { _id: search.match(/^[0-9a-fA-F]{24}$/) ? search : undefined },
                     { "guestInfo.name": searchRegex },
                     { "guestInfo.email": searchRegex },
+                    { name: searchRegex },
+                    { email: searchRegex },
                     { status: searchRegex },
                     { handoffMethod: searchRegex }
                 ].filter(Boolean)

@@ -50,6 +50,8 @@ export const loader = async ({ request }) => {
     const url = new URL(request.url);
     const customerID = url.searchParams.get("customerID");
 
+    console.log("customerID from get sneakers", customerID);
+
     if (!customerID) {
       return new Response(
         JSON.stringify({
@@ -63,7 +65,11 @@ export const loader = async ({ request }) => {
       );
     }
 
-    const sneakers = await SneakerModel.find({ customerID }).sort({
+    const idsToSearch = [];
+    if (!String(customerID).startsWith("gid://")) {
+      idsToSearch.push(`gid://shopify/Customer/${customerID}`);
+    }
+    const sneakers = await SneakerModel.find({ customerID: { $in: idsToSearch } }).sort({
       submittedAt: -1,
     });
 

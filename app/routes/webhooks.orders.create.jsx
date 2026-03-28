@@ -138,7 +138,24 @@ export const action = async ({ request }) => {
     }
 
     const bookingData = tempBooking.payload;
-    console.log("Finalizing booking for:", bookingData.guestInfo?.email || bookingData.customerID);
+    let customerName = null;
+    let customerEmail = null;
+    let customerPhone = null;
+
+    // if customerID is present, it's a logged-in customer (not a guest)
+    if (bookingData.customerID && payload.customer) {
+      customerName = `${payload.customer.first_name || ""} ${payload.customer.last_name || ""}`.trim() || null;
+      customerEmail = payload.customer.email || null;
+      customerPhone = payload.customer.phone || payload.customer.default_address?.phone || null;
+
+      // converting numeric ID to Shopify GID for consistency in DB
+      if (!String(bookingData.customerID).startsWith("gid://")) {
+        bookingData.customerID = payload.customer.admin_graphql_api_id || `gid://shopify/Customer/${payload.customer.id}`;
+      }
+      console.log("Populated customer data from Shopify webhook for logged-in user:", bookingData.customerID);
+    }
+
+    console.log("Finalizing booking for:", customerEmail || bookingData.guestInfo?.email || bookingData.customerID);
 
     const processedSneakers = [];
 
@@ -181,7 +198,10 @@ export const action = async ({ request }) => {
 
     const bookingDoc = new BookingModel({
       customerID: bookingData.customerID,
-      guestInfo: bookingData.guestInfo,
+      name: customerName,
+      email: customerEmail,
+      phone: customerPhone,
+      guestInfo: bookingData.customerID ? null : bookingData.guestInfo,
       handoffMethod: bookingData.handoffMethod,
       sneakers: processedSneakers,
       fullPayload: bookingData,
@@ -215,7 +235,7 @@ export const action = async ({ request }) => {
         const sneakerId = processedSnk.id || processedSnk._id;
         if (sneakerId && mongoose.Types.ObjectId.isValid(sneakerId)) {
           await SneakerModel.findOneAndUpdate(
-            { _id: sneakerId, customerID: bookingData.customerID },
+            { _id: sneakerId },
             { $set: sneakerFields },
             { upsert: true }
           );

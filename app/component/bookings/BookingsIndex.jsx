@@ -166,8 +166,8 @@ export default function BookingsIndex() {
                                     </s-table-cell>
                                     <s-table-cell>
                                         <div className="customer-info">
-                                            <s-text type="strong">{item.guestInfo?.name || 'Guest User'}</s-text>
-                                            <s-text variant="bodySm" tone="subdued">{item.guestInfo?.email}</s-text>
+                                            <s-text type="strong">{item.name || item.guestInfo?.name || 'Guest User'}</s-text>
+                                            <s-text variant="bodySm" tone="subdued">{item.email || item.guestInfo?.email}</s-text>
                                         </div>
                                     </s-table-cell>
                                     <s-table-cell>
@@ -209,7 +209,7 @@ export default function BookingsIndex() {
                         <div className="current-status-banner">
                             <s-text variant="bodySm" tone="subdued">CURRENTLY UPDATING</s-text>
                             <div className="modal-header-row">
-                                <s-text type="strong">{editingBooking.guestInfo?.name}</s-text>
+                                <s-text type="strong">{editingBooking.name || editingBooking.guestInfo?.name}</s-text>
                                 <s-badge>{editingBooking.status}</s-badge>
                             </div>
                         </div>

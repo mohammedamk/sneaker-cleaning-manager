@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://stolen-harmony-offline-touch.trycloudflare.com"
+application_url = "https://dive-pay-educational-utils.trycloudflare.com"
 embedded = true
 
 [build]
@@ -29,10 +29,10 @@ scopes = "write_products,write_files,read_orders,write_draft_orders"
 
 [auth]
 redirect_urls = [
-  "https://stolen-harmony-offline-touch.trycloudflare.com/api/auth"
+  "https://dive-pay-educational-utils.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://stolen-harmony-offline-touch.trycloudflare.com"
+url = "https://dive-pay-educational-utils.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"

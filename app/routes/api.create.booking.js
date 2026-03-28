@@ -85,9 +85,11 @@ export const action = async ({ request }) => {
 
         if (body.customerID) {
             const customerIdStr = String(body.customerID);
-            draftOrderInput.purchasingEntity.customerId = customerIdStr.startsWith("gid://")
-                ? customerIdStr
-                : `gid://shopify/Customer/${customerIdStr}`;
+            draftOrderInput.purchasingEntity = {
+                customerId: customerIdStr.startsWith("gid://")
+                    ? customerIdStr
+                    : `gid://shopify/Customer/${customerIdStr}`
+            };
         } else if (body.guestInfo?.email) {
             draftOrderInput.email = body.guestInfo.email;
         }

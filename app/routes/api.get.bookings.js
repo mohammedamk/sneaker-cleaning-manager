@@ -51,6 +51,8 @@ export const action = async ({ request }) => {
 
         const body = await request.json();
 
+        console.log("body get bookings", body);
+
         const customerID = body.customerID;
         const page = parseInt(body.page || "1");
         const limit = parseInt(body.limit || "10");
@@ -70,15 +72,19 @@ export const action = async ({ request }) => {
 
         const skip = (page - 1) * limit;
 
-        // fetching bookings
+        const idsToSearch = [];
+        if (!String(customerID).startsWith("gid://")) {
+            idsToSearch.push(`gid://shopify/Customer/${customerID}`);
+        }
+        const query = { customerID: { $in: idsToSearch } };
 
         const [bookings, total] = await Promise.all([
-            BookingModel.find({ customerID })
+            BookingModel.find(query)
                 .sort({ submittedAt: -1 })
                 .skip(skip)
                 .limit(limit),
 
-            BookingModel.countDocuments({ customerID }),
+            BookingModel.countDocuments(query),
         ]);
 
         // collecting all image ids
