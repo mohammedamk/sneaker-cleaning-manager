@@ -38,6 +38,41 @@ function getAddonPrice(addonId) {
     return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
 }
 
+function getShippingLineItems(shippingSelection = {}) {
+    const lineItems = [];
+
+    const forwardRate = shippingSelection?.selectedForwardRate;
+    const returnRate = shippingSelection?.selectedReturnRate;
+
+    if (forwardRate) {
+        lineItems.push({
+            title: `Shipping to Store - ${forwardRate.carrier} ${forwardRate.service}`,
+            originalUnitPrice: Number(forwardRate.amount),
+            quantity: 1,
+            customAttributes: [
+                { key: "shipping_direction", value: "customer_to_store" },
+                { key: "shipping_carrier", value: forwardRate.carrier || "N/A" },
+                { key: "shipping_service", value: forwardRate.service || "N/A" }
+            ]
+        });
+    }
+
+    if (returnRate) {
+        lineItems.push({
+            title: `Return Shipping - ${returnRate.carrier} ${returnRate.service}`,
+            originalUnitPrice: Number(returnRate.amount),
+            quantity: 1,
+            customAttributes: [
+                { key: "shipping_direction", value: "store_to_customer" },
+                { key: "shipping_carrier", value: returnRate.carrier || "N/A" },
+                { key: "shipping_service", value: returnRate.service || "N/A" }
+            ]
+        });
+    }
+
+    return lineItems;
+}
+
 export const action = async ({ request }) => {
     try {
         const { admin } = await authenticate.public.appProxy(request);
@@ -72,6 +107,10 @@ export const action = async ({ request }) => {
                     ]
                 });
             }
+        }
+
+        if (body.handoffMethod === "shipping") {
+            lineItems.push(...getShippingLineItems(body.shippingSelection));
         }
 
         const draftOrderInput = {

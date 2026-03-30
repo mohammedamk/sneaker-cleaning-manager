@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import StepIndicator from '../shared/StepIndicator/StepIndicator.jsx';
 import './BookingWizard.css';
 
@@ -26,6 +26,31 @@ function getCustomerID() {
 }
 
 const TOTAL_STEPS = 9;
+
+const DEFAULT_SHIPPING_SELECTION = {
+  customerAddress: {
+    name: '',
+    company: '',
+    street1: '',
+    street2: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: 'US',
+    phone: '',
+    email: '',
+  },
+  parcel: {
+    length: '',
+    width: '',
+    height: '',
+    weight: '',
+  },
+  rates: null,
+  selectedForwardRate: null,
+  selectedReturnRate: null,
+  storeAddress: null,
+};
 
 function BookingWizard() {
   const [customerID, setCustomerID] = useState(null);
@@ -65,6 +90,7 @@ function BookingWizard() {
   const [services, setServices] = useState({});
 
   const [handoffMethod, setHandoffMethod] = useState('');
+  const [shippingSelection, setShippingSelection] = useState(DEFAULT_SHIPPING_SELECTION);
 
   useEffect(() => {
     const id = getCustomerID();
@@ -292,6 +318,8 @@ function BookingWizard() {
               <HandoffMethodStep
                 handoffMethod={handoffMethod}
                 onHandoffChange={setHandoffMethod}
+                shippingSelection={shippingSelection}
+                onShippingChange={setShippingSelection}
                 bookingData={{
                   customerID,
                   guestInfo,

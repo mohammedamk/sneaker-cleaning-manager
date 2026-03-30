@@ -1,8 +1,11 @@
+import { Buffer } from "node:buffer";
 import { authenticate } from "../shopify.server";
 import BookingModel from "../MongoDB/models/Booking";
 import SneakerModel from "../MongoDB/models/Sneaker";
 import TempBookingModel from "../MongoDB/models/TempBooking";
 import mongoose from "mongoose";
+import sendEmail from "../utils/sendEmail";
+import { verifyAndBuySelectedRates } from "../utils/easyPostShipping";
 
 const STAGED_UPLOADS_URL_QUERY = `
 mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
@@ -104,6 +107,55 @@ async function uploadImageToShopify(admin, base64Data, mimeType = "image/jpeg", 
   }
 }
 
+const ADMIN_NOTIFICATION_EMAIL = "vowelweb113@gmail.com";
+
+function buildRateChangedEmail({ bookingDoc, orderPayload, shippingSelection, verificationResult }) {
+  const bookingReference = bookingDoc?._id?.toString() || "Pending booking";
+  const orderReference = orderPayload?.name || orderPayload?.id || "Unknown order";
+  const customerEmail = bookingDoc?.email || bookingDoc?.guestInfo?.email || "N/A";
+
+  const rateRows = (verificationResult.changedRates || [])
+    .map((rateChange) => {
+      const quoted = rateChange.quotedRate
+        ? `${rateChange.quotedRate.carrier} ${rateChange.quotedRate.service} $${Number(rateChange.quotedRate.amount).toFixed(2)}`
+        : "No quoted rate";
+      const current = rateChange.currentRate
+        ? `${rateChange.currentRate.carrier} ${rateChange.currentRate.service} $${Number(rateChange.currentRate.amount).toFixed(2)}`
+        : "Rate no longer available";
+
+      return `
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">${rateChange.direction}</td>
+          <td style="padding:8px;border:1px solid #ddd;">${quoted}</td>
+          <td style="padding:8px;border:1px solid #ddd;">${current}</td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  return `
+    <div style="font-family:Arial,sans-serif;line-height:1.5;color:#222;">
+      <h2>Shipping Rate Changed</h2>
+      <p>The EasyPost shipping rate changed after Shopify created an order, so labels were not purchased automatically.</p>
+      <p><strong>Booking ID:</strong> ${bookingReference}</p>
+      <p><strong>Order:</strong> ${orderReference}</p>
+      <p><strong>Customer Email:</strong> ${customerEmail}</p>
+      <p><strong>Forward Quote:</strong> ${shippingSelection?.selectedForwardRate?.carrier || "N/A"} ${shippingSelection?.selectedForwardRate?.service || ""} ${shippingSelection?.selectedForwardRate ? `$${Number(shippingSelection.selectedForwardRate.amount).toFixed(2)}` : ""}</p>
+      <p><strong>Return Quote:</strong> ${shippingSelection?.selectedReturnRate?.carrier || "N/A"} ${shippingSelection?.selectedReturnRate?.service || ""} ${shippingSelection?.selectedReturnRate ? `$${Number(shippingSelection.selectedReturnRate.amount).toFixed(2)}` : ""}</p>
+      <table style="border-collapse:collapse;margin-top:16px;">
+        <thead>
+          <tr>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Direction</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Quoted</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Current</th>
+          </tr>
+        </thead>
+        <tbody>${rateRows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
 export const action = async ({ request }) => {
   const { admin, payload, topic, shop } = await authenticate.webhook(request);
 
@@ -125,8 +177,8 @@ export const action = async ({ request }) => {
 
   try {
     // idempotency checking
-    const existing = await BookingModel.findOne({ shopifyOrderID: shopifyOrderId });
-    if (existing) {
+    let bookingDoc = await BookingModel.findOne({ shopifyOrderID: shopifyOrderId });
+    if (bookingDoc) {
       console.log("Booking already exists for orderID:", shopifyOrderId);
       return new Response();
     }
@@ -196,7 +248,7 @@ export const action = async ({ request }) => {
       }
     }
 
-    const bookingDoc = new BookingModel({
+    bookingDoc = new BookingModel({
       customerID: bookingData.customerID,
       name: customerName,
       email: customerEmail,
@@ -211,6 +263,52 @@ export const action = async ({ request }) => {
     });
 
     await bookingDoc.save();
+
+    if (bookingData.handoffMethod === "shipping" && bookingData.shippingSelection) {
+      const shippingContact = {
+        ...bookingData.shippingSelection.customerAddress,
+        email: bookingData.shippingSelection.customerAddress?.email || customerEmail || bookingData.guestInfo?.email || "",
+      };
+
+      const verificationResult = await verifyAndBuySelectedRates({
+        customerAddress: shippingContact,
+        parcel: bookingData.shippingSelection.parcel,
+        selectedForwardRate: bookingData.shippingSelection.selectedForwardRate,
+        selectedReturnRate: bookingData.shippingSelection.selectedReturnRate,
+        referencePrefix: bookingDoc._id.toString(),
+      });
+
+      if (verificationResult.status === "purchased") {
+        bookingDoc.shipping = {
+          ...bookingData.shippingSelection,
+          purchaseStatus: "purchased",
+          labels: verificationResult.labels,
+          storeAddress: verificationResult.storeAddress,
+          purchasedAt: new Date(),
+        };
+      } else {
+        bookingDoc.shipping = {
+          ...bookingData.shippingSelection,
+          purchaseStatus: "rate_changed",
+          changedRates: verificationResult.changedRates,
+          storeAddress: verificationResult.storeAddress,
+          flaggedAt: new Date(),
+        };
+
+        await sendEmail(
+          ADMIN_NOTIFICATION_EMAIL,
+          "EasyPost shipping rate changed for sneaker booking",
+          buildRateChangedEmail({
+            bookingDoc,
+            orderPayload: payload,
+            shippingSelection: bookingData.shippingSelection,
+            verificationResult,
+          }),
+        );
+      }
+
+      await bookingDoc.save();
+    }
 
     // registry logic
     if (bookingData.customerID) {

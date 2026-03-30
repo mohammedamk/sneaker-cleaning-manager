@@ -27,6 +27,7 @@ const bookingSchema = mongoose.Schema({
         default: 'Pending'
     },
     sneakers: [mongoose.Schema.Types.Mixed],
+    shipping: mongoose.Schema.Types.Mixed,
     fullPayload: mongoose.Schema.Types.Mixed,
     shopifyOrderID: { type: String, required: false },
     submittedAt: { type: Date, default: Date.now }

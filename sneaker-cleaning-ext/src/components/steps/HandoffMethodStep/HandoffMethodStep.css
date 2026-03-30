@@ -53,6 +53,14 @@
     gap: 6px;
 }
 
+.handoff-card__instructions--shipping {
+    gap: 18px;
+}
+
+.handoff-shipping-panel {
+    margin-top: 18px;
+}
+
 .handoff-instructions-list {
     padding-left: 18px;
     display: flex;
@@ -78,8 +86,132 @@
     margin-bottom: 0;
 }
 
+.shipping-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shipping-section__title {
+    font-size: 15px;
+}
+
+.shipping-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.shipping-grid--parcel {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.shipping-rates {
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.shipping-rates__button {
+    align-self: flex-start;
+}
+
+.shipping-rates__group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shipping-rates__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.shipping-rates__header h4 {
+    font-size: 15px;
+}
+
+.shipping-rates__header span,
+.shipping-rates__empty {
+    color: #666;
+}
+
+.shipping-rate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.shipping-rate-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.shipping-rate-card--selected {
+    border-color: #1a1a1a;
+    background: #f7f7f7;
+}
+
+.shipping-rate-card input {
+    margin-top: 3px;
+}
+
+.shipping-rate-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.shipping-rate-card__content-button {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+.shipping-rate-card__topline,
+.shipping-rate-card__meta,
+.shipping-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.shipping-rate-card__meta {
+    color: #666;
+    font-size: 12px;
+}
+
+.shipping-total {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #f4f4f5;
+    font-size: 14px;
+    align-items: center;
+}
+
+.shipping-error {
+    color: #c62828;
+    font-weight: 600;
+}
+
 @media (max-width: 600px) {
     .handoff-options {
+        grid-template-columns: 1fr;
+    }
+
+    .shipping-grid,
+    .shipping-grid--parcel {
         grid-template-columns: 1fr;
     }
 }
