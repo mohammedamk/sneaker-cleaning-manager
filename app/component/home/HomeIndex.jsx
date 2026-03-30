@@ -1,6 +1,21 @@
-export default function HomeIndex({ stats, handleViewBookings }) {
+/* eslint-disable react/prop-types */
+export default function HomeIndex({ stats, selectedRange, rangeLabel, handleRangeChange, handleViewBookings }) {
     return (
         <s-page heading="Dashboard Overview" subtitle="Welcome back! Here is what's happening today.">
+            <div className="dashboard-toolbar">
+                <div className="dashboard-toolbar-copy">
+                    <s-text variant="bodyMd" type="strong">Showing booking counts for {rangeLabel}</s-text>
+                </div>
+
+                <label className="dashboard-toolbar">
+                    <s-select value={selectedRange} onChange={(event) => handleRangeChange(event.target.value)}>
+                        <s-option value="7d">Last 7 days</s-option>
+                        <s-option value="1m">Last 1 month</s-option>
+                        <s-option value="2m">Last 2 months</s-option>
+                        <s-option value="3m">Last 3 months</s-option>
+                    </s-select>
+                </label>
+            </div>
 
             <div className="dashboard-stats-grid">
                 <s-section>
