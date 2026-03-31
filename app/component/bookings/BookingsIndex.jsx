@@ -30,6 +30,7 @@ export default function BookingsIndex() {
     const submit = useSubmit();
 
     const editModalRef = useRef(null);
+    const viewModalRef = useRef(null);
     const deleteModalRef = useRef(null);
 
     const [items, setItems] = useState([]);
@@ -39,6 +40,8 @@ export default function BookingsIndex() {
     const [tableLoading, setTableLoading] = useState(false);
 
     const [editingBooking, setEditingBooking] = useState(null);
+    const [viewingBooking, setViewingBooking] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
 
     const totalPages = Math.ceil(total / PAGE_LIMIT);
@@ -74,9 +77,12 @@ export default function BookingsIndex() {
     useEffect(() => {
         if (actionData?.success) {
             editModalRef.current?.hideOverlay?.();
+            viewModalRef.current?.hideOverlay?.();
             deleteModalRef.current?.hideOverlay?.();
             shopify.toast.show(actionData.message);
             setEditingBooking(null);
+            setViewingBooking(null);
+            setPreviewImage(null);
             setItemToDelete(null);
             fetchPage(page, search);
         }
@@ -92,6 +98,16 @@ export default function BookingsIndex() {
         editModalRef.current?.showOverlay?.();
     };
 
+    const handleView = (item) => {
+        setViewingBooking(item);
+        viewModalRef.current?.showOverlay?.();
+    };
+
+    const handlePreviewImage = (imageUrl) => {
+        viewModalRef.current?.hideOverlay?.();
+        setPreviewImage(imageUrl);
+    };
+
     const handleStatusUpdate = (status) => {
         if (editingBooking) {
             const formData = new FormData();
@@ -100,11 +116,6 @@ export default function BookingsIndex() {
             formData.append("status", status);
             submit(formData, { method: "post" });
         }
-    };
-
-    const handleDeleteClick = (id) => {
-        setItemToDelete(id);
-        deleteModalRef.current?.showOverlay?.();
     };
 
     const confirmDelete = () => {
@@ -119,6 +130,31 @@ export default function BookingsIndex() {
     const changePage = (newPage) => {
         if (newPage < 1 || newPage > totalPages) return;
         fetchPage(newPage, search);
+    };
+
+    const handleDownloadImage = async (imageUrl, sneakerName, imageIndex) => {
+        if (!imageUrl) return;
+
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const objectUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const sanitizedName = (sneakerName || "sneaker")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/(^-|-$)/g, "");
+
+            link.href = objectUrl;
+            link.download = `${sanitizedName || "sneaker"}-${imageIndex + 1}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(objectUrl);
+        } catch (error) {
+            console.error("Failed to download sneaker image:", error);
+            window.open(imageUrl, "_blank", "noopener,noreferrer");
+        }
     };
 
     return (
@@ -161,7 +197,7 @@ export default function BookingsIndex() {
                                 <s-table-row key={item._id}>
                                     <s-table-cell>
                                         <code className="order-id-code">
-                                            #{item._id.slice(-6).toUpperCase()}
+                                            #{item._id}
                                         </code>
                                     </s-table-cell>
                                     <s-table-cell>
@@ -187,6 +223,7 @@ export default function BookingsIndex() {
                                     </s-table-cell>
                                     <s-table-cell>
                                         <div className="actions-container">
+                                            <s-button size="slim" variant="secondary" onClick={() => handleView(item)}>View</s-button>
                                             <s-button size="slim" onClick={() => handleEdit(item)}>Update Status</s-button>
                                         </div>
                                     </s-table-cell>
@@ -228,6 +265,114 @@ export default function BookingsIndex() {
                     </div>
                 )}
             </s-modal>
+
+            <s-modal id="view-modal" ref={viewModalRef} heading="Booking Details">
+                {viewingBooking && (
+                    <div className="booking-view-modal">
+                        <div className="booking-view-grid">
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">BOOKING ID</s-text>
+                                <s-text type="strong">#{viewingBooking._id}</s-text>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">STATUS</s-text>
+                                <s-badge tone={getStatusTone(viewingBooking.status)}>{viewingBooking.status}</s-badge>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">CUSTOMER</s-text>
+                                <s-text type="strong">{viewingBooking.name || viewingBooking.guestInfo?.name || "Guest User"}</s-text>
+                                <s-text variant="bodySm" tone="subdued">{viewingBooking.email || viewingBooking.guestInfo?.email || "No email"}</s-text>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">HANDOFF</s-text>
+                                <s-text>{viewingBooking.handoffMethod || "N/A"}</s-text>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">SUBMITTED</s-text>
+                                <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">PHONE</s-text>
+                                <s-text>{viewingBooking.guestInfo?.phone || viewingBooking.phone || "N/A"}</s-text>
+                            </div>
+                        </div>
+
+                        <div className="booking-view-section">
+                            <s-text type="strong">Sneakers ({Array.isArray(viewingBooking.sneakers) ? viewingBooking.sneakers.length : 0})</s-text>
+                            <div className="booking-view-sneakers">
+                                {(viewingBooking.sneakers || []).map((sneaker, sneakerIndex) => (
+                                    <div className="booking-view-sneaker" key={sneaker._id || sneakerIndex}>
+                                        <div className="booking-view-sneaker__meta">
+                                            <s-text type="strong">{sneaker.nickname || "Unnamed Sneaker"}</s-text>
+                                            <s-text variant="bodySm" tone="subdued">
+                                                {[sneaker.brand, sneaker.model, sneaker.colorway].filter(Boolean).join(" - ") || "No sneaker details"}
+                                            </s-text>
+                                            {sneaker.services && (
+                                                <s-text variant="bodySm">
+                                                    Service: {sneaker.services.tier}
+                                                    {sneaker.services.addOns?.length ? ` + ${sneaker.services.addOns.join(", ")}` : ""}
+                                                </s-text>
+                                            )}
+                                        </div>
+
+                                        <div className="booking-view-images">
+                                            {sneaker.images?.length ? (
+                                                sneaker.images.map((imageUrl, imageIndex) => (
+                                                    <div className="booking-view-image-card" key={`${sneaker._id || sneakerIndex}-${imageIndex}`}>
+                                                        <button
+                                                            type="button"
+                                                            className="booking-view-image-button"
+                                                            onClick={() => handlePreviewImage(imageUrl)}
+                                                        >
+                                                            <img
+                                                                src={imageUrl}
+                                                                alt={`${sneaker.nickname || "Sneaker"} ${imageIndex + 1}`}
+                                                                className="booking-view-image"
+                                                            />
+                                                        </button>
+                                                        <div className="booking-view-image-actions">
+                                                            <s-button size="slim" variant="secondary" onClick={() => handlePreviewImage(imageUrl)}>
+                                                                Preview
+                                                            </s-button>
+                                                            <s-button size="slim" variant="secondary" onClick={() => handleDownloadImage(imageUrl, sneaker.nickname, imageIndex)}>
+                                                                Download
+                                                            </s-button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="booking-view-image-empty">No image uploaded</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </s-modal>
+
+            {previewImage && (
+                <div className="booking-image-preview" role="dialog" aria-modal="true" aria-label="Booking sneaker image preview">
+                    <button
+                        type="button"
+                        className="booking-image-preview__backdrop"
+                        onClick={() => setPreviewImage(null)}
+                        aria-label="Close booking image preview"
+                    />
+                    <div className="booking-image-preview__content">
+                        <button
+                            type="button"
+                            className="booking-image-preview__close"
+                            onClick={() => setPreviewImage(null)}
+                            aria-label="Close booking image preview"
+                        >
+                            ×
+                        </button>
+                        <img src={previewImage} alt="Booking sneaker preview" className="booking-image-preview__image" />
+                    </div>
+                </div>
+            )}
 
             <s-modal id="delete-modal" accessibilityLabel="delete-modal" ref={deleteModalRef} heading="Confirm Delete">
                 <div className="delete-modal-content">
