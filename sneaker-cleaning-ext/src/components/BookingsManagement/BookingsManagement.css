@@ -4,6 +4,33 @@
   border-radius: 12px;
 }
 
+.booking-lookup {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.booking-lookup__description {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.booking-lookup__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-lookup__actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.booking-lookup__error {
+  color: #c62828;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .bookings-management__header {
   display: flex;
   justify-content: space-between;

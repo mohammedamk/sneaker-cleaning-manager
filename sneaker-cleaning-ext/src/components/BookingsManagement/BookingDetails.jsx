@@ -1,12 +1,17 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
 import './BookingsManagement.css';
 
-function BookingDetails({ booking, onBack, onDelete }) {
+function BookingDetails({
+    booking,
+    onBack,
+    title = 'Booking Details',
+    backLabel = '← Back to List'
+}) {
     return (
         <div className="bookings-management booking-details">
             <div className="bookings-management__header">
-                <h2 className="bookings-management__title">Booking Details</h2>
-                <button className="btn btn--secondary" onClick={onBack}>← Back to List</button>
+                <h2 className="bookings-management__title">{title}</h2>
+                <button className="btn btn--secondary" onClick={onBack}>{backLabel}</button>
             </div>
 
             <div className="booking-details__section">

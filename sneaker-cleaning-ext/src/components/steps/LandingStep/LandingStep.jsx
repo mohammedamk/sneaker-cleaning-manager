@@ -1,7 +1,7 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
 import './LandingStep.css';
 
-function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings }) {
+function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings, onViewGuestBooking }) {
   return (
     <div className="landing-step">
       {customerID && (
@@ -36,6 +36,11 @@ function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings }) {
           <button className="btn btn--primary btn--large" onClick={onStart}>
             Schedule Cleaning Now
           </button>
+          {!customerID && (
+            <button className="btn btn--secondary btn--large" onClick={onViewGuestBooking}>
+              View Your Booking
+            </button>
+          )}
         </div>
       </div>
     </div>

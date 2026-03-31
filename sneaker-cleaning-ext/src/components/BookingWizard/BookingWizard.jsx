@@ -15,6 +15,7 @@ import ConfirmationStep from '../steps/ConfirmationStep/ConfirmationStep.jsx';
 import ShoeRackSelectionStep from '../steps/ShoeRackSelectionStep/ShoeRackSelectionStep.jsx';
 import ShoeRackManagement from '../ShoeRackManagement/ShoeRackManagement.jsx';
 import BookingsManagement from '../BookingsManagement/BookingsManagement.jsx';
+import GuestBookingLookup from '../BookingsManagement/GuestBookingLookup.jsx';
 
 const EMPTY_HISTORY = {
   professionallyCleaned: '',
@@ -69,7 +70,7 @@ const DEFAULT_SHIPPING_SELECTION = {
 
 function BookingWizard() {
   const [customerID] = useState(() => getCustomerID());
-  // top-level view management: 'landing', 'wizard', 'shoe-rack', 'bookings'
+  // top-level view management: 'landing', 'wizard', 'shoe-rack', 'bookings', 'guest-booking-lookup'
   const [currentView, setCurrentView] = useState('landing');
 
   // navigation within the wizard
@@ -254,6 +255,7 @@ function BookingWizard() {
             customerID={customerID}
             onViewShoeRack={() => setCurrentView('shoe-rack')}
             onViewBookings={() => setCurrentView('bookings')}
+            onViewGuestBooking={() => setCurrentView('guest-booking-lookup')}
           />
         )}
 
@@ -269,6 +271,10 @@ function BookingWizard() {
             customerID={customerID}
             onBack={() => setCurrentView('landing')}
           />
+        )}
+
+        {currentView === 'guest-booking-lookup' && (
+          <GuestBookingLookup onBack={() => setCurrentView('landing')} />
         )}
 
         {currentView === 'wizard' && (
