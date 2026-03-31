@@ -15,6 +15,11 @@ const ADD_ONS = [
   { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
 ];
 
+const getImageSrc = (image) => {
+  if (typeof image === 'string') return image;
+  return image?.preview || image?.url || '';
+};
+
 function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServiceChange }) {
   const handleTierChange = (tierId) => {
     onServiceChange(sneaker.id, { ...serviceSelection, tier: tierId });
@@ -49,12 +54,18 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
           {sneaker.images && sneaker.images.length > 0 && (
             <div className="sneaker-card__thumbnails">
               {sneaker.images.slice(0, 3).map((img, i) => (
-                <img
-                  key={i}
-                  src={img.preview || img.url || img}
-                  alt={`${sneaker.nickname} ${i + 1}`}
-                  className="sneaker-card__thumbnail"
-                />
+                getImageSrc(img) ? (
+                  <img
+                    key={i}
+                    src={getImageSrc(img)}
+                    alt={`${sneaker.nickname} ${i + 1}`}
+                    className="sneaker-card__thumbnail"
+                  />
+                ) : (
+                  <div key={i} className="sneaker-card__thumbnail sneaker-card__thumbnail--placeholder">
+                    Processing
+                  </div>
+                )
               ))}
               {sneaker.images.length > 3 && (
                 <span className="sneaker-card__more-images">+{sneaker.images.length - 3}</span>

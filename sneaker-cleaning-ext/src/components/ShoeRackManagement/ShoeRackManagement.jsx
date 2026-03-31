@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './ShoeRackManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import ShoeRackSneakerStep from '../steps/ShoeRackSneakerStep/ShoeRackSneakerStep.jsx';
+
+const IMAGE_POLL_INTERVAL_MS = 3000;
 
 const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -22,14 +24,10 @@ function ShoeRackManagement({ customerID, onBack }) {
     // Temporary state for the form
     const [tempSneaker, setTempSneaker] = useState(null);
 
-    useEffect(() => {
-        if (customerID) {
-            fetchSneakers();
+    const fetchSneakers = useCallback(async ({ showLoader = true } = {}) => {
+        if (showLoader) {
+            setIsLoading(true);
         }
-    }, [customerID]);
-
-    const fetchSneakers = async () => {
-        setIsLoading(true);
         try {
             const res = await fetch(`/apps/${PROXY_SUB_PATH}/api/get/sneakers?customerID=${customerID}`);
             const data = await res.json();
@@ -39,9 +37,29 @@ function ShoeRackManagement({ customerID, onBack }) {
         } catch (err) {
             console.error("Error fetching sneakers:", err);
         } finally {
-            setIsLoading(false);
+            if (showLoader) {
+                setIsLoading(false);
+            }
         }
-    };
+    }, [customerID]);
+
+    useEffect(() => {
+        if (customerID) {
+            fetchSneakers();
+        }
+    }, [customerID, fetchSneakers]);
+
+    useEffect(() => {
+        if (!customerID || !sneakers.some((snk) => snk.imageProcessing)) {
+            return undefined;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            fetchSneakers({ showLoader: false });
+        }, IMAGE_POLL_INTERVAL_MS);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [customerID, fetchSneakers, sneakers]);
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this sneaker from your rack?")) return;
@@ -173,8 +191,15 @@ function ShoeRackManagement({ customerID, onBack }) {
                                 sneakers.map(snk => (
                                     <tr key={snk._id}>
                                         <td>
-                                            {snk.images && snk.images[0] && (
-                                                <img src={snk.images[0].url || snk.images[0]} alt={snk.nickname} className="table-img" />
+                                            {snk.imageProcessing ? (
+                                                <div className="table-img table-img--placeholder" aria-label="Sneaker image is processing">
+                                                    <span className="table-img__spinner" />
+                                                    <span className="table-img__label">Processing</span>
+                                                </div>
+                                            ) : snk.images && snk.images[0]?.url ? (
+                                                <img src={snk.images[0].url} alt={snk.nickname} className="table-img" />
+                                            ) : (
+                                                <div className="table-img table-img--empty">No image</div>
                                             )}
                                         </td>
                                         <td><strong>{snk.nickname}</strong></td>

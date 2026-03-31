@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import StepIndicator from '../shared/StepIndicator/StepIndicator.jsx';
 import './BookingWizard.css';
 
@@ -15,6 +15,21 @@ import ConfirmationStep from '../steps/ConfirmationStep/ConfirmationStep.jsx';
 import ShoeRackSelectionStep from '../steps/ShoeRackSelectionStep/ShoeRackSelectionStep.jsx';
 import ShoeRackManagement from '../ShoeRackManagement/ShoeRackManagement.jsx';
 import BookingsManagement from '../BookingsManagement/BookingsManagement.jsx';
+
+const EMPTY_HISTORY = {
+  professionallyCleaned: '',
+  alterations: [],
+};
+
+const createLocalSneakerId = () =>
+  `local-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+const getSneakerKey = (sneaker) => sneaker?._id || sneaker?.id;
+
+const normalizeHistory = (history) => ({
+  professionallyCleaned: history?.professionallyCleaned || '',
+  alterations: Array.isArray(history?.alterations) ? history.alterations : [],
+});
 
 // reading shopify customer id if available
 function getCustomerID() {
@@ -53,7 +68,7 @@ const DEFAULT_SHIPPING_SELECTION = {
 };
 
 function BookingWizard() {
-  const [customerID, setCustomerID] = useState(null);
+  const [customerID] = useState(() => getCustomerID());
   // top-level view management: 'landing', 'wizard', 'shoe-rack', 'bookings'
   const [currentView, setCurrentView] = useState('landing');
 
@@ -71,18 +86,13 @@ function BookingWizard() {
 
   const [guestInfo, setGuestInfo] = useState({ name: '', email: '', phone: '' });
 
-  useEffect(() => {
-    console.log("step...........", step)
-  }, [step])
-
   // sneaker registry
   const [sneakers, setSneakers] = useState([]);
   const [editingSneaker, setEditingSneaker] = useState(null);
-  const [currentSneakerHistory, setCurrentSneakerHistory] = useState({
-    professionallyCleaned: '',
-    alterations: [],
-  });
+  const [currentSneakerHistory, setCurrentSneakerHistory] = useState(EMPTY_HISTORY);
   const [currentSneakerNotes, setCurrentSneakerNotes] = useState('');
+  const [reviewQueue, setReviewQueue] = useState([]);
+  const [currentReviewSneakerId, setCurrentReviewSneakerId] = useState(null);
 
   // tracking whether we are in "re-register" flow from Step 6
   const [returningToManage, setReturningToManage] = useState(false);
@@ -92,40 +102,88 @@ function BookingWizard() {
   const [handoffMethod, setHandoffMethod] = useState('');
   const [shippingSelection, setShippingSelection] = useState(DEFAULT_SHIPPING_SELECTION);
 
-  useEffect(() => {
-    const id = getCustomerID();
-    setCustomerID(id);
-  }, []);
+  const loadSneakerReviewState = (sneaker) => {
+    setCurrentSneakerHistory(normalizeHistory(sneaker?.history));
+    setCurrentSneakerNotes(sneaker?.notes || '');
+  };
+
+  const startReviewFlow = (nextSneakers, sneakerIds) => {
+    const queue = sneakerIds.filter(Boolean);
+
+    if (!queue.length) {
+      setReviewQueue([]);
+      setCurrentReviewSneakerId(null);
+      setStep(5);
+      return;
+    }
+
+    const firstSneaker = nextSneakers.find((sneaker) => getSneakerKey(sneaker) === queue[0]);
+
+    setReviewQueue(queue);
+    setCurrentReviewSneakerId(queue[0]);
+    loadSneakerReviewState(firstSneaker);
+    setStep(3);
+  };
 
   const handleSneakerSave = (sneakerData) => {
-    if (editingSneaker) {
-      setSneakers((prev) =>
-        prev.map((s) =>
-          (s._id || s.id) === (sneakerData._id || sneakerData.id) ? { ...s, ...sneakerData } : s
-        )
-      );
-      setEditingSneaker(null);
-      // jumping back to manage step if we came from there
-      if (returningToManage) {
-        setReturningToManage(false);
-        setEditingSneaker(null);
-        setIsAddingNew(false);
-        setStep(5);
-        return;
-      }
-    } else {
-      // brand new sneaker — attaching current history and notes
-      const full = {
+    const fallbackId = createLocalSneakerId();
+    const nextSneaker = editingSneaker
+      ? {
+        ...editingSneaker,
         ...sneakerData,
-        history: currentSneakerHistory,
-        notes: currentSneakerNotes,
+        id: getSneakerKey({ ...editingSneaker, ...sneakerData }) || fallbackId,
+      }
+      : {
+        ...sneakerData,
+        id: getSneakerKey(sneakerData) || fallbackId,
       };
-      setSneakers((prev) => [...prev, full]);
-      // resetting per-sneaker working state
-      setCurrentSneakerHistory({ professionallyCleaned: '', alterations: [] });
-      setCurrentSneakerNotes('');
+
+    const nextSneakers = editingSneaker
+      ? sneakers.map((s) =>
+        getSneakerKey(s) === getSneakerKey(editingSneaker) ? nextSneaker : s
+      )
+      : [...sneakers, nextSneaker];
+
+    setSneakers(nextSneakers);
+    setEditingSneaker(null);
+    setIsAddingNew(false);
+    startReviewFlow(nextSneakers, [getSneakerKey(nextSneaker)]);
+  };
+
+  const handleReviewComplete = () => {
+    const nextSneakers = sneakers.map((sneaker) =>
+      getSneakerKey(sneaker) === currentReviewSneakerId
+        ? {
+          ...sneaker,
+          history: currentSneakerHistory,
+          notes: currentSneakerNotes,
+        }
+        : sneaker
+    );
+
+    const remainingQueue = reviewQueue.slice(1);
+
+    setSneakers(nextSneakers);
+
+    if (remainingQueue.length) {
+      const nextSneaker = nextSneakers.find(
+        (sneaker) => getSneakerKey(sneaker) === remainingQueue[0]
+      );
+      setReviewQueue(remainingQueue);
+      setCurrentReviewSneakerId(remainingQueue[0]);
+      loadSneakerReviewState(nextSneaker);
+      setStep(3);
+      return;
     }
-    goNext();
+
+    setReviewQueue([]);
+    setCurrentReviewSneakerId(null);
+
+    if (returningToManage) {
+      setReturningToManage(false);
+    }
+
+    setStep(5);
   };
 
   const handleEditSneaker = (sneaker) => {
@@ -147,8 +205,11 @@ function BookingWizard() {
   const handleAddAnotherSneaker = () => {
     setEditingSneaker(null);
     setIsAddingNew(false);
-    setCurrentSneakerHistory({ professionallyCleaned: '', alterations: [] });
+    setReturningToManage(false);
+    setCurrentSneakerHistory(EMPTY_HISTORY);
     setCurrentSneakerNotes('');
+    setReviewQueue([]);
+    setCurrentReviewSneakerId(null);
     setStep(2);
   };
 
@@ -156,10 +217,23 @@ function BookingWizard() {
     setServices((prev) => ({ ...prev, [sneakerId]: serviceData }));
   };
 
-  // step 3→4 and 4→5 navigation
-  // these steps are part of a per-sneaker sub-flow:
-  // step 3: registration → step 4: history → step 5: notes → step 6: manage
-  // however, when editing from step 6, we skip history/notes and go straight back
+  const handleAddExistingSneaker = (sneaker) => {
+    const sneakerId = getSneakerKey(sneaker);
+    const alreadySelected = sneakers.some((item) => getSneakerKey(item) === sneakerId);
+
+    if (alreadySelected) {
+      handleRemoveSneaker(sneakerId);
+      return;
+    }
+
+    const nextSneaker = { ...sneaker, id: sneakerId };
+    const nextSneakers = [...sneakers, nextSneaker];
+
+    setSneakers(nextSneakers);
+    setReturningToManage(false);
+    startReviewFlow(nextSneakers, [sneakerId]);
+  };
+
   const handleRegistrationNext = (sneakerData) => handleSneakerSave(sneakerData);
 
   const showIndicator = currentView === 'wizard'
@@ -214,16 +288,10 @@ function BookingWizard() {
                 <ShoeRackSelectionStep
                   customerID={customerID}
                   sneakers={sneakers}
-                  onAddExisting={(snk) => {
-                    if (sneakers.some(s => (s._id || s.id) === (snk._id || snk.id))) {
-                      handleRemoveSneaker(snk._id || snk.id);
-                    } else {
-                      setSneakers(prev => [...prev, snk]);
-                    }
-                  }}
+                  onAddExisting={handleAddExistingSneaker}
                   onAddNew={() => setIsAddingNew(true)}
                   onEditExisting={handleEditSneaker}
-                  onNext={() => setStep(5)} // skipping History/Notes for saved shoes as they have them
+                  onNext={sneakers.length > 0 ? () => setStep(5) : null}
                   onPrev={goPrev}
                 />
               ) : (
@@ -231,14 +299,16 @@ function BookingWizard() {
                   editingSneaker={editingSneaker}
                   onSave={(data) => {
                     handleRegistrationNext(data);
-                    setIsAddingNew(false);
-                    // if editing, handleRegistrationNext already handled step 5 return via returningToManage
-                    // else it goes to step 3 via goNext inside handleSneakerSave
                   }}
                   onPrev={() => {
-                    if (customerID && (isAddingNew || editingSneaker)) {
-                      setIsAddingNew(false);
+                    if (customerID && editingSneaker) {
                       setEditingSneaker(null);
+                      setReturningToManage(false);
+                      setStep(5);
+                      return;
+                    }
+                    if (customerID && isAddingNew) {
+                      setIsAddingNew(false);
                       return;
                     }
                     goPrev();
@@ -260,19 +330,7 @@ function BookingWizard() {
               <AdditionalNotesStep
                 notes={currentSneakerNotes}
                 onNotesChange={setCurrentSneakerNotes}
-                onNext={() => {
-                  const lastPending = sneakers[sneakers.length - 1];
-                  if (lastPending && !lastPending.history) {
-                    setSneakers((prev) =>
-                      prev.map((s, i) =>
-                        i === prev.length - 1
-                          ? { ...s, history: currentSneakerHistory, notes: currentSneakerNotes }
-                          : s
-                      )
-                    );
-                  }
-                  goNext();
-                }}
+                onNext={handleReviewComplete}
                 onPrev={goPrev}
               />
             )}
@@ -308,7 +366,6 @@ function BookingWizard() {
               <SummaryStep
                 sneakers={sneakers}
                 services={services}
-                notes={currentSneakerNotes}
                 onNext={goNext}
                 onPrev={goPrev}
               />

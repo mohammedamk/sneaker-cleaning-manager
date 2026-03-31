@@ -68,15 +68,16 @@
     padding-top: 4px;
 }
 
-.summary__notes {
-    padding: 10px 14px;
-    background: #f9f9f9;
+.summary-row__notes {
+    padding: 10px 12px;
+    background: #f7f7f7;
     border-radius: 6px;
-    border: 1px solid #e8e8e8;
-    font-size: 14px;
+    border: 1px solid #e6e6e6;
+    font-size: 13px;
+    margin-top: 4px;
 }
 
-.summary__notes p {
+.summary-row__notes p {
     margin-top: 4px;
     color: #444;
 }

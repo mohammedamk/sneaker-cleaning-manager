@@ -69,6 +69,7 @@ export const loader = async ({ request }) => {
     if (!String(customerID).startsWith("gid://")) {
       idsToSearch.push(`gid://shopify/Customer/${customerID}`);
     }
+    // console.log("idsToSearch", idsToSearch);
     const sneakers = await SneakerModel.find({ customerID: { $in: idsToSearch } }).sort({
       submittedAt: -1,
     });
@@ -95,7 +96,8 @@ export const loader = async ({ request }) => {
       return {
         ...snk.toObject(),
         id: snk._id.toString(),
-        images: updatedImages.filter(img => img.url),
+        images: updatedImages,
+        imageProcessing: updatedImages.some((img) => img.id && !img.url),
       };
     });
 

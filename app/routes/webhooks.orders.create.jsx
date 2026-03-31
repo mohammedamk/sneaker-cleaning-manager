@@ -161,6 +161,8 @@ export const action = async ({ request }) => {
 
   console.log(`Received ${topic} webhook for ${shop}`);
 
+  console.log(`Received ${topic} webhook for ${shop}`);
+
   if (topic !== "ORDERS_CREATE") {
     return new Response();
   }

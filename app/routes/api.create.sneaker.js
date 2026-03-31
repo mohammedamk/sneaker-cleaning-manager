@@ -175,7 +175,7 @@ export const action = async ({ request }) => {
       images = [],
     } = body;
 
-    console.log("Incoming body:", body);
+    // console.log("Incoming body:", body);
 
     if (!customerID) {
       return new Response(
@@ -224,7 +224,7 @@ export const action = async ({ request }) => {
 
 
     const newSneaker = new SneakerModel({
-      customerID,
+      customerID: `gid://shopify/Customer/${customerID}`,
       nickname,
       brand,
       model,

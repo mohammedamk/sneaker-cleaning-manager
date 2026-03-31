@@ -42,13 +42,19 @@ function SneakerSummaryRow({ sneaker, service }) {
             ))}
           </ul>
         )}
+        {sneaker.notes && (
+          <div className="summary-row__notes">
+            <strong>Special Instructions:</strong>
+            <p>{sneaker.notes}</p>
+          </div>
+        )}
         <div className="summary-row__subtotal">Subtotal: ${subtotal}</div>
       </div>
     </div>
   );
 }
 
-function SummaryStep({ sneakers, services, notes, onNext, onPrev }) {
+function SummaryStep({ sneakers, services, onNext, onPrev }) {
   const estimatedTotal = sneakers.reduce((total, sneaker) => {
     const service = services[sneaker.id];
     const tierPrice = getTierPrice(service?.tier);
@@ -73,13 +79,6 @@ function SummaryStep({ sneakers, services, notes, onNext, onPrev }) {
             />
           ))}
         </div>
-
-        {notes && (
-          <div className="summary__notes">
-            <strong>Special Instructions:</strong>
-            <p>{notes}</p>
-          </div>
-        )}
 
         <div className="summary__total">
           <span>Estimated Total</span>
