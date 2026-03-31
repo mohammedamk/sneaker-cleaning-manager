@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import mongoose from "mongoose";
 import { authenticate } from "../shopify.server";
 import BookingModel from "../MongoDB/models/Booking";
@@ -80,8 +81,7 @@ export const action = async ({ request }) => {
 
     const bookingID = body.bookingID?.trim();
     const email = body.email?.trim().toLowerCase();
-    console.log("bookingID", bookingID);
-    console.log("email", email);
+    const accessToken = body.accessToken?.trim();
 
     if (!bookingID) {
       return new Response(
@@ -97,36 +97,47 @@ export const action = async ({ request }) => {
       );
     }
 
-    if (!email) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Email is required." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    let booking = null;
+
+    if (accessToken) {
+      const accessTokenHash = createHash("sha256").update(accessToken).digest("hex");
+      booking = await BookingModel.findOne({
+        _id: bookingID,
+        accessTokenHash,
+      });
+    } else {
+      if (!email) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Email is required." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (!EMAIL_REGEX.test(email)) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Enter a valid email address." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const escapedEmail = escapeRegex(email);
+
+      booking = await BookingModel.findOne({
+        _id: bookingID,
+        $or: [
+          { "guestInfo.email": { $regex: `^${escapedEmail}$`, $options: "i" } },
+          { email: { $regex: `^${escapedEmail}$`, $options: "i" } },
+        ],
+      });
     }
-
-    if (!EMAIL_REGEX.test(email)) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Enter a valid email address." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    const escapedEmail = escapeRegex(email);
-
-    const booking = await BookingModel.findOne({
-      _id: bookingID,
-      // customerID: null,
-      $or: [
-        { "guestInfo.email": { $regex: `^${escapedEmail}$`, $options: "i" } },
-        { email: { $regex: `^${escapedEmail}$`, $options: "i" } },
-      ],
-    });
 
     if (!booking) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: "No booking was found for that booking ID and email address.",
+          message: accessToken
+            ? "No booking was found for that secure booking link."
+            : "No booking was found for that booking ID and email address.",
         }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );

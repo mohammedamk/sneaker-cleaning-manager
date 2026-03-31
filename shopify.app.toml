@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://conceptual-alerts-convergence-pod.trycloudflare.com"
+application_url = "https://focusing-telecharger-considers-explicit.trycloudflare.com"
 embedded = true
 
 [build]
@@ -25,14 +25,14 @@ api_version = "2026-04"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products,write_files,read_orders,write_draft_orders"
+scopes = "write_products,write_files,read_orders,write_draft_orders,write_orders"
 
 [auth]
 redirect_urls = [
-  "https://conceptual-alerts-convergence-pod.trycloudflare.com/api/auth"
+  "https://focusing-telecharger-considers-explicit.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://conceptual-alerts-convergence-pod.trycloudflare.com"
+url = "https://focusing-telecharger-considers-explicit.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"

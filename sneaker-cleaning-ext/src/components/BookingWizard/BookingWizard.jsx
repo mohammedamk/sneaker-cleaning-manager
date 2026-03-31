@@ -70,8 +70,18 @@ const DEFAULT_SHIPPING_SELECTION = {
 
 function BookingWizard() {
   const [customerID] = useState(() => getCustomerID());
+  const [hasSecureBookingParams] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return Boolean(params.get('bookingId') && params.get('accessToken'));
+    } catch {
+      return false;
+    }
+  });
   // top-level view management: 'landing', 'wizard', 'shoe-rack', 'bookings', 'guest-booking-lookup'
-  const [currentView, setCurrentView] = useState('landing');
+  const [currentView, setCurrentView] = useState(
+    hasSecureBookingParams ? 'guest-booking-lookup' : 'landing'
+  );
 
   // navigation within the wizard
   const [step, setStep] = useState(1);

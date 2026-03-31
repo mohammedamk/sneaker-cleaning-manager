@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './BookingsManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import FormField from '../shared/FormField/FormField.jsx';
@@ -8,11 +7,65 @@ import BookingDetails from './BookingDetails.jsx';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function GuestBookingLookup({ onBack }) {
+  const [hasSecureLink] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return Boolean(params.get('bookingId') && params.get('accessToken'));
+    } catch {
+      return false;
+    }
+  });
   const [formData, setFormData] = useState({ bookingID: '', email: '' });
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(hasSecureLink);
   const [serverError, setServerError] = useState('');
   const [booking, setBooking] = useState(null);
+
+  const fetchBooking = async ({ bookingID, email, accessToken }) => {
+    setIsLoading(true);
+    setServerError('');
+    setBooking(null);
+
+    try {
+      const response = await fetch(`/apps/${PROXY_SUB_PATH}/api/get/booking`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingID,
+          ...(email ? { email } : {}),
+          ...(accessToken ? { accessToken } : {}),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setServerError(data.message || 'We could not find a booking with those details.');
+        return;
+      }
+
+      setBooking(data.booking);
+    } catch (error) {
+      console.error('Error looking up booking:', error);
+      setServerError('Something went wrong while looking up your booking. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const bookingID = params.get('bookingId')?.trim();
+    const accessToken = params.get('accessToken')?.trim();
+
+    if (bookingID) {
+      setFormData((prev) => ({ ...prev, bookingID }));
+    }
+
+    if (bookingID && accessToken) {
+      fetchBooking({ bookingID, accessToken });
+    }
+  }, []);
 
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -51,34 +104,10 @@ function GuestBookingLookup({ onBack }) {
       return;
     }
 
-    setIsLoading(true);
-    setServerError('');
-    setBooking(null);
-
-    try {
-      const response = await fetch(`/apps/${PROXY_SUB_PATH}/api/get/booking`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingID: formData.bookingID.trim(),
-          email: formData.email.trim(),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        setServerError(data.message || 'We could not find a booking with those details.');
-        return;
-      }
-
-      setBooking(data.booking);
-    } catch (error) {
-      console.error('Error looking up booking:', error);
-      setServerError('Something went wrong while looking up your booking. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    fetchBooking({
+      bookingID: formData.bookingID.trim(),
+      email: formData.email.trim(),
+    });
   };
 
   if (booking) {
@@ -89,6 +118,21 @@ function GuestBookingLookup({ onBack }) {
         title="Your Booking"
         backLabel="← Back to Lookup"
       />
+    );
+  }
+
+  if (hasSecureLink && isLoading) {
+    return (
+      <div className="bookings-management booking-lookup">
+        <div className="bookings-management__header">
+          <h2 className="bookings-management__title">Loading Your Booking</h2>
+          <button className="btn btn--secondary" onClick={onBack}>← Back</button>
+        </div>
+
+        <p className="booking-lookup__description">
+          Opening your secure booking details...
+        </p>
+      </div>
     );
   }
 

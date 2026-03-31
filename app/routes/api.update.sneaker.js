@@ -147,11 +147,15 @@ export const action = async ({ request }) => {
       }
     }
 
+    const customerIdStr = String(updateData.customerID);
+
     const finalUpdateData = {
       ...updateData,
+      customerID: customerIdStr.startsWith("gid://shopify/")
+        ? customerIdStr
+        : `gid://shopify/Customer/${customerIdStr}`,
       images: uploadedImageIds.length > 0 ? uploadedImageIds : updateData.images
     };
-
     // if images were provided (even empty array), here then updating them.
     if (Array.isArray(images)) {
       finalUpdateData.images = uploadedImageIds;

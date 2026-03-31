@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import { createHash, randomBytes } from "node:crypto";
 import { authenticate } from "../shopify.server";
 import BookingModel from "../MongoDB/models/Booking";
 import SneakerModel from "../MongoDB/models/Sneaker";
@@ -108,6 +109,138 @@ async function uploadImageToShopify(admin, base64Data, mimeType = "image/jpeg", 
 }
 
 const ADMIN_NOTIFICATION_EMAIL = "vowelweb113@gmail.com";
+const ORDER_UPDATE_MUTATION = `
+mutation orderUpdate($input: OrderInput!) {
+  orderUpdate(input: $input) {
+    order {
+      id
+      customAttributes {
+        key
+        value
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+`;
+
+function buildSecureBookingAccess(shopHost, bookingId, accessToken) {
+  const params = new URLSearchParams({
+    bookingId,
+    accessToken,
+  });
+
+  return `https://${shopHost}/pages/book-sneaker-pick-up?${params.toString()}`;
+}
+
+function buildQrCodeImageUrl(accessUrl) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(accessUrl)}`;
+}
+
+function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCodeImageUrl }) {
+  const customerName = bookingDoc?.name || bookingDoc?.guestInfo?.name || "there";
+  const sneakerRows = (bookingDoc?.sneakers || [])
+    .map((sneaker) => {
+      const sneakerName = sneaker.nickname || "Unnamed sneaker";
+      const sneakerDetails = [sneaker.brand, sneaker.model, sneaker.colorway]
+        .filter(Boolean)
+        .join(" - ");
+      const service = sneaker.services?.tier
+        ? `${sneaker.services.tier}${sneaker.services.addOns?.length ? ` + ${sneaker.services.addOns.join(", ")}` : ""}`
+        : "Service details pending";
+
+      return `
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd;">${sneakerName}</td>
+          <td style="padding:8px;border:1px solid #ddd;">${sneakerDetails || "N/A"}</td>
+          <td style="padding:8px;border:1px solid #ddd;">${service}</td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  return `
+    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;max-width:680px;margin:0 auto;">
+      <h2 style="margin-bottom:8px;">Your Sneaker Cleaning Booking Is Confirmed</h2>
+      <p>Hello ${customerName},</p>
+      <p>Your booking has been created successfully. You can scan the QR code below or use the secure button to open your booking details page directly.</p>
+
+      <div style="margin:24px 0;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa;text-align:center;">
+        <img src="${qrCodeImageUrl}" alt="QR code for your booking details" width="220" height="220" style="display:block;margin:0 auto 16px;" />
+        <a href="${accessUrl}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">
+          View Booking Details
+        </a>
+      </div>
+
+      <p><strong>Booking ID:</strong> ${bookingDoc?._id?.toString() || "N/A"}</p>
+      <p><strong>Order:</strong> ${orderPayload?.name || orderPayload?.id || "N/A"}</p>
+      <p><strong>Status:</strong> ${bookingDoc?.status || "Pending"}</p>
+      <p><strong>Handoff Method:</strong> ${bookingDoc?.handoffMethod || "N/A"}</p>
+
+      <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+        <thead>
+          <tr>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Sneaker</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Details</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Service</th>
+          </tr>
+        </thead>
+        <tbody>${sneakerRows}</tbody>
+      </table>
+
+      <p style="margin-top:20px;">If the button does not open, use this secure link:</p>
+      <p><a href="${accessUrl}" style="color:#2563eb;word-break:break-all;">${accessUrl}</a></p>
+    </div>
+  `;
+}
+
+async function saveBookingAccessToOrder(admin, orderId, bookingDoc, existingAttributes = []) {
+  const preservedAttributes = (existingAttributes || [])
+    .filter((attribute) => ![
+      "booking_id",
+      "booking_access_url",
+      "booking_qr_code_url",
+    ].includes(attribute.name))
+    .map((attribute) => ({
+      key: attribute.name,
+      value: String(attribute.value ?? ""),
+    }));
+
+  const customAttributes = [
+    ...preservedAttributes,
+    {
+      key: "booking_id",
+      value: bookingDoc._id.toString(),
+    },
+    {
+      key: "booking_access_url",
+      value: bookingDoc.secureAccessUrl,
+    },
+    {
+      key: "booking_qr_code_url",
+      value: bookingDoc.qrCodeImageUrl,
+    },
+  ];
+
+  const response = await admin.graphql(ORDER_UPDATE_MUTATION, {
+    variables: {
+      input: {
+        id: orderId,
+        customAttributes,
+      },
+    },
+  });
+
+  const data = await response.json();
+  const userErrors = data?.data?.orderUpdate?.userErrors || [];
+
+  if (userErrors.length) {
+    console.error("Failed to save booking access customAttributes on order:", userErrors);
+  }
+}
 
 function buildRateChangedEmail({ bookingDoc, orderPayload, shippingSelection, verificationResult }) {
   const bookingReference = bookingDoc?._id?.toString() || "Pending booking";
@@ -158,8 +291,6 @@ function buildRateChangedEmail({ bookingDoc, orderPayload, shippingSelection, ve
 
 export const action = async ({ request }) => {
   const { admin, payload, topic, shop } = await authenticate.webhook(request);
-
-  console.log(`Received ${topic} webhook for ${shop}`);
 
   console.log(`Received ${topic} webhook for ${shop}`);
 
@@ -264,6 +395,12 @@ export const action = async ({ request }) => {
       status: "Pending"
     });
 
+    const accessToken = randomBytes(32).toString("hex");
+    bookingDoc.accessTokenHash = createHash("sha256").update(accessToken).digest("hex");
+    await bookingDoc.save();
+
+    bookingDoc.secureAccessUrl = buildSecureBookingAccess(shop, bookingDoc._id.toString(), accessToken);
+    bookingDoc.qrCodeImageUrl = buildQrCodeImageUrl(bookingDoc.secureAccessUrl);
     await bookingDoc.save();
 
     if (bookingData.handoffMethod === "shipping" && bookingData.shippingSelection) {
@@ -310,6 +447,22 @@ export const action = async ({ request }) => {
       }
 
       await bookingDoc.save();
+    }
+
+    await saveBookingAccessToOrder(admin, shopifyOrderId, bookingDoc, payload.note_attributes);
+
+    const recipientEmail = customerEmail || bookingData.guestInfo?.email;
+    if (recipientEmail) {
+      await sendEmail(
+        recipientEmail,
+        `Booking confirmed: ${bookingDoc._id.toString()}`,
+        buildCustomerBookingEmail({
+          bookingDoc,
+          orderPayload: payload,
+          accessUrl: bookingDoc.secureAccessUrl,
+          qrCodeImageUrl: bookingDoc.qrCodeImageUrl,
+        }),
+      );
     }
 
     // registry logic

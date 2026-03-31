@@ -30,6 +30,9 @@ const bookingSchema = mongoose.Schema({
     shipping: mongoose.Schema.Types.Mixed,
     fullPayload: mongoose.Schema.Types.Mixed,
     shopifyOrderID: { type: String, required: false },
+    accessTokenHash: { type: String, default: null },
+    secureAccessUrl: { type: String, default: null },
+    qrCodeImageUrl: { type: String, default: null },
     submittedAt: { type: Date, default: Date.now }
 });
 
