@@ -1,49 +1,10 @@
 import { authenticate } from "../shopify.server";
 import BookingModel from "../MongoDB/models/Booking";
-
-// fetching images
-
-async function getImageUrls(admin, fileIds = []) {
-    try {
-        if (!fileIds.length) return {};
-
-        const query = `
-      query getFiles($ids: [ID!]!) {
-        nodes(ids: $ids) {
-          ... on MediaImage {
-            id
-            image {
-              url
-            }
-          }
-        }
-      }
-    `;
-
-        const res = await admin.graphql(query, {
-            variables: { ids: fileIds },
-        });
-
-        const data = await res.json();
-
-        const map = {};
-
-        if (data?.data?.nodes) {
-            data.data.nodes.forEach((node) => {
-                if (node?.id && node?.image?.url) {
-                    map[node.id] = node.image.url;
-                }
-            });
-        }
-
-        return map;
-    } catch (err) {
-        console.error("Error fetching image URLs:", err);
-        return {};
-    }
-}
-
-
+import {
+    collectBookingImageIds,
+    getImageUrls,
+    normalizeBookingImages,
+} from "../utils/shopifyImages.server";
 
 export const action = async ({ request }) => {
     try {
@@ -89,26 +50,7 @@ export const action = async ({ request }) => {
 
         // collecting all image ids
 
-        const allImageIds = [];
-
-        bookings.forEach((booking) => {
-            if (Array.isArray(booking.sneakers)) {
-                booking.sneakers.forEach((snk) => {
-                    if (Array.isArray(snk.images)) {
-                        snk.images.forEach((id) => {
-                            if (
-                                typeof id === "string" &&
-                                id.startsWith("gid://shopify/")
-                            ) {
-                                allImageIds.push(id);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-        const uniqueIds = [...new Set(allImageIds)];
+        const uniqueIds = [...new Set(bookings.flatMap((booking) => collectBookingImageIds(booking)))];
 
         // fetching images urls
 
@@ -116,31 +58,7 @@ export const action = async ({ request }) => {
 
         // mapping ids to urls
 
-        const bookingsWithUrls = bookings.map((booking) => {
-            const updatedSneakers = (booking.sneakers || []).map((snk) => {
-                const updatedImages = (snk.images || []).map((id) => {
-                    if (typeof id === "string" && id.startsWith("http")) {
-                        return id; // fallingback for old data
-                    }
-
-                    if (typeof id === "string" && id.startsWith("gid://shopify/")) {
-                        return imageMap[id] || null;
-                    }
-
-                    return null;
-                });
-
-                return {
-                    ...snk,
-                    images: updatedImages.filter(Boolean),
-                };
-            });
-
-            return {
-                ...booking.toObject(),
-                sneakers: updatedSneakers,
-            };
-        });
+        const bookingsWithUrls = bookings.map((booking) => normalizeBookingImages(booking, imageMap));
 
 
         return new Response(

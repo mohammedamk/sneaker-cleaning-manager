@@ -3,26 +3,67 @@ import { useActionData, useSubmit, useNavigation } from "react-router";
 
 const getStatusTone = (status) => {
     switch (status) {
-        case 'Pending': return 'warning';
-        case 'Received': return 'auto';
-        case 'Under Inspection': return 'caution';
-        case 'In Cleaning': return 'info';
-        case 'Awaiting Customer Approval': return 'warning';
-        case 'Cleaning Complete': return 'info';
-        case 'Ready for Pickup / Shipment': return 'success';
-        case 'Completed': return 'success';
-        case 'Canceled': return 'critical';
-        default: return 'subdued';
+        case "Pending": return "warning";
+        case "Received": return "auto";
+        case "Under Inspection": return "caution";
+        case "In Cleaning": return "info";
+        case "Awaiting Customer Approval": return "warning";
+        case "Cleaning Complete": return "info";
+        case "Ready for Pickup / Shipment": return "success";
+        case "Completed": return "success";
+        case "Canceled": return "critical";
+        default: return "subdued";
     }
 };
 
 const PAGE_LIMIT = 10;
 
 const STATUS_OPTIONS = [
-    'Pending', 'Received', 'Under Inspection', 'In Cleaning',
-    'Awaiting Customer Approval', 'Cleaning Complete',
-    'Ready for Pickup / Shipment', 'Completed', 'Canceled'
+    "Pending", "Received", "Under Inspection", "In Cleaning",
+    "Awaiting Customer Approval", "Cleaning Complete",
+    "Ready for Pickup / Shipment", "Completed", "Canceled"
 ];
+
+const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+});
+
+const getSneakerUploadKey = (bookingId, sneakerIndex) => `${bookingId}-${sneakerIndex}`;
+
+const getObjectIdString = (value) => {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+    if (typeof value.toHexString === "function") return value.toHexString();
+
+    if (typeof value.toString === "function") {
+        const stringValue = value.toString();
+        if (stringValue && stringValue !== "[object Object]") {
+            return stringValue;
+        }
+    }
+
+    const bytes = value?.buffer?.data
+        || (Array.isArray(value?.buffer) ? value.buffer : null)
+        || (Array.isArray(value?.id?.buffer) ? value.id.buffer : null)
+        || value?.id?.buffer?.data;
+
+    if (Array.isArray(bytes) && bytes.length === 12) {
+        return bytes.map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    return "";
+};
+
+const hasCleanedImages = (booking) => (booking?.sneakers || []).some(
+    (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
+);
+
+const updateBookingInList = (bookings, updatedBooking) => bookings.map((item) => (
+    getObjectIdString(item._id) === getObjectIdString(updatedBooking._id) ? updatedBooking : item
+));
 
 export default function BookingsIndex() {
     const actionData = useActionData();
@@ -43,6 +84,7 @@ export default function BookingsIndex() {
     const [viewingBooking, setViewingBooking] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
+    const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
 
     const totalPages = Math.ceil(total / PAGE_LIMIT);
 
@@ -50,7 +92,7 @@ export default function BookingsIndex() {
         setTableLoading(true);
         try {
             const res = await fetch(
-                `/api/admin/bookings`,
+                "/api/admin/bookings",
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -75,16 +117,51 @@ export default function BookingsIndex() {
     }, [fetchPage]);
 
     useEffect(() => {
-        if (actionData?.success) {
+        if (!actionData) return;
+        if (actionData.success) {
+            shopify.toast.show(actionData.message);
+
+            if (actionData.booking) {
+                setViewingBooking(actionData.booking);
+                setItems((currentItems) => updateBookingInList(currentItems, actionData.booking));
+            }
+
+            if (actionData.actionType === "UPLOAD_CLEANED_IMAGES" && actionData.booking?._id) {
+                setCleanedImageDrafts((currentDrafts) => {
+                    const nextDrafts = { ...currentDrafts };
+                    const bookingId = getObjectIdString(actionData.booking._id);
+                    (actionData.booking.sneakers || []).forEach((_, sneakerIndex) => {
+                        delete nextDrafts[getSneakerUploadKey(bookingId, sneakerIndex)];
+                    });
+                    return nextDrafts;
+                });
+                fetchPage(page, search);
+                return;
+            }
+
+            if (actionData.actionType === "DELETE_CLEANED_IMAGE") {
+                fetchPage(page, search);
+                return;
+            }
+
+            if (actionData.actionType === "SEND_CLEANED_EMAIL") {
+                fetchPage(page, search);
+                return;
+            }
+
             editModalRef.current?.hideOverlay?.();
             viewModalRef.current?.hideOverlay?.();
             deleteModalRef.current?.hideOverlay?.();
-            shopify.toast.show(actionData.message);
             setEditingBooking(null);
             setViewingBooking(null);
             setPreviewImage(null);
             setItemToDelete(null);
             fetchPage(page, search);
+            return;
+        }
+
+        if (actionData.message) {
+            shopify.toast.show(actionData.message, { isError: true });
         }
     }, [actionData, fetchPage, page, search]);
 
@@ -112,10 +189,28 @@ export default function BookingsIndex() {
         if (editingBooking) {
             const formData = new FormData();
             formData.append("actionType", "UPDATE_STATUS");
-            formData.append("id", editingBooking._id);
+            formData.append("id", getObjectIdString(editingBooking._id));
             formData.append("status", status);
             submit(formData, { method: "post" });
         }
+    };
+
+    const handleSendCleanedEmail = () => {
+        if (!viewingBooking) return;
+
+        const formData = new FormData();
+        formData.append("actionType", "SEND_CLEANED_EMAIL");
+        formData.append("id", getObjectIdString(viewingBooking._id));
+        submit(formData, { method: "post" });
+    };
+
+    const handleDeleteCleanedImage = (bookingId, sneakerIndex, imageIndex) => {
+        const formData = new FormData();
+        formData.append("actionType", "DELETE_CLEANED_IMAGE");
+        formData.append("id", getObjectIdString(bookingId));
+        formData.append("sneakerIndex", String(sneakerIndex));
+        formData.append("imageIndex", String(imageIndex));
+        submit(formData, { method: "post" });
     };
 
     const confirmDelete = () => {
@@ -157,6 +252,48 @@ export default function BookingsIndex() {
         }
     };
 
+    const handleCleanedImagesChange = (bookingId, sneakerIndex, files) => {
+        const uploadKey = getSneakerUploadKey(getObjectIdString(bookingId), sneakerIndex);
+        const nextFiles = Array.from(files || []).map((file) => ({
+            file,
+            previewUrl: URL.createObjectURL(file),
+        }));
+
+        setCleanedImageDrafts((currentDrafts) => {
+            (currentDrafts[uploadKey] || []).forEach((draft) => URL.revokeObjectURL(draft.previewUrl));
+            return {
+                ...currentDrafts,
+                [uploadKey]: nextFiles,
+            };
+        });
+    };
+
+    const handleUploadCleanedImages = async (bookingId, sneakerIndex) => {
+        const normalizedBookingId = getObjectIdString(bookingId);
+        const uploadKey = getSneakerUploadKey(normalizedBookingId, sneakerIndex);
+        const draftFiles = cleanedImageDrafts[uploadKey] || [];
+
+        if (!draftFiles.length) {
+            shopify.toast.show("Choose at least one cleaned sneaker image first.", { isError: true });
+            return;
+        }
+
+        try {
+            const images = await Promise.all(draftFiles.map((draft) => readFileAsDataUrl(draft.file)));
+            const formData = new FormData();
+            formData.append("actionType", "UPLOAD_CLEANED_IMAGES");
+            formData.append("id", normalizedBookingId);
+            formData.append("cleanedUploads", JSON.stringify([{ sneakerIndex, images }]));
+            submit(formData, { method: "post" });
+        } catch (error) {
+            console.error("Failed to prepare cleaned sneaker images:", error);
+            shopify.toast.show("We could not prepare the cleaned images for upload.", { isError: true });
+        }
+    };
+
+    const activeActionType = navigation.formData?.get("actionType");
+    const isSubmitting = navigation.state === "submitting";
+
     return (
         <s-page heading="Sneaker Cleaning Bookings" subtitle="Manage and track customer cleaning orders">
 
@@ -193,16 +330,16 @@ export default function BookingsIndex() {
                         </s-table-header-row>
 
                         <s-table-body>
-                            {items.map((item) => (
-                                <s-table-row key={item._id}>
+                            {items.map((item, itemIndex) => (
+                                <s-table-row key={getObjectIdString(item._id) || `booking-${itemIndex}`}>
                                     <s-table-cell>
                                         <code className="order-id-code">
-                                            #{item._id}
+                                            #{getObjectIdString(item._id)}
                                         </code>
                                     </s-table-cell>
                                     <s-table-cell>
                                         <div className="customer-info">
-                                            <s-text type="strong">{item.name || item.guestInfo?.name || 'Guest User'}</s-text>
+                                            <s-text type="strong">{item.name || item.guestInfo?.name || "Guest User"}</s-text>
                                             <s-text variant="bodySm" tone="subdued">{item.email || item.guestInfo?.email}</s-text>
                                         </div>
                                     </s-table-cell>
@@ -253,10 +390,10 @@ export default function BookingsIndex() {
 
                         <s-text type="strong">Select New Status</s-text>
                         <div className="status-grid">
-                            {STATUS_OPTIONS.map(opt => (
+                            {STATUS_OPTIONS.map((opt) => (
                                 <s-button key={opt} pressed={editingBooking.status === opt} variant={editingBooking.status === opt
                                     ? "primary" : "secondary"} onClick={() => handleStatusUpdate(opt)}
-                                    loading={navigation.state === "submitting"}
+                                    loading={isSubmitting && activeActionType === "UPDATE_STATUS"}
                                 >
                                     {opt}
                                 </s-button>
@@ -272,7 +409,7 @@ export default function BookingsIndex() {
                         <div className="booking-view-grid">
                             <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">BOOKING ID</s-text>
-                                <s-text type="strong">#{viewingBooking._id}</s-text>
+                                <s-text type="strong">#{getObjectIdString(viewingBooking._id)}</s-text>
                             </div>
                             <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">STATUS</s-text>
@@ -297,55 +434,165 @@ export default function BookingsIndex() {
                             </div>
                         </div>
 
+                        <div className="booking-view-toolbar">
+                            <div>
+                                <s-text type="strong">Post-cleaning updates</s-text>
+                                <s-text variant="bodySm" tone="subdued">Upload cleaned sneaker photos, then email the customer a direct link to view them.</s-text>
+                            </div>
+                            {hasCleanedImages(viewingBooking) && (
+                                <s-button
+                                    variant="primary"
+                                    onClick={handleSendCleanedEmail}
+                                    loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
+                                >
+                                    Send email to customer
+                                </s-button>
+                            )}
+                        </div>
+
                         <div className="booking-view-section">
                             <s-text type="strong">Sneakers ({Array.isArray(viewingBooking.sneakers) ? viewingBooking.sneakers.length : 0})</s-text>
                             <div className="booking-view-sneakers">
-                                {(viewingBooking.sneakers || []).map((sneaker, sneakerIndex) => (
-                                    <div className="booking-view-sneaker" key={sneaker._id || sneakerIndex}>
-                                        <div className="booking-view-sneaker__meta">
-                                            <s-text type="strong">{sneaker.nickname || "Unnamed Sneaker"}</s-text>
-                                            <s-text variant="bodySm" tone="subdued">
-                                                {[sneaker.brand, sneaker.model, sneaker.colorway].filter(Boolean).join(" - ") || "No sneaker details"}
-                                            </s-text>
-                                            {sneaker.services && (
-                                                <s-text variant="bodySm">
-                                                    Service: {sneaker.services.tier}
-                                                    {sneaker.services.addOns?.length ? ` + ${sneaker.services.addOns.join(", ")}` : ""}
-                                                </s-text>
-                                            )}
-                                        </div>
+                                {(viewingBooking.sneakers || []).map((sneaker, sneakerIndex) => {
+                                    const bookingId = getObjectIdString(viewingBooking._id);
+                                    const uploadKey = getSneakerUploadKey(bookingId, sneakerIndex);
+                                    const draftFiles = cleanedImageDrafts[uploadKey] || [];
+                                    const sneakerKey = getObjectIdString(sneaker._id) || sneaker.id || sneakerIndex;
 
-                                        <div className="booking-view-images">
-                                            {sneaker.images?.length ? (
-                                                sneaker.images.map((imageUrl, imageIndex) => (
-                                                    <div className="booking-view-image-card" key={`${sneaker._id || sneakerIndex}-${imageIndex}`}>
-                                                        <button
-                                                            type="button"
-                                                            className="booking-view-image-button"
-                                                            onClick={() => handlePreviewImage(imageUrl)}
-                                                        >
-                                                            <img
-                                                                src={imageUrl}
-                                                                alt={`${sneaker.nickname || "Sneaker"} ${imageIndex + 1}`}
-                                                                className="booking-view-image"
-                                                            />
-                                                        </button>
-                                                        <div className="booking-view-image-actions">
-                                                            <s-button size="slim" variant="secondary" onClick={() => handlePreviewImage(imageUrl)}>
-                                                                Preview
-                                                            </s-button>
-                                                            <s-button size="slim" variant="secondary" onClick={() => handleDownloadImage(imageUrl, sneaker.nickname, imageIndex)}>
-                                                                Download
-                                                            </s-button>
+                                    return (
+                                        <div className="booking-view-sneaker" key={sneakerKey}>
+                                            <div className="booking-view-sneaker__meta">
+                                                <s-text type="strong">{sneaker.nickname || "Unnamed Sneaker"}</s-text>
+                                                <s-text variant="bodySm" tone="subdued">
+                                                    {[sneaker.brand, sneaker.model, sneaker.colorway].filter(Boolean).join(" - ") || "No sneaker details"}
+                                                </s-text>
+                                                {sneaker.services && (
+                                                    <s-text variant="bodySm">
+                                                        Service: {sneaker.services.tier}
+                                                        {sneaker.services.addOns?.length ? ` + ${sneaker.services.addOns.join(", ")}` : ""}
+                                                    </s-text>
+                                                )}
+                                            </div>
+
+                                            <div className="booking-view-image-group">
+                                                <s-text type="strong">Before cleaning</s-text>
+                                                <div className="booking-view-images">
+                                                    {sneaker.images?.length ? (
+                                                        sneaker.images.map((imageUrl, imageIndex) => (
+                                                            <div className="booking-view-image-card" key={`${sneakerKey}-before-${imageIndex}`}>
+                                                                <button
+                                                                    type="button"
+                                                                    className="booking-view-image-button"
+                                                                    onClick={() => handlePreviewImage(imageUrl)}
+                                                                >
+                                                                    <img
+                                                                        src={imageUrl}
+                                                                        alt={`${sneaker.nickname || "Sneaker"} before cleaning ${imageIndex + 1}`}
+                                                                        className="booking-view-image"
+                                                                    />
+                                                                </button>
+                                                                <div className="booking-view-image-actions">
+                                                                    <s-button size="slim" variant="secondary" onClick={() => handlePreviewImage(imageUrl)}>
+                                                                        Preview
+                                                                    </s-button>
+                                                                    <s-button size="slim" variant="secondary" onClick={() => handleDownloadImage(imageUrl, `${sneaker.nickname || "sneaker"}-before`, imageIndex)}>
+                                                                        Download
+                                                                    </s-button>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="booking-view-image-empty">No original image uploaded</div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="booking-view-image-group booking-view-image-group--cleaned">
+                                                <div className="booking-view-section-header">
+                                                    <s-text type="strong">After cleaning</s-text>
+                                                    <s-text variant="bodySm" tone="subdued">Customers will see these images on their booking details page after upload.</s-text>
+                                                </div>
+
+                                                <div className="booking-view-images">
+                                                    {sneaker.cleanedImages?.length ? (
+                                                        sneaker.cleanedImages.map((imageUrl, imageIndex) => (
+                                                            <div className="booking-view-image-card" key={`${sneakerKey}-after-${imageIndex}`}>
+                                                                <button
+                                                                    type="button"
+                                                                    className="booking-view-image-button"
+                                                                    onClick={() => handlePreviewImage(imageUrl)}
+                                                                >
+                                                                    <img
+                                                                        src={imageUrl}
+                                                                        alt={`${sneaker.nickname || "Sneaker"} after cleaning ${imageIndex + 1}`}
+                                                                        className="booking-view-image"
+                                                                    />
+                                                                </button>
+                                                                <div className="booking-view-image-actions">
+                                                                    <s-button size="slim" variant="secondary" onClick={() => handlePreviewImage(imageUrl)}>
+                                                                        Preview
+                                                                    </s-button>
+                                                                    <s-button size="slim" variant="secondary" onClick={() => handleDownloadImage(imageUrl, `${sneaker.nickname || "sneaker"}-after`, imageIndex)}>
+                                                                        Download
+                                                                    </s-button>
+                                                                    <s-button
+                                                                        size="slim"
+                                                                        variant="secondary"
+                                                                        tone="critical"
+                                                                        onClick={() => handleDeleteCleanedImage(bookingId, sneakerIndex, imageIndex)}
+                                                                        loading={isSubmitting && activeActionType === "DELETE_CLEANED_IMAGE"}
+                                                                    >
+                                                                        Delete
+                                                                    </s-button>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="booking-view-image-empty">No cleaned image uploaded yet</div>
+                                                    )}
+                                                </div>
+
+                                                <div className="booking-view-upload-box">
+                                                    <label className="booking-view-upload-label" htmlFor={`cleaned-images-${uploadKey}`}>
+                                                        Upload cleaned images
+                                                    </label>
+                                                    <input
+                                                        id={`cleaned-images-${uploadKey}`}
+                                                        className="booking-view-file-input"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        multiple
+                                                        onChange={(event) => handleCleanedImagesChange(bookingId, sneakerIndex, event.target.files)}
+                                                    />
+                                                    {draftFiles.length > 0 && (
+                                                        <div className="booking-view-upload-previews">
+                                                            {draftFiles.map((draft, draftIndex) => (
+                                                                <img
+                                                                    key={`${uploadKey}-${draftIndex}`}
+                                                                    src={draft.previewUrl}
+                                                                    alt={`Selected cleaned sneaker preview ${draftIndex + 1}`}
+                                                                    className="booking-view-upload-preview"
+                                                                />
+                                                            ))}
                                                         </div>
+                                                    )}
+                                                    <div className="booking-view-upload-actions">
+                                                        <s-button
+                                                            variant="primary"
+                                                            onClick={() => handleUploadCleanedImages(bookingId, sneakerIndex)}
+                                                            loading={isSubmitting && activeActionType === "UPLOAD_CLEANED_IMAGES"}
+                                                        >
+                                                            Upload cleaned images
+                                                        </s-button>
+                                                        <s-text variant="bodySm" tone="subdued">
+                                                            You can upload multiple after-cleaning images at once, and new uploads are added to the current gallery.
+                                                        </s-text>
                                                     </div>
-                                                ))
-                                            ) : (
-                                                <div className="booking-view-image-empty">No image uploaded</div>
-                                            )}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -380,7 +627,7 @@ export default function BookingsIndex() {
                 </div>
                 <div className="delete-modal-actions">
                     <s-button onClick={() => deleteModalRef.current?.hideOverlay?.()}>Cancel</s-button>
-                    <s-button tone="critical" onClick={confirmDelete} loading={navigation.state === "submitting"}>
+                    <s-button tone="critical" onClick={confirmDelete} loading={isSubmitting && activeActionType === "DELETE"}>
                         Confirm Delete
                     </s-button>
                 </div>

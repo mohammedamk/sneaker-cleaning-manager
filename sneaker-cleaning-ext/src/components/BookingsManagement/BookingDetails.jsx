@@ -8,6 +8,9 @@ function BookingDetails({
     backLabel = '← Back to List'
 }) {
     const [previewImage, setPreviewImage] = useState(null);
+    const hasAnyCleanedImages = (booking.sneakers || []).some(
+        (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0
+    );
 
     const handleDownloadImage = async (imageUrl, sneakerName, imageIndex) => {
         if (!imageUrl) return;
@@ -72,6 +75,12 @@ function BookingDetails({
                                 {booking.handoffMethod}
                             </span>
                         </div>
+                        <div className="detail-item">
+                            <span className="detail-item__label">Cleaning Photos</span>
+                            <span className="detail-item__value">
+                                {hasAnyCleanedImages ? 'Uploaded and ready to view' : 'Will appear after cleaning is completed'}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -101,36 +110,77 @@ function BookingDetails({
                         {booking.sneakers?.map((snk, i) => (
                             <div key={i} className="sneaker-item">
                                 <div className="sneaker-item__gallery">
-                                    {snk.images?.length ? (
-                                        snk.images.map((imageUrl, imageIndex) => (
-                                            <div key={`${snk._id || i}-${imageIndex}`} className="sneaker-item__image-card">
-                                                <img
-                                                    src={imageUrl}
-                                                    alt={`${snk.nickname || 'Sneaker'} ${imageIndex + 1}`}
-                                                    className="sneaker-item__img sneaker-item__img--interactive"
-                                                    onClick={() => setPreviewImage(imageUrl)}
-                                                />
-                                                <div className="sneaker-item__image-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn--secondary btn--small"
-                                                        onClick={() => setPreviewImage(imageUrl)}
-                                                    >
-                                                        Preview
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn--secondary btn--small"
-                                                        onClick={() => handleDownloadImage(imageUrl, snk.nickname, imageIndex)}
-                                                    >
-                                                        Download
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="sneaker-item__empty-image">No image uploaded</div>
-                                    )}
+                                    <div className="sneaker-item__gallery-section">
+                                        <span className="sneaker-item__gallery-title">Before cleaning</span>
+                                        <div className="sneaker-item__gallery-grid">
+                                            {snk.images?.length ? (
+                                                snk.images.map((imageUrl, imageIndex) => (
+                                                    <div key={`${snk._id || i}-before-${imageIndex}`} className="sneaker-item__image-card">
+                                                        <img
+                                                            src={imageUrl}
+                                                            alt={`${snk.nickname || 'Sneaker'} before cleaning ${imageIndex + 1}`}
+                                                            className="sneaker-item__img sneaker-item__img--interactive"
+                                                            onClick={() => setPreviewImage(imageUrl)}
+                                                        />
+                                                        <div className="sneaker-item__image-actions">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn--secondary btn--small"
+                                                                onClick={() => setPreviewImage(imageUrl)}
+                                                            >
+                                                                Preview
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn--secondary btn--small"
+                                                                onClick={() => handleDownloadImage(imageUrl, `${snk.nickname || 'sneaker'}-before`, imageIndex)}
+                                                            >
+                                                                Download
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="sneaker-item__empty-image">No image uploaded</div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="sneaker-item__gallery-section sneaker-item__gallery-section--cleaned">
+                                        <span className="sneaker-item__gallery-title">After cleaning</span>
+                                        <div className="sneaker-item__gallery-grid">
+                                            {snk.cleanedImages?.length ? (
+                                                snk.cleanedImages.map((imageUrl, imageIndex) => (
+                                                    <div key={`${snk._id || i}-after-${imageIndex}`} className="sneaker-item__image-card">
+                                                        <img
+                                                            src={imageUrl}
+                                                            alt={`${snk.nickname || 'Sneaker'} after cleaning ${imageIndex + 1}`}
+                                                            className="sneaker-item__img sneaker-item__img--interactive"
+                                                            onClick={() => setPreviewImage(imageUrl)}
+                                                        />
+                                                        <div className="sneaker-item__image-actions">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn--secondary btn--small"
+                                                                onClick={() => setPreviewImage(imageUrl)}
+                                                            >
+                                                                Preview
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn--secondary btn--small"
+                                                                onClick={() => handleDownloadImage(imageUrl, `${snk.nickname || 'sneaker'}-after`, imageIndex)}
+                                                            >
+                                                                Download
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="sneaker-item__empty-image">Cleaning photos will appear here once uploaded</div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="sneaker-item__info">
                                     <span className="sneaker-item__name">{snk.nickname || 'Unnamed'}</span>

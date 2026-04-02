@@ -279,9 +279,33 @@
 
 .sneaker-item__gallery {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+  flex: 1;
+}
+
+.sneaker-item__gallery-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sneaker-item__gallery-section--cleaned {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+}
+
+.sneaker-item__gallery-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.sneaker-item__gallery-grid {
+  display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  min-width: 160px;
 }
 
 .sneaker-item__image-card {
@@ -386,4 +410,20 @@
   max-height: 90vh;
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 768px) {
+  .booking-details__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sneaker-item {
+    flex-direction: column;
+  }
+
+  .bookings-management__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 }

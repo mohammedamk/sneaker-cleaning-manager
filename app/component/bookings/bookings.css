@@ -113,6 +113,18 @@
     gap: 12px;
 }
 
+.booking-view-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px;
+    border: 1px solid #e1e3e5;
+    border-radius: 12px;
+    background: #f8fafc;
+    margin-bottom: 16px;
+}
+
 .booking-view-sneakers {
     display: flex;
     flex-direction: column;
@@ -129,6 +141,23 @@
 }
 
 .booking-view-sneaker__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.booking-view-image-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.booking-view-image-group--cleaned {
+    border-top: 1px solid #e1e3e5;
+    padding-top: 14px;
+}
+
+.booking-view-section-header {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -180,6 +209,47 @@
     padding: 12px;
 }
 
+.booking-view-upload-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px dashed #c7c9cc;
+    border-radius: 12px;
+    background: #fcfcfd;
+}
+
+.booking-view-upload-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.booking-view-file-input {
+    font: inherit;
+}
+
+.booking-view-upload-previews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.booking-view-upload-preview {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #d8dadd;
+}
+
+.booking-view-upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .booking-image-preview {
     position: fixed;
     inset: 0;
@@ -226,4 +296,20 @@
     display: block;
     border-radius: 12px;
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 768px) {
+    .bookings-header,
+    .booking-view-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    .booking-view-grid {
+        grid-template-columns: 1fr;
+    }
 }
