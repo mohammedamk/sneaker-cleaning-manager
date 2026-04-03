@@ -206,9 +206,11 @@ function ShoeRackManagement({ customerID, onBack }) {
                                         <td>{snk.brand} {snk.model}</td>
                                         <td>{snk.colorway}</td>
                                         <td>{snk.size} {snk.sizeUnit}</td>
-                                        <td className="table-actions">
-                                            <button className="btn btn--small btn--secondary" onClick={() => handleEditClick(snk)}>Edit</button>
-                                            <button className="btn btn--small btn--danger" onClick={() => handleDelete(snk._id)}>Delete</button>
+                                        <td>
+                                            <div className="table-actions">
+                                                <button className="btn btn--small btn--secondary" onClick={() => handleEditClick(snk)}>Edit</button>
+                                                <button className="btn btn--small btn--danger" onClick={() => handleDelete(snk._id)}>Delete</button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

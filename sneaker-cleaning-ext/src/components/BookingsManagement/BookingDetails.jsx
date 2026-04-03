@@ -89,11 +89,11 @@ function BookingDetails({
                     <div className="booking-details__grid">
                         <div className="detail-item">
                             <span className="detail-item__label">Name</span>
-                            <span className="detail-item__value">{booking.guestInfo?.name || 'N/A'}</span>
+                            <span className="detail-item__value">{booking?.name || booking.guestInfo?.name || 'N/A'}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-item__label">Email</span>
-                            <span className="detail-item__value">{booking.guestInfo?.email || 'N/A'}</span>
+                            <span className="detail-item__value">{booking?.email || booking.guestInfo?.email || 'N/A'}</span>
                         </div>
                         {booking.guestInfo?.phone && (
                             <div className="detail-item">

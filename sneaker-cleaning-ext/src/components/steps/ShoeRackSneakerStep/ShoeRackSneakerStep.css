@@ -35,6 +35,25 @@
   padding-top: 1.5rem;
 }
 
+.shoe-rack-sneaker-form__save-btn {
+  min-width: 132px;
+}
+
+.shoe-rack-sneaker-form__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: shoe-rack-spinner 0.7s linear infinite;
+}
+
+@keyframes shoe-rack-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .size-selector {
   display: flex;
   gap: 0.5rem;

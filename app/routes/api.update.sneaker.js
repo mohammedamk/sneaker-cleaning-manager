@@ -35,6 +35,19 @@ mutation fileCreate($files: [FileCreateInput!]!) {
 }
 `;
 
+const FILE_DELETE_MUTATION = `
+mutation fileDelete($fileIds: [ID!]!) {
+  fileDelete(fileIds: $fileIds) {
+    deletedFileIds
+    userErrors {
+      field
+      message
+      code
+    }
+  }
+}
+`;
+
 async function uploadImageToShopify(admin, base64Data, mimeType = "image/jpeg", filename = "sneaker.jpg") {
   try {
     const stagedRes = await admin.graphql(STAGED_UPLOADS_URL_QUERY, {
@@ -123,6 +136,15 @@ export const action = async ({ request }) => {
       });
     }
 
+    const existingSneaker = await SneakerModel.findById(id);
+
+    if (!existingSneaker) {
+      return new Response(JSON.stringify({ success: false, message: "Sneaker not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const uploadedImageIds = [];
     if (Array.isArray(images)) {
       for (let i = 0; i < images.length; i++) {
@@ -161,17 +183,36 @@ export const action = async ({ request }) => {
       finalUpdateData.images = uploadedImageIds;
     }
 
-    const updatedSneaker = await SneakerModel.findByIdAndUpdate(
-      id,
-      { $set: finalUpdateData },
-      { new: true }
+    const existingImageIds = (existingSneaker.images || []).filter(
+      (imageId) => typeof imageId === "string" && imageId.startsWith("gid://shopify/"),
     );
 
-    if (!updatedSneaker) {
-      return new Response(JSON.stringify({ success: false, message: "Sneaker not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+    const nextImageIds = (finalUpdateData.images || []).filter(
+      (imageId) => typeof imageId === "string" && imageId.startsWith("gid://shopify/"),
+    );
+
+    const removedImageIds = existingImageIds.filter(
+      (imageId) => !nextImageIds.includes(imageId),
+    );
+
+    const updatedSneaker = await SneakerModel.findByIdAndUpdate(id, { $set: finalUpdateData }, { new: true });
+
+    if (removedImageIds.length > 0) {
+      try {
+        const response = await admin.graphql(FILE_DELETE_MUTATION, {
+          variables: {
+            fileIds: removedImageIds,
+          },
+        });
+
+        const data = await response.json();
+
+        if (data?.data?.fileDelete?.userErrors?.length) {
+          console.error("Shopify file delete errors:", data.data.fileDelete.userErrors);
+        }
+      } catch (deleteError) {
+        console.error("Error deleting removed sneaker images from Shopify:", deleteError);
+      }
     }
 
     return new Response(JSON.stringify({ success: true, sneaker: updatedSneaker }), {

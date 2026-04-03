@@ -142,6 +142,17 @@ function buildQrCodeImageUrl(accessUrl) {
 
 function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCodeImageUrl }) {
   const customerName = bookingDoc?.name || bookingDoc?.guestInfo?.name || "there";
+  const shippingInstructions = bookingDoc?.handoffMethod === "shipping"
+    ? `
+      <div style="margin-top:24px;padding:20px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;">
+        <h3 style="margin:0 0 12px;">Shipping Instructions</h3>
+        <p style="margin:0 0 12px;">Before shipping your footwear, please package all pairs together in one box.</p>
+        <p style="margin:0 0 12px;">All footwear should be shipped outside of their original boxes or packaging.</p>
+        <p style="margin:0 0 12px;">Please ship only the footwear included in your order. Including unrelated items or unregistered pairs may result in delays, additional charges, or order cancellation.</p>
+        <p style="margin:0;">This helps us keep shipping fair, accurate, and efficient for everyone.</p>
+      </div>
+    `
+    : "";
   const sneakerRows = (bookingDoc?.sneakers || [])
     .map((sneaker) => {
       const sneakerName = sneaker.nickname || "Unnamed sneaker";
@@ -190,6 +201,8 @@ function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCode
         </thead>
         <tbody>${sneakerRows}</tbody>
       </table>
+
+      ${shippingInstructions}
 
       <p style="margin-top:20px;">If the button does not open, use this secure link:</p>
       <p><a href="${accessUrl}" style="color:#2563eb;word-break:break-all;">${accessUrl}</a></p>

@@ -50,20 +50,29 @@ query getFiles($ids: [ID!]!) {
 }
 `;
 
-function normalizeImageArray(images = [], imageMap = {}) {
-  return (images || [])
-    .map((id) => {
-      if (typeof id === "string" && id.startsWith("http")) {
-        return id;
-      }
+function normalizeImageState(images = [], imageMap = {}) {
+  const resolvedUrls = [];
+  let isProcessing = false;
 
-      if (typeof id === "string" && id.startsWith("gid://shopify/")) {
-        return imageMap[id] || null;
-      }
+  (images || []).forEach((id) => {
+    if (typeof id === "string" && id.startsWith("http")) {
+      resolvedUrls.push(id);
+      return;
+    }
 
-      return null;
-    })
-    .filter(Boolean);
+    if (typeof id === "string" && id.startsWith("gid://shopify/")) {
+      if (imageMap[id]) {
+        resolvedUrls.push(imageMap[id]);
+      } else {
+        isProcessing = true;
+      }
+    }
+  });
+
+  return {
+    resolvedUrls,
+    isProcessing,
+  };
 }
 
 function normalizeObjectId(value) {
@@ -246,12 +255,19 @@ export function collectBookingImageIds(booking) {
 
 export function normalizeBookingImages(booking, imageMap = {}) {
   const bookingObject = booking.toObject();
-  const updatedSneakers = (bookingObject.sneakers || []).map((sneaker) => ({
-    ...sneaker,
-    _id: normalizeObjectId(sneaker._id),
-    images: normalizeImageArray(sneaker.images, imageMap),
-    cleanedImages: normalizeImageArray(sneaker.cleanedImages, imageMap),
-  }));
+  const updatedSneakers = (bookingObject.sneakers || []).map((sneaker) => {
+    const originalImages = normalizeImageState(sneaker.images, imageMap);
+    const cleanedImages = normalizeImageState(sneaker.cleanedImages, imageMap);
+
+    return {
+      ...sneaker,
+      _id: normalizeObjectId(sneaker._id),
+      images: originalImages.resolvedUrls,
+      imageProcessing: originalImages.isProcessing,
+      cleanedImages: cleanedImages.resolvedUrls,
+      cleanedImageProcessing: cleanedImages.isProcessing,
+    };
+  });
 
   return {
     ...bookingObject,

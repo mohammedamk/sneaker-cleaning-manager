@@ -209,6 +209,13 @@
     padding: 12px;
 }
 
+.booking-view-image-empty--processing {
+    border-style: solid;
+    border-color: #d8dadd;
+    background: #f8fafc;
+    color: #374151;
+}
+
 .booking-view-upload-box {
     display: flex;
     flex-direction: column;

@@ -22,7 +22,9 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
       return {
         ...editingSneaker,
         images: (editingSneaker.images || []).map(img =>
-          typeof img === 'string' ? { preview: img, url: img } : { ...img, preview: img.url }
+          typeof img === 'string'
+            ? { preview: img, url: img }
+            : { ...img, preview: img.url || img.preview }
         )
       };
     }
@@ -30,6 +32,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
   }, [editingSneaker]);
 
   const [form, setForm] = useState(initial);
+  const [isSaving, setIsSaving] = useState(false);
 
   // syncing form if editingSneaker changes while component is mounted
   React.useEffect(() => {
@@ -51,8 +54,15 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
-    if (validate()) onSave(form);
+  const handleSave = async () => {
+    if (!validate() || isSaving) return;
+
+    try {
+      setIsSaving(true);
+      await Promise.resolve(onSave(form));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -139,9 +149,16 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
       </div>
 
       <div className="shoe-rack-sneaker-form__footer">
-        <button className="btn btn--secondary" onClick={onCancel}>Cancel</button>
-        <button className="btn btn--primary" onClick={handleSave}>
-          {editingSneaker ? 'Save Changes' : 'Add to Rack'}
+        <button className="btn btn--secondary" onClick={onCancel} disabled={isSaving}>Cancel</button>
+        <button className="btn btn--primary shoe-rack-sneaker-form__save-btn" onClick={handleSave} disabled={isSaving}>
+          {isSaving ? (
+            <>
+              <span className="shoe-rack-sneaker-form__spinner" aria-hidden="true" />
+              <span>{editingSneaker ? 'Saving...' : 'Adding...'}</span>
+            </>
+          ) : (
+            editingSneaker ? 'Save Changes' : 'Add to Rack'
+          )}
         </button>
       </div>
     </div>

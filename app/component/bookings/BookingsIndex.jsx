@@ -17,6 +17,7 @@ const getStatusTone = (status) => {
 };
 
 const PAGE_LIMIT = 10;
+const BOOKING_IMAGE_POLL_INTERVAL_MS = 3000;
 
 const STATUS_OPTIONS = [
     "Pending", "Received", "Under Inspection", "In Cleaning",
@@ -61,6 +62,10 @@ const hasCleanedImages = (booking) => (booking?.sneakers || []).some(
     (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
 );
 
+const hasPendingCleanedImages = (booking) => (booking?.sneakers || []).some(
+    (sneaker) => Boolean(sneaker.cleanedImageProcessing),
+);
+
 const updateBookingInList = (bookings, updatedBooking) => bookings.map((item) => (
     getObjectIdString(item._id) === getObjectIdString(updatedBooking._id) ? updatedBooking : item
 ));
@@ -88,8 +93,10 @@ export default function BookingsIndex() {
 
     const totalPages = Math.ceil(total / PAGE_LIMIT);
 
-    const fetchPage = useCallback(async (targetPage, query = "") => {
-        setTableLoading(true);
+    const fetchPage = useCallback(async (targetPage, query = "", { showLoader = true } = {}) => {
+        if (showLoader) {
+            setTableLoading(true);
+        }
         try {
             const res = await fetch(
                 "/api/admin/bookings",
@@ -104,11 +111,14 @@ export default function BookingsIndex() {
                 setItems(jsonRes.data);
                 setTotal(jsonRes.total);
                 setPage(jsonRes.page);
+                return jsonRes.data;
             }
         } catch (err) {
             console.error("Failed to fetch bookings", err);
         } finally {
-            setTableLoading(false);
+            if (showLoader) {
+                setTableLoading(false);
+            }
         }
     }, []);
 
@@ -164,6 +174,31 @@ export default function BookingsIndex() {
             shopify.toast.show(actionData.message, { isError: true });
         }
     }, [actionData, fetchPage, page, search]);
+
+    useEffect(() => {
+        const shouldPollCurrentBooking = hasPendingCleanedImages(viewingBooking);
+        const shouldPollList = items.some((booking) => hasPendingCleanedImages(booking));
+
+        if (!shouldPollCurrentBooking && !shouldPollList) {
+            return undefined;
+        }
+
+        const timeoutId = window.setTimeout(async () => {
+            const latestItems = await fetchPage(page, search, { showLoader: false });
+
+            if (viewingBooking?._id && Array.isArray(latestItems)) {
+                const latestBooking = latestItems.find(
+                    (booking) => getObjectIdString(booking._id) === getObjectIdString(viewingBooking._id),
+                );
+
+                if (latestBooking) {
+                    setViewingBooking(latestBooking);
+                }
+            }
+        }, BOOKING_IMAGE_POLL_INTERVAL_MS);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [fetchPage, items, page, search, viewingBooking]);
 
     const handleSearch = (val) => {
         setSearch(val);
@@ -437,13 +472,17 @@ export default function BookingsIndex() {
                         <div className="booking-view-toolbar">
                             <div>
                                 <s-text type="strong">Post-cleaning updates</s-text>
-                                <s-text variant="bodySm" tone="subdued">Upload cleaned sneaker photos, then email the customer a direct link to view them.</s-text>
+                                <s-text variant="bodySm" tone="subdued">
+                                    Upload cleaned sneaker photos, then email the customer a direct link to view them.
+                                    {hasPendingCleanedImages(viewingBooking) ? " Newly uploaded images are still processing and will appear automatically." : ""}
+                                </s-text>
                             </div>
                             {hasCleanedImages(viewingBooking) && (
                                 <s-button
                                     variant="primary"
                                     onClick={handleSendCleanedEmail}
                                     loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
+                                    disabled={hasPendingCleanedImages(viewingBooking)}
                                 >
                                     Send email to customer
                                 </s-button>
@@ -515,40 +554,51 @@ export default function BookingsIndex() {
 
                                                 <div className="booking-view-images">
                                                     {sneaker.cleanedImages?.length ? (
-                                                        sneaker.cleanedImages.map((imageUrl, imageIndex) => (
-                                                            <div className="booking-view-image-card" key={`${sneakerKey}-after-${imageIndex}`}>
-                                                                <button
-                                                                    type="button"
-                                                                    className="booking-view-image-button"
-                                                                    onClick={() => handlePreviewImage(imageUrl)}
-                                                                >
-                                                                    <img
-                                                                        src={imageUrl}
-                                                                        alt={`${sneaker.nickname || "Sneaker"} after cleaning ${imageIndex + 1}`}
-                                                                        className="booking-view-image"
-                                                                    />
-                                                                </button>
-                                                                <div className="booking-view-image-actions">
-                                                                    <s-button size="slim" variant="secondary" onClick={() => handlePreviewImage(imageUrl)}>
-                                                                        Preview
-                                                                    </s-button>
-                                                                    <s-button size="slim" variant="secondary" onClick={() => handleDownloadImage(imageUrl, `${sneaker.nickname || "sneaker"}-after`, imageIndex)}>
-                                                                        Download
-                                                                    </s-button>
-                                                                    <s-button
-                                                                        size="slim"
-                                                                        variant="secondary"
-                                                                        tone="critical"
-                                                                        onClick={() => handleDeleteCleanedImage(bookingId, sneakerIndex, imageIndex)}
-                                                                        loading={isSubmitting && activeActionType === "DELETE_CLEANED_IMAGE"}
+                                                        <>
+                                                            {sneaker.cleanedImages.map((imageUrl, imageIndex) => (
+                                                                <div className="booking-view-image-card" key={`${sneakerKey}-after-${imageIndex}`}>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="booking-view-image-button"
+                                                                        onClick={() => handlePreviewImage(imageUrl)}
                                                                     >
-                                                                        Delete
-                                                                    </s-button>
+                                                                        <img
+                                                                            src={imageUrl}
+                                                                            alt={`${sneaker.nickname || "Sneaker"} after cleaning ${imageIndex + 1}`}
+                                                                            className="booking-view-image"
+                                                                        />
+                                                                    </button>
+                                                                    <div className="booking-view-image-actions">
+                                                                        <s-button size="slim" variant="secondary" onClick={() => handlePreviewImage(imageUrl)}>
+                                                                            Preview
+                                                                        </s-button>
+                                                                        <s-button size="slim" variant="secondary" onClick={() => handleDownloadImage(imageUrl, `${sneaker.nickname || "sneaker"}-after`, imageIndex)}>
+                                                                            Download
+                                                                        </s-button>
+                                                                        <s-button
+                                                                            size="slim"
+                                                                            variant="secondary"
+                                                                            tone="critical"
+                                                                            onClick={() => handleDeleteCleanedImage(bookingId, sneakerIndex, imageIndex)}
+                                                                            loading={isSubmitting && activeActionType === "DELETE_CLEANED_IMAGE"}
+                                                                        >
+                                                                            Delete
+                                                                        </s-button>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        ))
+                                                            ))}
+                                                            {sneaker.cleanedImageProcessing && (
+                                                                <div className="booking-view-image-empty booking-view-image-empty--processing">
+                                                                    Cleaned image is processing...
+                                                                </div>
+                                                            )}
+                                                        </>
                                                     ) : (
-                                                        <div className="booking-view-image-empty">No cleaned image uploaded yet</div>
+                                                        sneaker.cleanedImageProcessing ? (
+                                                            <div className="booking-view-image-empty booking-view-image-empty--processing">Cleaned image is processing...</div>
+                                                        ) : (
+                                                            <div className="booking-view-image-empty">No cleaned image uploaded yet</div>
+                                                        )
                                                     )}
                                                 </div>
 
