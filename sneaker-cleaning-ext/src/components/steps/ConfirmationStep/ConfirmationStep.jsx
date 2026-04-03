@@ -2,6 +2,9 @@ import React from 'react';
 import './ConfirmationStep.css';
 
 function ConfirmationStep({ handoffMethod }) {
+  const isShipping = handoffMethod === 'shipping';
+  const isPickupAndReturn = handoffMethod === 'pickup_delivery';
+
   return (
     <div className="confirmation-step">
       <div className="confirmation-step__icon">✔️</div>
@@ -13,11 +16,17 @@ function ConfirmationStep({ handoffMethod }) {
       <div className="confirmation-step__info">
         <h3>What Happens Next</h3>
         <ol className="confirmation-step__steps">
-          {handoffMethod === 'shipping' ? (
+          {isShipping ? (
             <>
               <li>You will receive an email with your booking ID and shipping instructions.</li>
               <li>Label each pair with your booking ID and seal them in a plastic bag.</li>
               <li>Pack all pairs into one box and ship to our address.</li>
+            </>
+          ) : isPickupAndReturn ? (
+            <>
+              <li>We will use your submitted address and phone number to coordinate sneaker pickup.</li>
+              <li>Please keep all pairs together and ready for collection.</li>
+              <li>After cleaning, our team will return the sneakers to your address.</li>
             </>
           ) : (
             <li>Bring your sneakers to our location within 48 hours (during business hours) to avoid automatic cancellation.</li>

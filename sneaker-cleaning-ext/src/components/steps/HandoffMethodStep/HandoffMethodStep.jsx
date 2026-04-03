@@ -7,6 +7,7 @@ import { PROXY_SUB_PATH } from '../../../utils/global.js';
 
 const REQUIRED_ADDRESS_FIELDS = ['name', 'street1', 'city', 'state', 'zip', 'phone'];
 const REQUIRED_PARCEL_FIELDS = ['length', 'width', 'height', 'weight'];
+const PICKUP_AND_RETURN_METHOD = 'pickup_delivery';
 
 function getShippingTotal(shippingSelection) {
   return (
@@ -47,6 +48,8 @@ function HandoffMethodStep({
     selectedForwardRate: null,
     selectedReturnRate: null,
   });
+
+  const requiresCustomerAddress = handoffMethod === 'shipping' || handoffMethod === PICKUP_AND_RETURN_METHOD;
 
   const handleAddressChange = (field, value) => {
     setShippingError('');
@@ -95,6 +98,14 @@ function HandoffMethodStep({
         messages.push(`package: ${missingParcelFields.join(', ')}`);
       }
       throw new Error(`Please complete the required shipping details (${messages.join(' | ')})`);
+    }
+  };
+
+  const validateCustomerAddress = () => {
+    const missingAddressFields = REQUIRED_ADDRESS_FIELDS.filter((field) => !String(shippingAddress[field] || '').trim());
+
+    if (missingAddressFields.length) {
+      throw new Error(`Please complete the required address details (${missingAddressFields.join(', ')})`);
     }
   };
 
@@ -165,6 +176,15 @@ function HandoffMethodStep({
       }
     }
 
+    if (handoffMethod === PICKUP_AND_RETURN_METHOD) {
+      try {
+        validateCustomerAddress();
+      } catch (error) {
+        setShippingError(error.message);
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -195,7 +215,7 @@ function HandoffMethodStep({
         sneakers: sneakersWithBase64Images,
         handoffMethod,
         shippingSelection:
-          handoffMethod === 'shipping'
+          requiresCustomerAddress
             ? {
               ...shippingSelection,
               customerAddress: {
@@ -359,12 +379,46 @@ function HandoffMethodStep({
             </div>
           )}
         </div>
+
+        <div
+          className={`handoff-card ${handoffMethod === PICKUP_AND_RETURN_METHOD ? 'handoff-card--selected' : ''}`}
+          onClick={() => {
+            setShippingError('');
+            onHandoffChange(PICKUP_AND_RETURN_METHOD);
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setShippingError('');
+              onHandoffChange(PICKUP_AND_RETURN_METHOD);
+            }
+          }}
+        >
+          <div className="handoff-card__icon">🚚</div>
+          <h3 className="handoff-card__title">Pickup & Return</h3>
+          <p className="handoff-card__desc">A store employee will collect your sneakers and deliver them back after cleaning.</p>
+          {handoffMethod === PICKUP_AND_RETURN_METHOD && (
+            <div className="handoff-card__instructions">
+              <p><strong>How it works:</strong></p>
+              <ol className="handoff-instructions-list">
+                <li>Enter the address where our team should pick up your sneakers.</li>
+                <li>Keep all pairs together and ready for collection.</li>
+                <li>After cleaning, we will return the sneakers to the same address unless arranged otherwise.</li>
+              </ol>
+              <p><em>We will use your submitted address and phone number to coordinate pickup and return.</em></p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {handoffMethod === 'shipping' && (
+      {requiresCustomerAddress && (
         <div className="handoff-card__instructions handoff-card__instructions--shipping handoff-shipping-panel">
           <div className="shipping-section">
-            <h4 className="shipping-section__title">Customer Shipping Address</h4>
+            <h4 className="shipping-section__title">
+              {handoffMethod === 'shipping' ? 'Customer Shipping Address' : 'Pickup & Return Address'}
+            </h4>
             <div className="shipping-grid">
               <FormField label="Full Name" required htmlFor="shipping-name">
                 <input id="shipping-name" className="input" value={shippingAddress.name || ''} onChange={(event) => handleAddressChange('name', event.target.value)} />
@@ -396,30 +450,32 @@ function HandoffMethodStep({
             </div>
           </div>
 
-          <div className="shipping-section">
-            <h4 className="shipping-section__title">Package Details</h4>
-            <div className="shipping-grid shipping-grid--parcel">
-              <FormField label="Length (in)" required htmlFor="parcel-length">
-                <input id="parcel-length" className="input" inputMode="decimal" value={parcel.length || ''} onChange={(event) => handleParcelChange('length', event.target.value)} />
-              </FormField>
-              <FormField label="Width (in)" required htmlFor="parcel-width">
-                <input id="parcel-width" className="input" inputMode="decimal" value={parcel.width || ''} onChange={(event) => handleParcelChange('width', event.target.value)} />
-              </FormField>
-              <FormField label="Height (in)" required htmlFor="parcel-height">
-                <input id="parcel-height" className="input" inputMode="decimal" value={parcel.height || ''} onChange={(event) => handleParcelChange('height', event.target.value)} />
-              </FormField>
-              <FormField label="Weight (oz)" required htmlFor="parcel-weight">
-                <input id="parcel-weight" className="input" inputMode="decimal" value={parcel.weight || ''} onChange={(event) => handleParcelChange('weight', event.target.value)} />
-              </FormField>
+          {handoffMethod === 'shipping' && (
+            <div className="shipping-section">
+              <h4 className="shipping-section__title">Package Details</h4>
+              <div className="shipping-grid shipping-grid--parcel">
+                <FormField label="Length (in)" required htmlFor="parcel-length">
+                  <input id="parcel-length" className="input" inputMode="decimal" value={parcel.length || ''} onChange={(event) => handleParcelChange('length', event.target.value)} />
+                </FormField>
+                <FormField label="Width (in)" required htmlFor="parcel-width">
+                  <input id="parcel-width" className="input" inputMode="decimal" value={parcel.width || ''} onChange={(event) => handleParcelChange('width', event.target.value)} />
+                </FormField>
+                <FormField label="Height (in)" required htmlFor="parcel-height">
+                  <input id="parcel-height" className="input" inputMode="decimal" value={parcel.height || ''} onChange={(event) => handleParcelChange('height', event.target.value)} />
+                </FormField>
+                <FormField label="Weight (oz)" required htmlFor="parcel-weight">
+                  <input id="parcel-weight" className="input" inputMode="decimal" value={parcel.weight || ''} onChange={(event) => handleParcelChange('weight', event.target.value)} />
+                </FormField>
+              </div>
+              <button type="button" className="btn btn--secondary shipping-rates__button" onClick={handleFetchRates} disabled={isFetchingRates}>
+                {isFetchingRates ? 'Fetching Rates...' : 'Fetch USPS & UPS Rates'}
+              </button>
             </div>
-            <button type="button" className="btn btn--secondary shipping-rates__button" onClick={handleFetchRates} disabled={isFetchingRates}>
-              {isFetchingRates ? 'Fetching Rates...' : 'Fetch USPS & UPS Rates'}
-            </button>
-          </div>
+          )}
 
           {shippingError && <p className="shipping-error">{shippingError}</p>}
 
-          {shippingRates && (
+          {handoffMethod === 'shipping' && shippingRates && (
             <div className="shipping-section shipping-rates">
               {renderRateOptions(
                 'Customer -> Store',
