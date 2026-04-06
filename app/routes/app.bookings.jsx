@@ -95,8 +95,27 @@ export const action = async ({ request }) => {
       const id = formData.get("id");
       const status = formData.get("status");
 
-      await BookingModel.findByIdAndUpdate(id, { status }, { new: true });
-      return { success: true, actionType, message: "Status updated successfully" };
+      const booking = await BookingModel.findById(id);
+
+      if (!booking) {
+        return { success: false, actionType, message: "Booking not found." };
+      }
+
+      const previousStatus = booking.status;
+      booking.status = status;
+
+      if (status === "Completed" && previousStatus !== "Completed") {
+        booking.lastCleaning = new Date();
+      }
+
+      await booking.save();
+
+      return {
+        success: true,
+        actionType,
+        message: "Status updated successfully",
+        booking: await getNormalizedBooking(admin, booking),
+      };
     }
     if (actionType === "DELETE") {
       const id = formData.get("id");

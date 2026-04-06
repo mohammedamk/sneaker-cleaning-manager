@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import './BookingsManagement.css';
 
+function formatDateTime(value, fallback = 'Not completed yet') {
+    if (!value) return fallback;
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return fallback;
+
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+}
+
 function BookingDetails({
     booking,
     onBack,
@@ -79,6 +88,12 @@ function BookingDetails({
                             <span className="detail-item__label">Cleaning Photos</span>
                             <span className="detail-item__value">
                                 {hasAnyCleanedImages ? 'Uploaded and ready to view' : 'Will appear after cleaning is completed'}
+                            </span>
+                        </div>
+                        <div className="detail-item">
+                            <span className="detail-item__label">Last Cleaning</span>
+                            <span className="detail-item__value">
+                                {formatDateTime(booking.lastCleaning)}
                             </span>
                         </div>
                     </div>

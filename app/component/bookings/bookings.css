@@ -107,6 +107,53 @@
     gap: 4px;
 }
 
+.booking-view-qr-section {
+    margin-bottom: 1.25rem;
+}
+
+.booking-view-qr-card {
+    border: 1px solid #e1e3e5;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: #fcfcfd;
+}
+
+.booking-view-qr-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.booking-view-qr-image {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid #d8dadd;
+    background: #fff;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.booking-view-qr-empty {
+    width: 180px;
+    min-height: 180px;
+    border: 1px dashed #c7c9cc;
+    border-radius: 12px;
+    background: #fafbfb;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-shrink: 0;
+}
+
 .booking-view-section {
     display: flex;
     flex-direction: column;
@@ -318,5 +365,21 @@
 
     .booking-view-grid {
         grid-template-columns: 1fr;
+    }
+
+    .booking-view-qr-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .booking-view-qr-copy {
+        align-items: stretch;
+    }
+
+    .booking-view-qr-image,
+    .booking-view-qr-empty {
+        width: 100%;
+        max-width: 220px;
+        align-self: center;
     }
 }

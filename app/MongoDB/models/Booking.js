@@ -33,6 +33,7 @@ const bookingSchema = mongoose.Schema({
     accessTokenHash: { type: String, default: null },
     secureAccessUrl: { type: String, default: null },
     qrCodeImageUrl: { type: String, default: null },
+    lastCleaning: { type: Date, default: null },
     submittedAt: { type: Date, default: Date.now }
 });
 

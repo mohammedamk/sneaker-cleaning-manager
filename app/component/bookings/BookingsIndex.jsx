@@ -70,6 +70,23 @@ const updateBookingInList = (bookings, updatedBooking) => bookings.map((item) =>
     getObjectIdString(item._id) === getObjectIdString(updatedBooking._id) ? updatedBooking : item
 ));
 
+const getBookingQrCodeUrl = (booking) => {
+    if (booking?.qrCodeImageUrl) return booking.qrCodeImageUrl;
+    if (booking?.secureAccessUrl) {
+        return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(booking.secureAccessUrl)}`;
+    }
+    return "";
+};
+
+const formatDateTime = (value) => {
+    if (!value) return "Not completed yet";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Not completed yet";
+
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+};
+
 export default function BookingsIndex() {
     const actionData = useActionData();
     const navigation = useNavigation();
@@ -464,8 +481,44 @@ export default function BookingsIndex() {
                                 <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
                             </div>
                             <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">LAST CLEANING</s-text>
+                                <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
+                            </div>
+                            <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">PHONE</s-text>
                                 <s-text>{viewingBooking.guestInfo?.phone || viewingBooking.phone || "N/A"}</s-text>
+                            </div>
+                        </div>
+
+                        <div className="booking-view-qr-section">
+                            <div className="booking-view-qr-card">
+                                <div className="booking-view-qr-copy">
+                                    <s-text type="strong">Booking QR Code</s-text>
+                                    <s-text variant="bodySm" tone="subdued">
+                                        Scan this code to open the customer booking details page.
+                                    </s-text>
+                                    {viewingBooking.secureAccessUrl && (
+                                        <s-button
+                                            size="slim"
+                                            variant="secondary"
+                                            href={viewingBooking.secureAccessUrl}
+                                            target="_blank"
+                                        >
+                                            Open booking page
+                                        </s-button>
+                                    )}
+                                </div>
+                                {getBookingQrCodeUrl(viewingBooking) ? (
+                                    <img
+                                        src={getBookingQrCodeUrl(viewingBooking)}
+                                        alt={`QR code for booking ${getObjectIdString(viewingBooking._id)}`}
+                                        className="booking-view-qr-image"
+                                    />
+                                ) : (
+                                    <div className="booking-view-qr-empty">
+                                        <s-text variant="bodySm" tone="subdued">No QR code saved for this booking yet.</s-text>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
