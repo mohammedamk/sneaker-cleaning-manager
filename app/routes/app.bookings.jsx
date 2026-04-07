@@ -27,6 +27,36 @@ mutation fileDelete($fileIds: [ID!]!) {
 }
 `;
 
+const ORDER_CANCEL_MUTATION = `
+mutation OrderCancel(
+  $orderId: ID!
+  $refundMethod: OrderCancelRefundMethodInput!
+  $restock: Boolean!
+  $reason: OrderCancelReason!
+) {
+  orderCancel(
+    orderId: $orderId
+    refundMethod: $refundMethod
+    restock: $restock
+    reason: $reason
+  ) {
+    job {
+      id
+      done
+    }
+    orderCancelUserErrors {
+      field
+      message
+      code
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+`;
+
 function buildCleanedSneakersEmail(booking) {
   const customerName = booking?.name || booking?.guestInfo?.name || "there";
   const accessUrl = booking?.secureAccessUrl;
@@ -85,6 +115,38 @@ async function getNormalizedBooking(admin, booking) {
   return normalizeBookingImages(booking, imageMap);
 }
 
+async function cancelShopifyOrder(admin, shopifyOrderID) {
+  if (!shopifyOrderID) {
+    return;
+  }
+
+  const response = await admin.graphql(ORDER_CANCEL_MUTATION, {
+    variables: {
+      orderId: shopifyOrderID,
+      refundMethod: {
+        originalPaymentMethodsRefund: false,
+      },
+      restock: true,
+      reason: "CUSTOMER",
+    },
+  });
+
+  const data = await response.json();
+  const payload = data?.data?.orderCancel;
+  const orderCancelUserErrors = payload?.orderCancelUserErrors || [];
+  const userErrors = payload?.userErrors || [];
+  const allErrors = [...orderCancelUserErrors, ...userErrors];
+
+  if (allErrors.length > 0) {
+    const errorMessage = allErrors
+      .map((error) => error?.message)
+      .filter(Boolean)
+      .join(", ");
+
+    throw new Error(errorMessage || "Shopify could not cancel the order.");
+  }
+}
+
 export const action = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
@@ -102,6 +164,11 @@ export const action = async ({ request }) => {
       }
 
       const previousStatus = booking.status;
+
+      if (status === "Canceled" && previousStatus !== "Canceled") {
+        await cancelShopifyOrder(admin, booking.shopifyOrderID);
+      }
+
       booking.status = status;
 
       if (status === "Completed" && previousStatus !== "Completed") {

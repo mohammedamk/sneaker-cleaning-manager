@@ -1,3 +1,4 @@
+import process from "node:process";
 import { authenticate } from "../shopify.server";
 import TempBookingModel from "../MongoDB/models/TempBooking";
 
@@ -50,7 +51,11 @@ function getShippingLineItems(shippingSelection = {}) {
             originalUnitPrice: Number(forwardRate.amount),
             quantity: 1,
             customAttributes: [
+                { key: "line_item_role", value: "booking_shipping" },
+                { key: "booking_shipping", value: "true" },
+                { key: "refund_exclude", value: "true" },
                 { key: "shipping_direction", value: "customer_to_store" },
+                { key: "booking_shipping_direction", value: "customer_to_store" },
                 { key: "shipping_carrier", value: forwardRate.carrier || "N/A" },
                 { key: "shipping_service", value: forwardRate.service || "N/A" }
             ]
@@ -63,7 +68,11 @@ function getShippingLineItems(shippingSelection = {}) {
             originalUnitPrice: Number(returnRate.amount),
             quantity: 1,
             customAttributes: [
+                { key: "line_item_role", value: "booking_shipping" },
+                { key: "booking_shipping", value: "true" },
+                { key: "refund_exclude", value: "true" },
                 { key: "shipping_direction", value: "store_to_customer" },
+                { key: "booking_shipping_direction", value: "store_to_customer" },
                 { key: "shipping_carrier", value: returnRate.carrier || "N/A" },
                 { key: "shipping_service", value: returnRate.service || "N/A" }
             ]
@@ -76,7 +85,17 @@ function getShippingLineItems(shippingSelection = {}) {
 export const action = async ({ request }) => {
     try {
         const { admin } = await authenticate.public.appProxy(request);
-        const body = await request.json();
+        const requestBody = await request.json();
+        const shouldUseTestShipping = !process.env.EASYPOST_API_KEY;
+        const body = {
+            ...requestBody,
+            shippingSelection: requestBody?.handoffMethod === "shipping" && requestBody?.shippingSelection
+                ? {
+                    ...requestBody.shippingSelection,
+                    isTestData: shouldUseTestShipping || Boolean(requestBody.shippingSelection?.isTestData),
+                }
+                : requestBody?.shippingSelection,
+        };
 
         console.log("Saving temporary booking data for post-payment processing");
 
@@ -117,7 +136,9 @@ export const action = async ({ request }) => {
             lineItems,
             customAttributes: [
                 { key: "temp_booking_id", value: tempBooking._id.toString() },
-                { key: "is_sneaker_booking", value: "true" }
+                { key: "is_sneaker_booking", value: "true" },
+                { key: "booking_handoff_method", value: body.handoffMethod || "dropoff" },
+                { key: "has_booking_shipping", value: body.handoffMethod === "shipping" ? "true" : "false" }
             ],
             useCustomerDefaultAddress: true
         };
@@ -151,7 +172,8 @@ export const action = async ({ request }) => {
                 success: true,
                 message: "Draft order created successfully",
                 invoiceUrl: draftOrder.invoiceUrl,
-                draftOrderId: draftOrder.id
+                draftOrderId: draftOrder.id,
+                shippingMode: shouldUseTestShipping ? "test" : "live",
             })
         );
     } catch (error) {

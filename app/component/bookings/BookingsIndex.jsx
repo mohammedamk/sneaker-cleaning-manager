@@ -87,6 +87,15 @@ const formatDateTime = (value) => {
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 };
 
+const formatMoney = (amount, currencyCode = "USD") => {
+    const numericAmount = Number(amount);
+
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currencyCode,
+    }).format(Number.isFinite(numericAmount) ? numericAmount : 0);
+};
+
 export default function BookingsIndex() {
     const actionData = useActionData();
     const navigation = useNavigation();
@@ -94,7 +103,8 @@ export default function BookingsIndex() {
 
     const editModalRef = useRef(null);
     const viewModalRef = useRef(null);
-    const deleteModalRef = useRef(null);
+    const confirmModalRef = useRef(null);
+    const confirmActionRef = useRef(null);
 
     const [items, setItems] = useState([]);
     const [total, setTotal] = useState(0);
@@ -107,6 +117,14 @@ export default function BookingsIndex() {
     const [previewImage, setPreviewImage] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
+    const [refundLoading, setRefundLoading] = useState(false);
+    const [confirmModal, setConfirmModal] = useState({
+        heading: "",
+        message: "",
+        tone: "default",
+        confirmLabel: "Confirm",
+        loading: false,
+    });
 
     const totalPages = Math.ceil(total / PAGE_LIMIT);
 
@@ -178,7 +196,8 @@ export default function BookingsIndex() {
 
             editModalRef.current?.hideOverlay?.();
             viewModalRef.current?.hideOverlay?.();
-            deleteModalRef.current?.hideOverlay?.();
+            confirmModalRef.current?.hideOverlay?.();
+            confirmActionRef.current = null;
             setEditingBooking(null);
             setViewingBooking(null);
             setPreviewImage(null);
@@ -265,12 +284,111 @@ export default function BookingsIndex() {
         submit(formData, { method: "post" });
     };
 
+    const closeConfirmModal = useCallback(() => {
+        confirmModalRef.current?.hideOverlay?.();
+        confirmActionRef.current = null;
+        setItemToDelete(null);
+        setConfirmModal({
+            heading: "",
+            message: "",
+            tone: "auto",
+            confirmLabel: "Confirm",
+            loading: false,
+        });
+    }, []);
+
+    const openConfirmModal = useCallback((config, onConfirm) => {
+        setItemToDelete(null);
+        confirmActionRef.current = onConfirm;
+        setConfirmModal({
+            heading: config.heading || "Please Confirm",
+            message: config.message || "",
+            tone: config.tone || "auto",
+            confirmLabel: config.confirmLabel || "Confirm",
+            loading: Boolean(config.loading),
+        });
+        confirmModalRef.current?.showOverlay?.();
+    }, []);
+
+    const handleConfirmModalAction = async () => {
+        if (typeof confirmActionRef.current !== "function") return;
+        await confirmActionRef.current();
+    };
+
     const confirmDelete = () => {
         if (itemToDelete) {
             const formData = new FormData();
             formData.append("actionType", "DELETE");
             formData.append("id", itemToDelete);
             submit(formData, { method: "post" });
+        }
+    };
+
+    const handleRefundBooking = async () => {
+        if (!viewingBooking || viewingBooking.status !== "Canceled" || viewingBooking.refund?.status === "completed") {
+            return;
+        }
+
+        setRefundLoading(true);
+
+        try {
+            const bookingId = getObjectIdString(viewingBooking._id);
+            const previewResponse = await fetch("/api/refund/booking", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ bookingId, mode: "preview" }),
+            });
+            const previewResult = await previewResponse.json();
+
+            if (!previewResponse.ok || !previewResult.success) {
+                throw new Error(previewResult.message || "We could not calculate the refund amount.");
+            }
+
+            const refundAmountText = formatMoney(
+                previewResult.refund?.amount,
+                previewResult.refund?.currencyCode,
+            );
+            openConfirmModal({
+                heading: "Confirm Refund",
+                message: `Refund ${refundAmountText} to the customer? Shipping charges are excluded from this refund.`,
+                tone: "critical",
+                confirmLabel: "Process Refund",
+            }, async () => {
+                setRefundLoading(true);
+
+                try {
+                    const processResponse = await fetch("/api/refund/booking", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ bookingId, mode: "process" }),
+                    });
+                    const processResult = await processResponse.json();
+
+                    if (!processResponse.ok || !processResult.success) {
+                        throw new Error(processResult.message || "We could not process the refund.");
+                    }
+
+                    closeConfirmModal();
+                    shopify.toast.show(processResult.message || "Refund processed successfully.");
+
+                    if (processResult.booking) {
+                        setViewingBooking(processResult.booking);
+                        setItems((currentItems) => updateBookingInList(currentItems, processResult.booking));
+                    } else {
+                        fetchPage(page, search);
+                    }
+                } catch (error) {
+                    console.error("Failed to process refund:", error);
+                    shopify.toast.show(error.message || "We could not process the refund.", { isError: true });
+                } finally {
+                    setRefundLoading(false);
+                }
+            });
+        } catch (error) {
+            console.error("Failed to process refund:", error);
+            shopify.toast.show(error.message || "We could not process the refund.", { isError: true });
+        } finally {
+            setRefundLoading(false);
         }
     };
 
@@ -413,7 +531,7 @@ export default function BookingsIndex() {
                                     <s-table-cell>
                                         <div className="actions-container">
                                             <s-button size="slim" variant="secondary" onClick={() => handleView(item)}>View</s-button>
-                                            <s-button size="slim" onClick={() => handleEdit(item)}>Update Status</s-button>
+                                            <s-button size="slim" disabled={item.status === "Canceled"} onClick={() => handleEdit(item)}>Update Status</s-button>
                                         </div>
                                     </s-table-cell>
                                 </s-table-row>
@@ -440,17 +558,25 @@ export default function BookingsIndex() {
                             </div>
                         </div>
 
-                        <s-text type="strong">Select New Status</s-text>
-                        <div className="status-grid">
-                            {STATUS_OPTIONS.map((opt) => (
-                                <s-button key={opt} pressed={editingBooking.status === opt} variant={editingBooking.status === opt
-                                    ? "primary" : "secondary"} onClick={() => handleStatusUpdate(opt)}
-                                    loading={isSubmitting && activeActionType === "UPDATE_STATUS"}
-                                >
-                                    {opt}
-                                </s-button>
-                            ))}
-                        </div>
+                        {editingBooking.status === "Canceled" ? (
+                            <s-text tone="subdued">
+                                This booking has been canceled and its status can no longer be changed.
+                            </s-text>
+                        ) : (
+                            <>
+                                <s-text type="strong">Select New Status</s-text>
+                                <div className="status-grid">
+                                    {STATUS_OPTIONS.map((opt) => (
+                                        <s-button key={opt} pressed={editingBooking.status === opt} variant={editingBooking.status === opt
+                                            ? "primary" : "secondary"} onClick={() => handleStatusUpdate(opt)}
+                                            loading={isSubmitting && activeActionType === "UPDATE_STATUS"}
+                                        >
+                                            {opt}
+                                        </s-button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </s-modal>
@@ -462,6 +588,10 @@ export default function BookingsIndex() {
                             <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">BOOKING ID</s-text>
                                 <s-text type="strong">#{getObjectIdString(viewingBooking._id)}</s-text>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">Shopify Order ID</s-text>
+                                <s-text type="strong">#{getObjectIdString(viewingBooking.shopifyOrderID.split("/").pop())}</s-text>
                             </div>
                             <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">STATUS</s-text>
@@ -483,6 +613,22 @@ export default function BookingsIndex() {
                             <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">LAST CLEANING</s-text>
                                 <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
+                            </div>
+                            <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">REFUND</s-text>
+                                {viewingBooking.refund?.status === "completed" ? (
+                                    <>
+                                        <s-badge tone="success">Refunded</s-badge>
+                                        <s-text>
+                                            {formatMoney(viewingBooking.refund.amount, viewingBooking.refund.currencyCode)}
+                                        </s-text>
+                                        <s-text variant="bodySm" tone="subdued">
+                                            {formatDateTime(viewingBooking.refund.processedAt)}
+                                        </s-text>
+                                    </>
+                                ) : (
+                                    <s-text>{(viewingBooking.status === "Canceled" && viewingBooking.handoffMethod === "shipping") ? "Pending refund" : "Not available"}</s-text>
+                                )}
                             </div>
                             <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">PHONE</s-text>
@@ -530,16 +676,28 @@ export default function BookingsIndex() {
                                     {hasPendingCleanedImages(viewingBooking) ? " Newly uploaded images are still processing and will appear automatically." : ""}
                                 </s-text>
                             </div>
-                            {hasCleanedImages(viewingBooking) && (
-                                <s-button
-                                    variant="primary"
-                                    onClick={handleSendCleanedEmail}
-                                    loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
-                                    disabled={hasPendingCleanedImages(viewingBooking)}
-                                >
-                                    Send email to customer
-                                </s-button>
-                            )}
+                            <div className="actions-container">
+                                {viewingBooking.status === "Canceled" && viewingBooking.refund?.status !== "completed" && viewingBooking.handoffMethod === "shipping" && (
+                                    <s-button
+                                        variant="primary"
+                                        tone="critical"
+                                        onClick={handleRefundBooking}
+                                        loading={refundLoading}
+                                    >
+                                        Refund customer
+                                    </s-button>
+                                )}
+                                {hasCleanedImages(viewingBooking) && (
+                                    <s-button
+                                        variant="primary"
+                                        onClick={handleSendCleanedEmail}
+                                        loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
+                                        disabled={hasPendingCleanedImages(viewingBooking)}
+                                    >
+                                        Send email to customer
+                                    </s-button>
+                                )}
+                            </div>
                         </div>
 
                         <div className="booking-view-section">
@@ -724,14 +882,18 @@ export default function BookingsIndex() {
                 </div>
             )}
 
-            <s-modal id="delete-modal" accessibilityLabel="delete-modal" ref={deleteModalRef} heading="Confirm Delete">
+            <s-modal id="confirm-modal" accessibilityLabel="confirm-modal" ref={confirmModalRef} heading={confirmModal.heading || "Please Confirm"}>
                 <div className="delete-modal-content">
-                    <s-text>Are you sure you want to delete this booking record? This action cannot be undone.</s-text>
+                    <s-text>{confirmModal.message || "Please confirm this action."}</s-text>
                 </div>
                 <div className="delete-modal-actions">
-                    <s-button onClick={() => deleteModalRef.current?.hideOverlay?.()}>Cancel</s-button>
-                    <s-button tone="critical" onClick={confirmDelete} loading={isSubmitting && activeActionType === "DELETE"}>
-                        Confirm Delete
+                    <s-button onClick={closeConfirmModal}>Cancel</s-button>
+                    <s-button
+                        tone={confirmModal.tone}
+                        onClick={itemToDelete ? confirmDelete : handleConfirmModalAction}
+                        loading={(itemToDelete && isSubmitting && activeActionType === "DELETE") || refundLoading}
+                    >
+                        {confirmModal.confirmLabel || "Confirm"}
                     </s-button>
                 </div>
             </s-modal>

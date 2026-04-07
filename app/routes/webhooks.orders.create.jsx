@@ -1,5 +1,6 @@
 import { Buffer } from "node:buffer";
 import { createHash, randomBytes } from "node:crypto";
+import process from "node:process";
 import { authenticate } from "../shopify.server";
 import BookingModel from "../MongoDB/models/Booking";
 import SneakerModel from "../MongoDB/models/Sneaker";
@@ -7,6 +8,18 @@ import TempBookingModel from "../MongoDB/models/TempBooking";
 import mongoose from "mongoose";
 import sendEmail from "../utils/sendEmail";
 import { verifyAndBuySelectedRates } from "../utils/easyPostShipping";
+
+const TEST_STORE_ADDRESS = {
+  name: "Sneaker Cleaning Manager Test Store",
+  company: "Sneaker Cleaning Manager",
+  street1: "123 Test Shipping Lane",
+  street2: "Suite 4",
+  city: "New York",
+  state: "NY",
+  zip: "10001",
+  country: "US",
+  phone: "2125550100",
+};
 
 const STAGED_UPLOADS_URL_QUERY = `
 mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
@@ -216,11 +229,22 @@ async function saveBookingAccessToOrder(admin, orderId, bookingDoc, existingAttr
       "booking_id",
       "booking_access_url",
       "booking_qr_code_url",
+      "booking_handoff_method",
+      "has_booking_shipping",
+      "booking_shipping_directions",
     ].includes(attribute.name))
     .map((attribute) => ({
       key: attribute.name,
       value: String(attribute.value ?? ""),
     }));
+
+  const shippingDirections = [];
+  if (bookingDoc?.shipping?.selectedForwardRate) {
+    shippingDirections.push("customer_to_store");
+  }
+  if (bookingDoc?.shipping?.selectedReturnRate) {
+    shippingDirections.push("store_to_customer");
+  }
 
   const customAttributes = [
     ...preservedAttributes,
@@ -235,6 +259,18 @@ async function saveBookingAccessToOrder(admin, orderId, bookingDoc, existingAttr
     {
       key: "booking_qr_code_url",
       value: bookingDoc.qrCodeImageUrl,
+    },
+    {
+      key: "booking_handoff_method",
+      value: bookingDoc?.handoffMethod || "dropoff",
+    },
+    {
+      key: "has_booking_shipping",
+      value: bookingDoc?.handoffMethod === "shipping" ? "true" : "false",
+    },
+    {
+      key: "booking_shipping_directions",
+      value: shippingDirections.join(","),
     },
   ];
 
@@ -300,6 +336,72 @@ function buildRateChangedEmail({ bookingDoc, orderPayload, shippingSelection, ve
       </table>
     </div>
   `;
+}
+
+function buildTestLabel(direction, bookingId, selectedRate, customerAddress) {
+  const fallbackCarrier = direction === "customerToStore" ? "USPS" : "UPS";
+  const fallbackService = direction === "customerToStore" ? "Priority" : "Ground";
+  const baseRate = selectedRate || {};
+  const trackingSuffix = bookingId.slice(-6).toUpperCase();
+  const trackingCode = direction === "customerToStore"
+    ? `TEST-IN-${trackingSuffix}`
+    : `TEST-OUT-${trackingSuffix}`;
+
+  return {
+    shipmentId: `test-shipment-${direction}-${bookingId}`,
+    trackingCode,
+    selectedRate: {
+      id: baseRate.id || `test-rate-${direction}-${bookingId}`,
+      carrier: baseRate.carrier || fallbackCarrier,
+      service: baseRate.service || fallbackService,
+      amount: Number(baseRate.amount || 0),
+      amountDisplay: Number(baseRate.amount || 0).toFixed(2),
+      currency: baseRate.currency || "USD",
+      deliveryDays: baseRate.deliveryDays || null,
+      deliveryDate: baseRate.deliveryDate || null,
+      deliveryDateGuaranteed: Boolean(baseRate.deliveryDateGuaranteed),
+      shipmentId: `test-shipment-${direction}-${bookingId}`,
+    },
+    postageLabel: {
+      label_url: `https://example.com/test-labels/${bookingId}/${direction}.pdf`,
+      label_pdf_url: `https://example.com/test-labels/${bookingId}/${direction}.pdf`,
+      label_zpl_url: null,
+      label_epl2_url: null,
+      label_file_type: "application/pdf",
+      label_size: "4x6",
+      label_date: new Date().toISOString(),
+      label_resolution: 300,
+      recipient: {
+        name: customerAddress?.name || "Test Customer",
+        street1: customerAddress?.street1 || "123 Test Street",
+        city: customerAddress?.city || "Brooklyn",
+        state: customerAddress?.state || "NY",
+        zip: customerAddress?.zip || "11201",
+      },
+    },
+  };
+}
+
+function buildTestShippingPurchase({ bookingId, shippingSelection, shippingContact }) {
+  return {
+    status: "purchased",
+    labels: {
+      customerToStore: buildTestLabel(
+        "customerToStore",
+        bookingId,
+        shippingSelection?.selectedForwardRate,
+        shippingContact,
+      ),
+      storeToCustomer: buildTestLabel(
+        "storeToCustomer",
+        bookingId,
+        shippingSelection?.selectedReturnRate,
+        shippingContact,
+      ),
+    },
+    storeAddress: TEST_STORE_ADDRESS,
+    isTestData: true,
+  };
 }
 
 export const action = async ({ request }) => {
@@ -422,13 +524,19 @@ export const action = async ({ request }) => {
         email: bookingData.shippingSelection.customerAddress?.email || customerEmail || bookingData.guestInfo?.email || "",
       };
 
-      const verificationResult = await verifyAndBuySelectedRates({
-        customerAddress: shippingContact,
-        parcel: bookingData.shippingSelection.parcel,
-        selectedForwardRate: bookingData.shippingSelection.selectedForwardRate,
-        selectedReturnRate: bookingData.shippingSelection.selectedReturnRate,
-        referencePrefix: bookingDoc._id.toString(),
-      });
+      const verificationResult = process.env.EASYPOST_API_KEY
+        ? await verifyAndBuySelectedRates({
+          customerAddress: shippingContact,
+          parcel: bookingData.shippingSelection.parcel,
+          selectedForwardRate: bookingData.shippingSelection.selectedForwardRate,
+          selectedReturnRate: bookingData.shippingSelection.selectedReturnRate,
+          referencePrefix: bookingDoc._id.toString(),
+        })
+        : buildTestShippingPurchase({
+          bookingId: bookingDoc._id.toString(),
+          shippingSelection: bookingData.shippingSelection,
+          shippingContact,
+        });
 
       if (verificationResult.status === "purchased") {
         bookingDoc.shipping = {
@@ -436,6 +544,7 @@ export const action = async ({ request }) => {
           purchaseStatus: "purchased",
           labels: verificationResult.labels,
           storeAddress: verificationResult.storeAddress,
+          isTestData: Boolean(verificationResult.isTestData),
           purchasedAt: new Date(),
         };
       } else {
