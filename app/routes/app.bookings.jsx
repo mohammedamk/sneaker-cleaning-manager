@@ -57,9 +57,79 @@ mutation OrderCancel(
 }
 `;
 
-function buildCleanedSneakersEmail(booking) {
-  const customerName = booking?.name || booking?.guestInfo?.name || "there";
+const BOOKING_STATUS_EMAIL_CONFIG = {
+  Received: {
+    subject: (booking) => `We received your sneakers: booking ${booking._id.toString()}`,
+    heading: "Your sneakers have been received",
+    message: [
+      "We have received your sneakers at the store.",
+      "Our team will inspect them next, and the cleaning process will begin shortly.",
+    ],
+  },
+  "Cleaning Complete": {
+    subject: (booking) => `Cleaning complete for booking ${booking._id.toString()}`,
+    heading: "Cleaning is complete",
+    message: [
+      "Your sneaker cleaning service has been completed.",
+      "We will notify you again as soon as your order is ready for pickup or shipment.",
+    ],
+  },
+  "Ready for Pickup / Shipment": {
+    subject: (booking) => `Booking ready for pickup or shipment: ${booking._id.toString()}`,
+    heading: "Your order is ready",
+    message: (booking) => [
+      booking.handoffMethod === "shipping"
+        ? "Your order is now ready for shipment."
+        : "Your order is now ready for pickup.",
+      "You can review your booking details any time from the booking page.",
+    ],
+  },
+};
+
+function getBookingCustomerName(booking) {
+  return booking?.name || booking?.guestInfo?.name || "there";
+}
+
+function getBookingRecipientEmail(booking) {
+  return booking?.email || booking?.guestInfo?.email || "";
+}
+
+function buildBookingAccessSection(booking, buttonLabel = "View Booking Details") {
   const accessUrl = booking?.secureAccessUrl;
+
+  if (!accessUrl) {
+    return "";
+  }
+
+  return `
+    <div style="margin:24px 0;">
+      <a href="${accessUrl}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">
+        ${buttonLabel}
+      </a>
+    </div>
+    <p style="margin:0;"><a href="${accessUrl}" style="color:#2563eb;word-break:break-all;">${accessUrl}</a></p>
+  `;
+}
+
+function buildBookingEmailContent({ booking, heading, message, buttonLabel = "View Booking Details", footerMessage = "" }) {
+  const customerName = getBookingCustomerName(booking);
+  const bookingId = booking?._id?.toString() || "N/A";
+  const paragraphs = (Array.isArray(message) ? message : [message])
+    .filter(Boolean)
+    .map((paragraph) => `<p style="margin:0 0 12px;">${paragraph}</p>`)
+    .join("");
+
+  return `
+    <h2 style="margin:0 0 8px;">${heading}</h2>
+    <p style="margin:0 0 12px;">Hello ${customerName},</p>
+    ${paragraphs}
+    <p style="margin:0 0 16px;"><strong>Booking ID:</strong> ${bookingId}</p>
+    ${buildBookingAccessSection(booking, buttonLabel)}
+    ${footerMessage ? `<p style="margin:16px 0 0;">${footerMessage}</p>` : ""}
+  `;
+}
+
+function buildCleanedSneakersEmail(booking) {
   const cleanedSneakers = (booking?.sneakers || []).filter(
     (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
   );
@@ -80,34 +150,55 @@ function buildCleanedSneakersEmail(booking) {
     .join("");
 
   return `
-    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;max-width:680px;margin:0 auto;">
-      <h2 style="margin-bottom:8px;">Your Sneakers Are Cleaned</h2>
-      <p>Hello ${customerName},</p>
-      <p>Your cleaned sneaker photos are now ready to view.</p>
-      <p><strong>Booking ID:</strong> ${booking?._id?.toString() || "N/A"}</p>
-
-      ${cleanedSneakers.length ? `
-        <div style="margin:20px 0;padding:18px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa;">
-          <p style="margin-top:0;"><strong>Updated sneakers</strong></p>
-          <ul style="padding-left:20px;margin-bottom:0;">
-            ${sneakerList}
-          </ul>
-        </div>
-      ` : ""}
-
-      ${accessUrl ? `
-        <div style="margin:24px 0;">
-          <a href="${accessUrl}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">
-            View Cleaned Sneaker Images
-          </a>
-        </div>
-        <p>If the button does not open, use this secure link:</p>
-        <p><a href="${accessUrl}" style="color:#2563eb;word-break:break-all;">${accessUrl}</a></p>
-      ` : `
-        <p>Please open your booking details page and use your booking ID to view the cleaned images.</p>
-      `}
-    </div>
+    ${buildBookingEmailContent({
+      booking,
+      heading: "Your sneakers are cleaned",
+      message: [
+        "Your cleaned sneaker photos are now ready to view.",
+        "Please review the after-cleaning images from your order details page and approve them once you are satisfied.",
+      ],
+      buttonLabel: "Review Cleaned Sneaker Images",
+      footerMessage: booking?.secureAccessUrl
+        ? "If the button does not open, use the secure link above to open your booking details page."
+        : "Please open your booking details page and use your booking ID to review the cleaned images.",
+    })}
+    ${cleanedSneakers.length ? `
+      <div style="margin:20px 0 0;padding:18px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa;">
+        <p style="margin:0 0 10px;"><strong>Updated sneakers</strong></p>
+        <ul style="padding-left:20px;margin:0;">
+          ${sneakerList}
+        </ul>
+      </div>
+    ` : ""}
   `;
+}
+
+async function sendBookingStatusEmail(booking, status) {
+  const recipientEmail = getBookingRecipientEmail(booking);
+
+  if (!recipientEmail) {
+    return;
+  }
+
+  const emailConfig = BOOKING_STATUS_EMAIL_CONFIG[status];
+
+  if (!emailConfig) {
+    return;
+  }
+
+  const message = typeof emailConfig.message === "function"
+    ? emailConfig.message(booking)
+    : emailConfig.message;
+
+  await sendEmail(
+    recipientEmail,
+    emailConfig.subject(booking),
+    buildBookingEmailContent({
+      booking,
+      heading: emailConfig.heading,
+      message,
+    }),
+  );
 }
 
 async function getNormalizedBooking(admin, booking) {
@@ -182,6 +273,9 @@ export const action = async ({ request }) => {
       }
 
       await booking.save();
+      if (status !== previousStatus) {
+        await sendBookingStatusEmail(booking, status);
+      }
 
       return {
         success: true,
@@ -342,7 +436,7 @@ export const action = async ({ request }) => {
         return { success: false, actionType, message: "Booking not found." };
       }
 
-      const recipientEmail = booking.email || booking.guestInfo?.email;
+      const recipientEmail = getBookingRecipientEmail(booking);
 
       if (!recipientEmail) {
         return { success: false, actionType, message: "Customer email is missing for this booking." };
