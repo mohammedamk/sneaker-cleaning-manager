@@ -66,6 +66,11 @@ const hasPendingCleanedImages = (booking) => (booking?.sneakers || []).some(
     (sneaker) => Boolean(sneaker.cleanedImageProcessing),
 );
 
+const getCleanedImagesApprovalStatus = (booking) => {
+    if (!hasCleanedImages(booking)) return "not-available";
+    return booking?.cleanedImagesApprovalStatus || "pending";
+};
+
 const updateBookingInList = (bookings, updatedBooking) => bookings.map((item) => (
     getObjectIdString(item._id) === getObjectIdString(updatedBooking._id) ? updatedBooking : item
 ));
@@ -284,6 +289,14 @@ export default function BookingsIndex() {
         submit(formData, { method: "post" });
     };
 
+    const handleApprovalUpdate = (bookingId, approvalStatus) => {
+        const formData = new FormData();
+        formData.append("actionType", "UPDATE_CLEANING_APPROVAL");
+        formData.append("id", getObjectIdString(bookingId));
+        formData.append("approvalStatus", approvalStatus);
+        submit(formData, { method: "post" });
+    };
+
     const closeConfirmModal = useCallback(() => {
         confirmModalRef.current?.hideOverlay?.();
         confirmActionRef.current = null;
@@ -462,7 +475,9 @@ export default function BookingsIndex() {
     };
 
     const activeActionType = navigation.formData?.get("actionType");
+    const activeApprovalStatus = navigation.formData?.get("approvalStatus");
     const isSubmitting = navigation.state === "submitting";
+    const approvalStatus = getCleanedImagesApprovalStatus(viewingBooking);
 
     return (
         <s-page heading="Sneaker Cleaning Bookings" subtitle="Manage and track customer cleaning orders">
@@ -615,6 +630,26 @@ export default function BookingsIndex() {
                                 <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
                             </div>
                             <div className="booking-view-card">
+                                <s-text variant="bodySm" tone="subdued">AFTER CLEANING APPROVAL</s-text>
+                                <s-badge tone={
+                                    approvalStatus === "approved"
+                                        ? "success"
+                                        : approvalStatus === "rejected"
+                                            ? "critical"
+                                            : approvalStatus === "pending"
+                                                ? "warning"
+                                                : "subdued"
+                                }>
+                                    {approvalStatus === "approved"
+                                        ? "Approved"
+                                        : approvalStatus === "rejected"
+                                            ? "Rejected"
+                                            : approvalStatus === "pending"
+                                                ? "Approval Pending"
+                                                : "Not available"}
+                                </s-badge>
+                            </div>
+                            <div className="booking-view-card">
                                 <s-text variant="bodySm" tone="subdued">REFUND</s-text>
                                 {viewingBooking.refund?.status === "completed" ? (
                                     <>
@@ -675,6 +710,40 @@ export default function BookingsIndex() {
                                     Upload cleaned sneaker photos, then email the customer a direct link to view them.
                                     {hasPendingCleanedImages(viewingBooking) ? " Newly uploaded images are still processing and will appear automatically." : ""}
                                 </s-text>
+                                {hasCleanedImages(viewingBooking) && (
+                                    <div className="booking-view-approval-actions">
+                                        <s-badge tone={
+                                            approvalStatus === "approved"
+                                                ? "success"
+                                                : approvalStatus === "rejected"
+                                                    ? "critical"
+                                                    : "warning"
+                                        }>
+                                            {approvalStatus === "approved"
+                                                ? "Customer Approved"
+                                                : approvalStatus === "rejected"
+                                                    ? "Customer Rejected"
+                                                    : "Approval Pending"}
+                                        </s-badge>
+                                        <s-button
+                                            size="slim"
+                                            variant="secondary"
+                                            onClick={() => handleApprovalUpdate(viewingBooking._id, "approved")}
+                                            loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "approved"}
+                                        >
+                                            Mark approved
+                                        </s-button>
+                                        <s-button
+                                            size="slim"
+                                            variant="secondary"
+                                            tone="critical"
+                                            onClick={() => handleApprovalUpdate(viewingBooking._id, "rejected")}
+                                            loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "rejected"}
+                                        >
+                                            Mark rejected
+                                        </s-button>
+                                    </div>
+                                )}
                             </div>
                             <div className="actions-container">
                                 {viewingBooking.status === "Canceled" && viewingBooking.refund?.status !== "completed" && viewingBooking.handoffMethod === "shipping" && (

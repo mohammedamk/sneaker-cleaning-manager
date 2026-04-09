@@ -257,6 +257,13 @@
   gap: 16px;
 }
 
+.booking-details__approval-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
 .sneaker-item {
   display: flex;
   gap: 16px;
@@ -291,6 +298,14 @@
   gap: 10px;
 }
 
+.sneaker-item__gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .sneaker-item__gallery-section--cleaned {
   border-top: 1px solid #f0f0f0;
   padding-top: 12px;
@@ -300,6 +315,41 @@
   font-size: 13px;
   font-weight: 700;
   color: #1a1a1a;
+}
+
+.booking-approval-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.booking-approval-pill--approved {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.booking-approval-pill--rejected {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.booking-approval-pill--pending {
+  background: #fff8e1;
+  color: #f9a825;
+  border: 1px solid #ffecb3;
+}
+
+.booking-approval-pill--not-available {
+  background: #f5f5f5;
+  color: #616161;
+  border: 1px solid #e0e0e0;
 }
 
 .sneaker-item__gallery-grid {
@@ -318,6 +368,7 @@
   display: flex;
   gap: 8px;
 }
+
 
 .sneaker-item__empty-image {
   min-width: 120px;

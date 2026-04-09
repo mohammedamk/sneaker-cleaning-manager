@@ -115,6 +115,12 @@ async function getNormalizedBooking(admin, booking) {
   return normalizeBookingImages(booking, imageMap);
 }
 
+function hasCleanedImages(booking) {
+  return (booking?.sneakers || []).some(
+    (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
+  );
+}
+
 async function cancelShopifyOrder(admin, shopifyOrderID) {
   if (!shopifyOrderID) {
     return;
@@ -248,6 +254,7 @@ export const action = async ({ request }) => {
       }
 
       booking.sneakers = sneakers;
+      booking.cleanedImagesApprovalStatus = null;
       await booking.save();
       return {
         success: true,
@@ -315,6 +322,9 @@ export const action = async ({ request }) => {
       };
 
       booking.sneakers = sneakers;
+      if (!hasCleanedImages(booking)) {
+        booking.cleanedImagesApprovalStatus = null;
+      }
       await booking.save();
 
       return {
@@ -355,6 +365,34 @@ export const action = async ({ request }) => {
         success: true,
         actionType,
         message: "Customer email sent successfully.",
+        booking: await getNormalizedBooking(admin, booking),
+      };
+    }
+    if (actionType === "UPDATE_CLEANING_APPROVAL") {
+      const id = formData.get("id");
+      const approvalStatus = formData.get("approvalStatus");
+
+      if (!id || !["approved", "rejected"].includes(approvalStatus)) {
+        return { success: false, actionType, message: "A valid booking and approval status are required." };
+      }
+
+      const booking = await BookingModel.findById(id);
+
+      if (!booking) {
+        return { success: false, actionType, message: "Booking not found." };
+      }
+
+      if (!hasCleanedImages(booking)) {
+        return { success: false, actionType, message: "No cleaned images are available for approval yet." };
+      }
+
+      booking.cleanedImagesApprovalStatus = approvalStatus;
+      await booking.save();
+
+      return {
+        success: true,
+        actionType,
+        message: `Customer marked cleaned images as ${approvalStatus}.`,
         booking: await getNormalizedBooking(admin, booking),
       };
     }

@@ -172,6 +172,14 @@
     margin-bottom: 16px;
 }
 
+.booking-view-approval-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
 .booking-view-sneakers {
     display: flex;
     flex-direction: column;

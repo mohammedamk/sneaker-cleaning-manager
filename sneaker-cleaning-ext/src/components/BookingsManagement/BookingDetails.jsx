@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { PROXY_SUB_PATH } from '../../utils/global.js';
 import './BookingsManagement.css';
 
 function formatDateTime(value, fallback = 'Not completed yet') {
@@ -13,13 +14,61 @@ function formatDateTime(value, fallback = 'Not completed yet') {
 function BookingDetails({
     booking,
     onBack,
+    onBookingUpdate,
     title = 'Booking Details',
     backLabel = '← Back to List'
 }) {
+    const [currentBooking, setCurrentBooking] = useState(booking);
     const [previewImage, setPreviewImage] = useState(null);
-    const hasAnyCleanedImages = (booking.sneakers || []).some(
+    const [approvalLoading, setApprovalLoading] = useState(false);
+    const [approvalAction, setApprovalAction] = useState('');
+    const hasAnyCleanedImages = (currentBooking.sneakers || []).some(
         (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0
     );
+    const approvalStatus = currentBooking.cleanedImagesApprovalStatus || (hasAnyCleanedImages ? 'pending' : null);
+
+    useEffect(() => {
+        setCurrentBooking(booking);
+    }, [booking]);
+
+    const handleApprovalUpdate = async (nextStatus) => {
+        if (!hasAnyCleanedImages || approvalLoading) return;
+
+        setApprovalLoading(true);
+        setApprovalAction(nextStatus);
+
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const bookingID = params.get('bookingId')?.trim() || currentBooking._id;
+            const accessToken = params.get('accessToken')?.trim();
+
+            const response = await fetch(`/apps/${PROXY_SUB_PATH}/api/get/booking`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    actionType: 'UPDATE_CLEANING_APPROVAL',
+                    bookingID,
+                    approvalStatus: nextStatus,
+                    ...(accessToken ? { accessToken } : { email: (currentBooking.email || currentBooking.guestInfo?.email || '').trim() }),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Failed to update approval status.');
+            }
+
+            setCurrentBooking(data.booking);
+            onBookingUpdate?.(data.booking);
+        } catch (error) {
+            console.error('Failed to update cleaned image approval:', error);
+            alert(error.message || 'Failed to update approval status.');
+        } finally {
+            setApprovalLoading(false);
+            setApprovalAction('');
+        }
+    };
 
     const handleDownloadImage = async (imageUrl, sneakerName, imageIndex) => {
         if (!imageUrl) return;
@@ -59,29 +108,29 @@ function BookingDetails({
                     <div className="booking-details__grid">
                         <div className="detail-item">
                             <span className="detail-item__label">Booking ID</span>
-                            <span className="detail-item__value">#{booking._id}</span>
+                            <span className="detail-item__value">#{currentBooking._id}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-item__label">Status</span>
                             <span
-                                className={`booking-card__status booking-card__status--${booking.status
+                                className={`booking-card__status booking-card__status--${currentBooking.status
                                     .toLowerCase()
                                     .replace(/\s+/g, "-")
                                     .replace(/\//g, "-")}`}
                             >
-                                {booking.status}
+                                {currentBooking.status}
                             </span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-item__label">Submitted On</span>
                             <span className="detail-item__value">
-                                {new Date(booking.submittedAt).toLocaleDateString()} {new Date(booking.submittedAt).toLocaleTimeString()}
+                                {new Date(currentBooking.submittedAt).toLocaleDateString()} {new Date(currentBooking.submittedAt).toLocaleTimeString()}
                             </span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-item__label">Handoff Method</span>
                             <span className="detail-item__value" style={{ textTransform: 'capitalize' }}>
-                                {booking.handoffMethod}
+                                {currentBooking.handoffMethod}
                             </span>
                         </div>
                         <div className="detail-item">
@@ -91,9 +140,21 @@ function BookingDetails({
                             </span>
                         </div>
                         <div className="detail-item">
+                            <span className="detail-item__label">After Cleaning Approval</span>
+                            <span className={`booking-approval-pill booking-approval-pill--${approvalStatus || 'not-available'}`}>
+                                {approvalStatus === 'approved'
+                                    ? 'Approved'
+                                    : approvalStatus === 'rejected'
+                                        ? 'Rejected'
+                                        : approvalStatus === 'pending'
+                                            ? 'Approval Pending'
+                                            : 'Not available'}
+                            </span>
+                        </div>
+                        <div className="detail-item">
                             <span className="detail-item__label">Last Cleaning</span>
                             <span className="detail-item__value">
-                                {formatDateTime(booking.lastCleaning)}
+                                {formatDateTime(currentBooking.lastCleaning)}
                             </span>
                         </div>
                     </div>
@@ -104,25 +165,45 @@ function BookingDetails({
                     <div className="booking-details__grid">
                         <div className="detail-item">
                             <span className="detail-item__label">Name</span>
-                            <span className="detail-item__value">{booking?.name || booking.guestInfo?.name || 'N/A'}</span>
+                            <span className="detail-item__value">{currentBooking?.name || currentBooking.guestInfo?.name || 'N/A'}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-item__label">Email</span>
-                            <span className="detail-item__value">{booking?.email || booking.guestInfo?.email || 'N/A'}</span>
+                            <span className="detail-item__value">{currentBooking?.email || currentBooking.guestInfo?.email || 'N/A'}</span>
                         </div>
-                        {booking.guestInfo?.phone && (
+                        {currentBooking.guestInfo?.phone && (
                             <div className="detail-item">
                                 <span className="detail-item__label">Phone</span>
-                                <span className="detail-item__value">{booking.guestInfo.phone}</span>
+                                <span className="detail-item__value">{currentBooking.guestInfo.phone}</span>
                             </div>
                         )}
                     </div>
                 </div>
 
                 <div className="booking-details__section">
-                    <span className="booking-details__section-title">Registered Sneakers ({booking.sneakers?.length || 0})</span>
+                    <span className="booking-details__section-title">Registered Sneakers ({currentBooking.sneakers?.length || 0})</span>
+                    {hasAnyCleanedImages && (
+                        <div className="booking-details__approval-actions">
+                            <button
+                                type="button"
+                                className="btn btn--primary btn--small"
+                                onClick={() => handleApprovalUpdate('approved')}
+                                disabled={approvalLoading || currentBooking.cleanedImagesApprovalStatus === 'approved'}
+                            >
+                                {approvalLoading && approvalAction === 'approved' ? 'Saving...' : 'Approve After Cleaning'}
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn--secondary btn--small"
+                                onClick={() => handleApprovalUpdate('rejected')}
+                                disabled={approvalLoading || currentBooking.cleanedImagesApprovalStatus === 'rejected'}
+                            >
+                                {approvalLoading && approvalAction === 'rejected' ? 'Saving...' : 'Reject After Cleaning'}
+                            </button>
+                        </div>
+                    )}
                     <div className="booking-details__sneaker-list">
-                        {booking.sneakers?.map((snk, i) => (
+                        {currentBooking.sneakers?.map((snk, i) => (
                             <div key={i} className="sneaker-item">
                                 <div className="sneaker-item__gallery">
                                     <div className="sneaker-item__gallery-section">
@@ -162,7 +243,18 @@ function BookingDetails({
                                     </div>
 
                                     <div className="sneaker-item__gallery-section sneaker-item__gallery-section--cleaned">
-                                        <span className="sneaker-item__gallery-title">After cleaning</span>
+                                        <div className="sneaker-item__gallery-header">
+                                            <span className="sneaker-item__gallery-title">After cleaning</span>
+                                            {hasAnyCleanedImages && (
+                                                <span className={`booking-approval-pill booking-approval-pill--${approvalStatus}`}>
+                                                    {approvalStatus === 'approved'
+                                                        ? 'Approved'
+                                                        : approvalStatus === 'rejected'
+                                                            ? 'Rejected'
+                                                            : 'Approval Pending'}
+                                                </span>
+                                            )}
+                                        </div>
                                         <div className="sneaker-item__gallery-grid">
                                             {snk.cleanedImages?.length ? (
                                                 snk.cleanedImages.map((imageUrl, imageIndex) => (

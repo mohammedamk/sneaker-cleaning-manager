@@ -114,6 +114,7 @@ function GuestBookingLookup({ onBack }) {
     return (
       <BookingDetails
         booking={booking}
+        onBookingUpdate={setBooking}
         onBack={() => setBooking(null)}
         title="Your Booking"
         backLabel="← Back to Lookup"

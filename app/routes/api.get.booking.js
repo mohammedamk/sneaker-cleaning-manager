@@ -14,6 +14,12 @@ function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function hasCleanedImages(booking) {
+  return (booking?.sneakers || []).some(
+    (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
+  );
+}
+
 export const action = async ({ request }) => {
   try {
     const { admin } = await authenticate.public.appProxy(request);
@@ -22,6 +28,8 @@ export const action = async ({ request }) => {
     const bookingID = body.bookingID?.trim();
     const email = body.email?.trim().toLowerCase();
     const accessToken = body.accessToken?.trim();
+    const actionType = body.actionType?.trim();
+    const approvalStatus = body.approvalStatus?.trim();
 
     if (!bookingID) {
       return new Response(
@@ -83,11 +91,33 @@ export const action = async ({ request }) => {
       );
     }
 
+    if (actionType === "UPDATE_CLEANING_APPROVAL") {
+      if (!["approved", "rejected"].includes(approvalStatus)) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Choose approve or reject." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (!hasCleanedImages(booking)) {
+        return new Response(
+          JSON.stringify({ success: false, message: "No cleaned images are available for approval yet." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      booking.cleanedImagesApprovalStatus = approvalStatus;
+      await booking.save();
+    }
+
     const imageMap = await getImageUrls(admin, collectBookingImageIds(booking));
 
     return new Response(
       JSON.stringify({
         success: true,
+        message: actionType === "UPDATE_CLEANING_APPROVAL"
+          ? `Cleaned images ${approvalStatus} successfully.`
+          : undefined,
         booking: normalizeBookingImages(booking, imageMap),
       }),
       { headers: { "Content-Type": "application/json" } }
