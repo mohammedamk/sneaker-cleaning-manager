@@ -18,6 +18,7 @@ const getStatusTone = (status) => {
 
 const PAGE_LIMIT = 10;
 const BOOKING_IMAGE_POLL_INTERVAL_MS = 3000;
+const READY_FOR_SHIPMENT_STATUS = "Ready for Pickup / Shipment";
 
 const STATUS_OPTIONS = [
     "Pending", "Received", "Under Inspection", "In Cleaning",
@@ -117,13 +118,21 @@ const getAddressLines = (address = {}) => {
 const formatRateSummary = (rate) => {
     if (!rate) return "Not selected";
 
-    const deliveryText = rate.deliveryDays ? `${rate.deliveryDays} day${rate.deliveryDays === 1 ? "" : "s"}` : null;
     const amountText = formatMoney(rate.amount, rate.currency || "USD");
 
     return [
         [rate.carrier, rate.service].filter(Boolean).join(" "),
         amountText
     ].filter(Boolean).join(" • ");
+};
+
+const canBuyStoreToCustomerShipping = (booking) => {
+    const shippingSelection = getBookingShippingSelection(booking);
+
+    return booking?.handoffMethod === "shipping"
+        && Boolean(shippingSelection?.selectedReturnRate)
+        && booking?.status === READY_FOR_SHIPMENT_STATUS
+        && !shippingSelection?.labels?.storeToCustomer?.shipmentId;
 };
 
 export default function BookingsIndex() {
@@ -148,6 +157,7 @@ export default function BookingsIndex() {
     const [itemToDelete, setItemToDelete] = useState(null);
     const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
     const [refundLoading, setRefundLoading] = useState(false);
+    const [buyShippingBookingId, setBuyShippingBookingId] = useState("");
     const [confirmModal, setConfirmModal] = useState({
         heading: "",
         message: "",
@@ -303,6 +313,34 @@ export default function BookingsIndex() {
         formData.append("actionType", "SEND_CLEANED_EMAIL");
         formData.append("id", getObjectIdString(viewingBooking._id));
         submit(formData, { method: "post" });
+    };
+
+    const handleBuyShipping = (bookingId) => {
+        const normalizedBookingId = getObjectIdString(bookingId);
+        setBuyShippingBookingId(normalizedBookingId);
+
+        fetch("/api/buy/return-shipping", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bookingId: normalizedBookingId }),
+        })
+            .then(async (response) => {
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || "We could not buy return shipping.");
+                }
+
+                shopify.toast.show(result.message || "Store-to-customer shipping purchased successfully.");
+                await fetchPage(page, search);
+            })
+            .catch((error) => {
+                console.error("Failed to buy return shipping:", error);
+                shopify.toast.show(error.message || "We could not buy return shipping.", { isError: true });
+            })
+            .finally(() => {
+                setBuyShippingBookingId("");
+            });
     };
 
     const handleDeleteCleanedImage = (bookingId, sneakerIndex, imageIndex) => {
@@ -578,6 +616,21 @@ export default function BookingsIndex() {
                                         <div className="actions-container">
                                             <s-button size="slim" variant="secondary" onClick={() => handleView(item)}>View</s-button>
                                             <s-button size="slim" disabled={item.status === "Canceled"} onClick={() => handleEdit(item)}>Update Status</s-button>
+                                            {item.handoffMethod === "shipping" && getBookingShippingSelection(item)?.selectedReturnRate && (
+                                                <s-button
+                                                    size="slim"
+                                                    variant="secondary"
+                                                    onClick={() => handleBuyShipping(item._id)}
+                                                    disabled={!canBuyStoreToCustomerShipping(item)}
+                                                    loading={
+                                                        buyShippingBookingId === getObjectIdString(item._id)
+                                                    }
+                                                >
+                                                    {getBookingShippingSelection(item)?.labels?.storeToCustomer?.shipmentId
+                                                        ? "Shipping Purchased"
+                                                        : "Buy Shipping"}
+                                                </s-button>
+                                            )}
                                         </div>
                                     </s-table-cell>
                                 </s-table-row>

@@ -6,7 +6,7 @@ import SneakerModel from "../MongoDB/models/Sneaker";
 import TempBookingModel from "../MongoDB/models/TempBooking";
 import mongoose from "mongoose";
 import sendEmail from "../utils/sendEmail";
-import { verifyAndBuySelectedRates } from "../utils/easyPostShipping";
+import { verifyAndBuySelectedRate } from "../utils/easyPostShipping";
 import { uploadImageToShopify } from "../utils/shopifyImages.server";
 
 const TEST_STORE_ADDRESS = {
@@ -285,20 +285,12 @@ function buildTestLabel(direction, bookingId, selectedRate, customerAddress) {
 function buildTestShippingPurchase({ bookingId, shippingSelection, shippingContact }) {
   return {
     status: "purchased",
-    labels: {
-      customerToStore: buildTestLabel(
-        "customerToStore",
-        bookingId,
-        shippingSelection?.selectedForwardRate,
-        shippingContact,
-      ),
-      storeToCustomer: buildTestLabel(
-        "storeToCustomer",
-        bookingId,
-        shippingSelection?.selectedReturnRate,
-        shippingContact,
-      ),
-    },
+    label: buildTestLabel(
+      "customerToStore",
+      bookingId,
+      shippingSelection?.selectedForwardRate,
+      shippingContact,
+    ),
     storeAddress: TEST_STORE_ADDRESS,
     isTestData: true,
   };
@@ -422,53 +414,62 @@ export const action = async ({ request }) => {
     await bookingDoc.save();
 
     if (bookingData.handoffMethod === "shipping" && bookingData.shippingSelection) {
+      bookingDoc.shipping = {
+        ...bookingData.shippingSelection,
+      };
+
       const shippingContact = {
         ...bookingData.shippingSelection.customerAddress,
         email: bookingData.shippingSelection.customerAddress?.email || customerEmail || bookingData.guestInfo?.email || "",
       };
 
-      const verificationResult = process.env.EASYPOST_API_KEY
-        ? await verifyAndBuySelectedRates({
-          customerAddress: shippingContact,
-          parcel: bookingData.shippingSelection.parcel,
-          selectedForwardRate: bookingData.shippingSelection.selectedForwardRate,
-          selectedReturnRate: bookingData.shippingSelection.selectedReturnRate,
-          referencePrefix: bookingDoc._id.toString(),
-        })
-        : buildTestShippingPurchase({
-          bookingId: bookingDoc._id.toString(),
-          shippingSelection: bookingData.shippingSelection,
-          shippingContact,
-        });
-
-      if (verificationResult.status === "purchased") {
-        bookingDoc.shipping = {
-          ...bookingData.shippingSelection,
-          purchaseStatus: "purchased",
-          labels: verificationResult.labels,
-          storeAddress: verificationResult.storeAddress,
-          isTestData: Boolean(verificationResult.isTestData),
-          purchasedAt: new Date(),
-        };
-      } else {
-        bookingDoc.shipping = {
-          ...bookingData.shippingSelection,
-          purchaseStatus: "rate_changed",
-          changedRates: verificationResult.changedRates,
-          storeAddress: verificationResult.storeAddress,
-          flaggedAt: new Date(),
-        };
-
-        await sendEmail(
-          ADMIN_NOTIFICATION_EMAIL,
-          "EasyPost shipping rate changed for sneaker booking",
-          buildRateChangedEmail({
-            bookingDoc,
-            orderPayload: payload,
+      if (bookingData.shippingSelection.selectedForwardRate) {
+        const verificationResult = process.env.EASYPOST_API_KEY
+          ? await verifyAndBuySelectedRate({
+            customerAddress: shippingContact,
+            parcel: bookingData.shippingSelection.parcel,
+            selectedRate: bookingData.shippingSelection.selectedForwardRate,
+            direction: "customer_to_store",
+            referencePrefix: bookingDoc._id.toString(),
+          })
+          : buildTestShippingPurchase({
+            bookingId: bookingDoc._id.toString(),
             shippingSelection: bookingData.shippingSelection,
-            verificationResult,
-          }),
-        );
+            shippingContact,
+          });
+
+        if (verificationResult.status === "purchased") {
+          bookingDoc.shipping = {
+            ...bookingDoc.shipping,
+            purchaseStatus: "customer_to_store_purchased",
+            labels: {
+              ...(bookingDoc.shipping?.labels || {}),
+              customerToStore: verificationResult.label,
+            },
+            storeAddress: verificationResult.storeAddress,
+            isTestData: Boolean(verificationResult.isTestData),
+            purchasedAt: new Date(),
+          };
+        } else {
+          bookingDoc.shipping = {
+            ...bookingDoc.shipping,
+            purchaseStatus: "customer_to_store_rate_changed",
+            changedRates: verificationResult.changedRates,
+            storeAddress: verificationResult.storeAddress,
+            flaggedAt: new Date(),
+          };
+
+          await sendEmail(
+            ADMIN_NOTIFICATION_EMAIL,
+            "EasyPost shipping rate changed for sneaker booking",
+            buildRateChangedEmail({
+              bookingDoc,
+              orderPayload: payload,
+              shippingSelection: bookingData.shippingSelection,
+              verificationResult,
+            }),
+          );
+        }
       }
 
       await bookingDoc.save();

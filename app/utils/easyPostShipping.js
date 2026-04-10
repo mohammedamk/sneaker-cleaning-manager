@@ -135,6 +135,36 @@ async function createShipment({ fromAddress, toAddress, parcel, isReturn = false
   });
 }
 
+function getShipmentConfigForDirection({
+  normalizedCustomerAddress,
+  normalizedParcel,
+  storeAddress,
+  direction,
+  referencePrefix,
+}) {
+  if (direction === "customer_to_store") {
+    return {
+      fromAddress: normalizedCustomerAddress,
+      toAddress: storeAddress,
+      parcel: normalizedParcel,
+      isReturn: false,
+      reference: `${referencePrefix}-forward-purchase`,
+    };
+  }
+
+  if (direction === "store_to_customer") {
+    return {
+      fromAddress: storeAddress,
+      toAddress: normalizedCustomerAddress,
+      parcel: normalizedParcel,
+      isReturn: true,
+      reference: `${referencePrefix}-return-purchase`,
+    };
+  }
+
+  throw new Error(`Unsupported shipping direction: ${direction}`);
+}
+
 export async function getShippingQuotes({ customerAddress, parcel, referencePrefix = "booking" }) {
   const normalizedCustomerAddress = validateShippingAddress(customerAddress);
   const normalizedParcel = validateParcel(parcel);
@@ -191,15 +221,15 @@ function amountsMatch(leftAmount, rightAmount) {
   return Number(leftAmount).toFixed(2) === Number(rightAmount).toFixed(2);
 }
 
-export async function verifyAndBuySelectedRates({
+export async function verifyAndBuySelectedRate({
   customerAddress,
   parcel,
-  selectedForwardRate,
-  selectedReturnRate,
+  selectedRate,
+  direction,
   referencePrefix = "booking",
 }) {
-  if (!selectedForwardRate || !selectedReturnRate) {
-    throw new Error("Both forward and return shipping rates are required");
+  if (!selectedRate) {
+    throw new Error("A shipping rate is required");
   }
 
   const normalizedCustomerAddress = validateShippingAddress(customerAddress);
@@ -207,70 +237,41 @@ export async function verifyAndBuySelectedRates({
   const storeAddress = getStoreAddress();
   const client = getEasyPostClient();
 
-  const [forwardShipment, returnShipment] = await Promise.all([
-    createShipment({
-      fromAddress: normalizedCustomerAddress,
-      toAddress: storeAddress,
-      parcel: normalizedParcel,
-      reference: `${referencePrefix}-forward-purchase`,
+  const shipment = await createShipment(
+    getShipmentConfigForDirection({
+      normalizedCustomerAddress,
+      normalizedParcel,
+      storeAddress,
+      direction,
+      referencePrefix,
     }),
-    createShipment({
-      fromAddress: storeAddress,
-      toAddress: normalizedCustomerAddress,
-      parcel: normalizedParcel,
-      isReturn: true,
-      reference: `${referencePrefix}-return-purchase`,
-    }),
-  ]);
+  );
 
-  const currentForwardRate = findMatchingRate(forwardShipment, selectedForwardRate);
-  const currentReturnRate = findMatchingRate(returnShipment, selectedReturnRate);
-  const changedRates = [];
+  const currentRate = findMatchingRate(shipment, selectedRate);
 
-  if (!currentForwardRate || !amountsMatch(currentForwardRate.rate, selectedForwardRate.amount)) {
-    changedRates.push({
-      direction: "customer_to_store",
-      quotedRate: selectedForwardRate,
-      currentRate: currentForwardRate ? mapRate(currentForwardRate) : null,
-    });
-  }
-
-  if (!currentReturnRate || !amountsMatch(currentReturnRate.rate, selectedReturnRate.amount)) {
-    changedRates.push({
-      direction: "store_to_customer",
-      quotedRate: selectedReturnRate,
-      currentRate: currentReturnRate ? mapRate(currentReturnRate) : null,
-    });
-  }
-
-  if (changedRates.length) {
+  if (!currentRate || !amountsMatch(currentRate.rate, selectedRate.amount)) {
     return {
       status: "rate_changed",
-      changedRates,
+      changedRates: [
+        {
+          direction,
+          quotedRate: selectedRate,
+          currentRate: currentRate ? mapRate(currentRate) : null,
+        },
+      ],
       storeAddress,
     };
   }
 
-  const [purchasedForwardShipment, purchasedReturnShipment] = await Promise.all([
-    client.Shipment.buy(forwardShipment.id, currentForwardRate.id),
-    client.Shipment.buy(returnShipment.id, currentReturnRate.id),
-  ]);
+  const purchasedShipment = await client.Shipment.buy(shipment.id, currentRate.id);
 
   return {
     status: "purchased",
-    labels: {
-      customerToStore: {
-        shipmentId: purchasedForwardShipment.id,
-        trackingCode: purchasedForwardShipment.tracking_code,
-        selectedRate: mapRate(purchasedForwardShipment.selected_rate || currentForwardRate),
-        postageLabel: purchasedForwardShipment.postage_label,
-      },
-      storeToCustomer: {
-        shipmentId: purchasedReturnShipment.id,
-        trackingCode: purchasedReturnShipment.tracking_code,
-        selectedRate: mapRate(purchasedReturnShipment.selected_rate || currentReturnRate),
-        postageLabel: purchasedReturnShipment.postage_label,
-      },
+    label: {
+      shipmentId: purchasedShipment.id,
+      trackingCode: purchasedShipment.tracking_code,
+      selectedRate: mapRate(purchasedShipment.selected_rate || currentRate),
+      postageLabel: purchasedShipment.postage_label,
     },
     storeAddress,
   };
