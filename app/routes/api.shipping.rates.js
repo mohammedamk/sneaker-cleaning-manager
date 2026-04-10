@@ -1,6 +1,10 @@
 import process from "node:process";
 import { authenticate } from "../shopify.server";
 import { getShippingQuotes } from "../utils/easyPostShipping";
+import {
+  applyReturnShippingBufferToQuotes,
+  getReturnShippingBufferPercentage,
+} from "../utils/returnShippingBuffer";
 
 function toAmount(value, fallback) {
   const parsed = Number(value);
@@ -72,8 +76,9 @@ export const action = async ({ request }) => {
   try {
     await authenticate.public.appProxy(request);
     const body = await request.json();
+    const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
 
-    const quotes = process.env.EASYPOST_API_KEY
+    const rawQuotes = process.env.EASYPOST_API_KEY
       ? await getShippingQuotes({
         customerAddress: body.customerAddress,
         parcel: body.parcel,
@@ -84,10 +89,13 @@ export const action = async ({ request }) => {
         referencePrefix: body.referencePrefix || "booking",
       });
 
+    const quotes = applyReturnShippingBufferToQuotes(rawQuotes, returnShippingBufferPercentage);
+
     return new Response(
       JSON.stringify({
         success: true,
         quotes,
+        returnShippingBufferPercentage,
       }),
       {
         headers: { "Content-Type": "application/json" },

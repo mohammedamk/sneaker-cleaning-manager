@@ -619,7 +619,7 @@ export default function BookingsIndex() {
                                             {item.handoffMethod === "shipping" && getBookingShippingSelection(item)?.selectedReturnRate && (
                                                 <s-button
                                                     size="slim"
-                                                    variant="secondary"
+                                                    variant="primary"
                                                     onClick={() => handleBuyShipping(item._id)}
                                                     disabled={!canBuyStoreToCustomerShipping(item)}
                                                     loading={

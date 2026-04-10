@@ -221,6 +221,18 @@ function amountsMatch(leftAmount, rightAmount) {
   return Number(leftAmount).toFixed(2) === Number(rightAmount).toFixed(2);
 }
 
+function selectedRateSupportsCurrentAmount(selectedRate, currentRateAmount, direction) {
+  if (direction === "store_to_customer") {
+    const maxPurchaseAmount = Number(selectedRate?.maxPurchaseAmount);
+
+    if (Number.isFinite(maxPurchaseAmount) && maxPurchaseAmount > 0) {
+      return Number(currentRateAmount) <= maxPurchaseAmount;
+    }
+  }
+
+  return amountsMatch(currentRateAmount, selectedRate?.amount);
+}
+
 export async function verifyAndBuySelectedRate({
   customerAddress,
   parcel,
@@ -249,7 +261,7 @@ export async function verifyAndBuySelectedRate({
 
   const currentRate = findMatchingRate(shipment, selectedRate);
 
-  if (!currentRate || !amountsMatch(currentRate.rate, selectedRate.amount)) {
+  if (!currentRate || !selectedRateSupportsCurrentAmount(selectedRate, currentRate.rate, direction)) {
     return {
       status: "rate_changed",
       changedRates: [
