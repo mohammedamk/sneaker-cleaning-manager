@@ -189,30 +189,33 @@ function HandoffMethodStep({
 
     try {
       // converting all sneaker image files to base64
-      const sneakersWithBase64Images = await Promise.all(
+      const sneakersWithImageRefs = await Promise.all(
         bookingData.sneakers.map(async (sneaker) => {
-          const base64Images = await Promise.all(
-            sneaker.images.map((img) => {
+          const images = await Promise.all(
+            (sneaker.images || []).map((img) => {
+              if (typeof img === 'string') return Promise.resolve(img);
+              if (img?.id) return Promise.resolve(img.id);
+              if (!img?.file) return Promise.resolve('');
+
               return new Promise((resolve, reject) => {
-                // if it's already a string/URL somehow, ignoring
-                if (typeof img === 'string') return resolve(img);
-                if (img.id && !img.file) return resolve(img.id);
-                if (!img.file) return resolve(img.url || img.preview || '');
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
                 reader.onerror = reject;
                 reader.readAsDataURL(img.file);
               });
-            })
+            }),
           );
-          // returning the sneaker clone with base64 images string array
-          return { ...sneaker, images: base64Images };
-        })
+
+          return {
+            ...sneaker,
+            images: images.filter(Boolean),
+          };
+        }),
       );
 
       const payload = {
         ...bookingData,
-        sneakers: sneakersWithBase64Images,
+        sneakers: sneakersWithImageRefs,
         handoffMethod,
         shippingSelection:
           requiresCustomerAddress

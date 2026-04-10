@@ -1,4 +1,3 @@
-import { Buffer } from "node:buffer";
 import { createHash, randomBytes } from "node:crypto";
 import process from "node:process";
 import { authenticate } from "../shopify.server";
@@ -8,6 +7,7 @@ import TempBookingModel from "../MongoDB/models/TempBooking";
 import mongoose from "mongoose";
 import sendEmail from "../utils/sendEmail";
 import { verifyAndBuySelectedRates } from "../utils/easyPostShipping";
+import { uploadImageToShopify } from "../utils/shopifyImages.server";
 
 const TEST_STORE_ADDRESS = {
   name: "Sneaker Cleaning Manager Test Store",
@@ -20,106 +20,6 @@ const TEST_STORE_ADDRESS = {
   country: "US",
   phone: "2125550100",
 };
-
-const STAGED_UPLOADS_URL_QUERY = `
-mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
-  stagedUploadsCreate(input: $input) {
-    stagedTargets {
-      resourceUrl
-      url
-      parameters {
-        name
-        value
-      }
-    }
-    userErrors {
-      field
-      message
-    }
-  }
-}
-`;
-
-const FILE_CREATE_MUTATION = `
-mutation fileCreate($files: [FileCreateInput!]!) {
-  fileCreate(files: $files) {
-    files {
-      id
-      fileStatus
-    }
-    userErrors {
-      field
-      message
-    }
-  }
-}
-`;
-
-async function uploadImageToShopify(admin, base64Data, mimeType = "image/jpeg", filename = "sneaker.jpg") {
-  try {
-    const stagedRes = await admin.graphql(STAGED_UPLOADS_URL_QUERY, {
-      variables: {
-        input: [
-          {
-            filename,
-            mimeType,
-            resource: "IMAGE",
-            httpMethod: "POST",
-          },
-        ],
-      },
-    });
-
-    const stagedData = await stagedRes.json();
-    if (stagedData?.data?.stagedUploadsCreate?.userErrors?.length) {
-      console.error("Staged upload error:", stagedData.data.stagedUploadsCreate.userErrors);
-      return null;
-    }
-
-    const target = stagedData.data.stagedUploadsCreate.stagedTargets[0];
-    const formData = new FormData();
-    target.parameters.forEach(({ name, value }) => {
-      formData.append(name, value);
-    });
-
-    if (typeof base64Data !== "string") return null;
-
-    const base64Content = base64Data.includes("base64,")
-      ? base64Data.split("base64,")[1]
-      : base64Data;
-
-    const buffer = Buffer.from(base64Content, "base64");
-    const blob = new Blob([buffer], { type: mimeType });
-    formData.append("file", blob, filename);
-
-    const uploadRes = await fetch(target.url, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!uploadRes.ok) return null;
-
-    const fileRes = await admin.graphql(FILE_CREATE_MUTATION, {
-      variables: {
-        files: [
-          {
-            alt: "Sneaker image",
-            contentType: "IMAGE",
-            originalSource: target.resourceUrl,
-          },
-        ],
-      },
-    });
-
-    const fileData = await fileRes.json();
-    const createdFile = fileData?.data?.fileCreate?.files?.[0];
-
-    return createdFile?.id ? { id: createdFile.id } : null;
-  } catch (err) {
-    console.error("Upload exception:", err);
-    return null;
-  }
-}
 
 const ADMIN_NOTIFICATION_EMAIL = "vowelweb113@gmail.com";
 const ORDER_UPDATE_MUTATION = `
@@ -476,12 +376,10 @@ export const action = async ({ request }) => {
             }
 
             // deferred upload happens here
-            const result = await uploadImageToShopify(
-              admin,
-              b64OrGid,
-              "image/jpeg",
-              `sneaker-${Date.now()}-${j}.jpg`
-            );
+            const result = await uploadImageToShopify(admin, b64OrGid, {
+              filename: `sneaker-${Date.now()}-${j}.jpg`,
+              alt: sneakerInput?.nickname || "Sneaker image",
+            });
 
             if (result?.id) {
               uploadedImageIds.push(result.id);
@@ -496,6 +394,11 @@ export const action = async ({ request }) => {
       }
     }
 
+    const normalizedBookingPayload = {
+      ...bookingData,
+      sneakers: processedSneakers,
+    };
+
     bookingDoc = new BookingModel({
       customerID: bookingData.customerID,
       name: customerName,
@@ -504,7 +407,7 @@ export const action = async ({ request }) => {
       guestInfo: bookingData.customerID ? null : bookingData.guestInfo,
       handoffMethod: bookingData.handoffMethod,
       sneakers: processedSneakers,
-      fullPayload: bookingData,
+      fullPayload: normalizedBookingPayload,
       shopifyOrderID: shopifyOrderId,
       submittedAt: bookingData.submittedAt ? new Date(bookingData.submittedAt) : new Date(),
       status: "Pending"
