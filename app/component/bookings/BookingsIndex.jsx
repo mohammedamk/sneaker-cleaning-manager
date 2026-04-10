@@ -101,6 +101,31 @@ const formatMoney = (amount, currencyCode = "USD") => {
     }).format(Number.isFinite(numericAmount) ? numericAmount : 0);
 };
 
+const getBookingShippingSelection = (booking) => (
+    booking?.shipping || booking?.fullPayload?.shippingSelection || null
+);
+
+const getAddressLines = (address = {}) => {
+    const streetLine = [address.street1, address.street2].filter(Boolean).join(", ");
+    const cityLine = [address.city, address.state, address.zip].filter(Boolean).join(", ");
+    const countryLine = address.country || "";
+
+    return [address.name, address.company, streetLine, cityLine, countryLine, address.phone, address.email]
+        .filter((value) => String(value || "").trim());
+};
+
+const formatRateSummary = (rate) => {
+    if (!rate) return "Not selected";
+
+    const deliveryText = rate.deliveryDays ? `${rate.deliveryDays} day${rate.deliveryDays === 1 ? "" : "s"}` : null;
+    const amountText = formatMoney(rate.amount, rate.currency || "USD");
+
+    return [
+        [rate.carrier, rate.service].filter(Boolean).join(" "),
+        amountText
+    ].filter(Boolean).join(" • ");
+};
+
 export default function BookingsIndex() {
     const actionData = useActionData();
     const navigation = useNavigation();
@@ -478,6 +503,12 @@ export default function BookingsIndex() {
     const activeApprovalStatus = navigation.formData?.get("approvalStatus");
     const isSubmitting = navigation.state === "submitting";
     const approvalStatus = getCleanedImagesApprovalStatus(viewingBooking);
+    const bookingShippingSelection = getBookingShippingSelection(viewingBooking);
+    const customerShippingAddress = bookingShippingSelection?.customerAddress;
+    const pickupReturnAddress = bookingShippingSelection?.customerAddress;
+    const packageDetails = bookingShippingSelection?.parcel;
+    const selectedForwardRate = bookingShippingSelection?.selectedForwardRate;
+    const selectedReturnRate = bookingShippingSelection?.selectedReturnRate;
 
     return (
         <s-page heading="Sneaker Cleaning Bookings" subtitle="Manage and track customer cleaning orders">
@@ -601,36 +632,36 @@ export default function BookingsIndex() {
                     <div className="booking-view-modal">
                         <div className="booking-view-grid">
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">BOOKING ID</s-text>
+                                <s-text color="subdued" tone="auto">BOOKING ID</s-text>
                                 <s-text type="strong">#{getObjectIdString(viewingBooking._id)}</s-text>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">Shopify Order ID</s-text>
+                                <s-text color="subdued" tone="auto">Shopify Order ID</s-text>
                                 <s-text type="strong">#{getObjectIdString(viewingBooking.shopifyOrderID.split("/").pop())}</s-text>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">STATUS</s-text>
+                                <s-text color="subdued" tone="auto">STATUS</s-text>
                                 <s-badge tone={getStatusTone(viewingBooking.status)}>{viewingBooking.status}</s-badge>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">CUSTOMER</s-text>
+                                <s-text color="subdued" tone="auto">CUSTOMER</s-text>
                                 <s-text type="strong">{viewingBooking.name || viewingBooking.guestInfo?.name || "Guest User"}</s-text>
                                 <s-text variant="bodySm" tone="subdued">{viewingBooking.email || viewingBooking.guestInfo?.email || "No email"}</s-text>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">HANDOFF</s-text>
+                                <s-text color="subdued" tone="auto">HANDOFF</s-text>
                                 <s-text>{viewingBooking.handoffMethod || "N/A"}</s-text>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">SUBMITTED</s-text>
+                                <s-text color="subdued" tone="auto">SUBMITTED</s-text>
                                 <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">LAST CLEANING</s-text>
+                                <s-text color="subdued" tone="auto">LAST CLEANING</s-text>
                                 <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">AFTER CLEANING APPROVAL</s-text>
+                                <s-text color="subdued" tone="auto">AFTER CLEANING APPROVAL</s-text>
                                 <s-badge tone={
                                     approvalStatus === "approved"
                                         ? "success"
@@ -650,7 +681,7 @@ export default function BookingsIndex() {
                                 </s-badge>
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">REFUND</s-text>
+                                <s-text color="subdued" tone="auto">REFUND</s-text>
                                 {viewingBooking.refund?.status === "completed" ? (
                                     <>
                                         <s-badge tone="success">Refunded</s-badge>
@@ -666,10 +697,55 @@ export default function BookingsIndex() {
                                 )}
                             </div>
                             <div className="booking-view-card">
-                                <s-text variant="bodySm" tone="subdued">PHONE</s-text>
+                                <s-text color="subdued" tone="auto">PHONE</s-text>
                                 <s-text>{viewingBooking.guestInfo?.phone || viewingBooking.phone || "N/A"}</s-text>
                             </div>
                         </div>
+
+                        {(viewingBooking.handoffMethod === "shipping" || viewingBooking.handoffMethod === "pickup_delivery") && (
+                            <div className="booking-view-grid">
+                                {viewingBooking.handoffMethod === "shipping" && customerShippingAddress && (
+                                    <div className="booking-view-card">
+                                        <s-text color="subdued" tone="auto">CUSTOMER SHIPPING ADDRESS</s-text>
+                                        {getAddressLines(customerShippingAddress).map((line, index) => (
+                                            <s-text key={`shipping-address-${index}`}>{line}</s-text>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {viewingBooking.handoffMethod === "pickup_delivery" && pickupReturnAddress && (
+                                    <div className="booking-view-card">
+                                        <s-text color="subdued" tone="auto">PICKUP & RETURN ADDRESS</s-text>
+                                        {getAddressLines(pickupReturnAddress).map((line, index) => (
+                                            <s-text key={`pickup-address-${index}`}>{line}</s-text>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {viewingBooking.handoffMethod === "shipping" && packageDetails && (
+                                    <div className="booking-view-card">
+                                        <s-text color="subdued" tone="auto">PACKAGE DETAILS</s-text>
+                                        <s-text>Length: {packageDetails.length || "N/A"}</s-text>
+                                        <s-text>Width: {packageDetails.width || "N/A"}</s-text>
+                                        <s-text>Height: {packageDetails.height || "N/A"}</s-text>
+                                        <s-text>Weight: {packageDetails.weight || "N/A"}</s-text>
+                                    </div>
+                                )}
+
+                                {viewingBooking.handoffMethod === "shipping" && (
+                                    <>
+                                        <div className="booking-view-card">
+                                            <s-text color="subdued" tone="auto">CUSTOMER TO STORE RATE</s-text>
+                                            <s-text>{formatRateSummary(selectedForwardRate)}</s-text>
+                                        </div>
+                                        <div className="booking-view-card">
+                                            <s-text color="subdued" tone="auto">STORE TO CUSTOMER RATE</s-text>
+                                            <s-text>{formatRateSummary(selectedReturnRate)}</s-text>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
 
                         <div className="booking-view-qr-section">
                             <div className="booking-view-qr-card">
