@@ -30,6 +30,7 @@ export const action = async ({ request }) => {
     const accessToken = body.accessToken?.trim();
     const actionType = body.actionType?.trim();
     const approvalStatus = body.approvalStatus?.trim();
+    const approvalNote = body.approvalNote?.trim();
 
     if (!bookingID) {
       return new Response(
@@ -106,7 +107,15 @@ export const action = async ({ request }) => {
         );
       }
 
+      if (approvalStatus === "rejected" && !approvalNote) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Please add a note before rejecting the cleaned images." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
       booking.cleanedImagesApprovalStatus = approvalStatus;
+      booking.cleanedImagesApprovalNote = approvalStatus === "rejected" ? approvalNote : null;
       await booking.save();
     }
 

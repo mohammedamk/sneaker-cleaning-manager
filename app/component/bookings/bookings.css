@@ -180,6 +180,41 @@
     margin-top: 10px;
 }
 
+.booking-view-approval-block {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.booking-view-approval-note {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 480px;
+}
+
+.booking-view-approval-note__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.booking-view-approval-note__input {
+    width: 100%;
+    min-height: 88px;
+    padding: 10px 12px;
+    border: 1px solid #c7c9cc;
+    border-radius: 10px;
+    background: #fff;
+    color: #111827;
+    font: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
 .booking-view-sneakers {
     display: flex;
     flex-direction: column;

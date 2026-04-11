@@ -349,6 +349,7 @@ export const action = async ({ request }) => {
 
       booking.sneakers = sneakers;
       booking.cleanedImagesApprovalStatus = null;
+      booking.cleanedImagesApprovalNote = null;
       await booking.save();
       return {
         success: true,
@@ -418,6 +419,7 @@ export const action = async ({ request }) => {
       booking.sneakers = sneakers;
       if (!hasCleanedImages(booking)) {
         booking.cleanedImagesApprovalStatus = null;
+        booking.cleanedImagesApprovalNote = null;
       }
       await booking.save();
 
@@ -465,6 +467,7 @@ export const action = async ({ request }) => {
     if (actionType === "UPDATE_CLEANING_APPROVAL") {
       const id = formData.get("id");
       const approvalStatus = formData.get("approvalStatus");
+      const approvalNote = formData.get("approvalNote")?.toString().trim();
 
       if (!id || !["approved", "rejected"].includes(approvalStatus)) {
         return { success: false, actionType, message: "A valid booking and approval status are required." };
@@ -480,7 +483,12 @@ export const action = async ({ request }) => {
         return { success: false, actionType, message: "No cleaned images are available for approval yet." };
       }
 
+      if (approvalStatus === "rejected" && !approvalNote) {
+        return { success: false, actionType, message: "Add a note before marking the cleaned images as rejected." };
+      }
+
       booking.cleanedImagesApprovalStatus = approvalStatus;
+      booking.cleanedImagesApprovalNote = approvalStatus === "rejected" ? approvalNote : null;
       await booking.save();
 
       return {

@@ -234,6 +234,10 @@
   gap: 16px;
 }
 
+.detail-item--full {
+  grid-column: 1 / -1;
+}
+
 .detail-item {
   display: flex;
   flex-direction: column;
@@ -251,6 +255,10 @@
   color: #333;
 }
 
+.detail-item__value--note {
+  white-space: pre-wrap;
+}
+
 .booking-details__sneaker-list {
   display: flex;
   flex-direction: column;
@@ -262,6 +270,40 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+}
+
+.booking-details__note-box {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid #f1d3d6;
+  border-radius: 10px;
+  background: #fff8f8;
+}
+
+.booking-details__note-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7f1d1d;
+}
+
+.booking-details__note-input {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.booking-details__note-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 
 .sneaker-item {

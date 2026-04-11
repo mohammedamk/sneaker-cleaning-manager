@@ -22,6 +22,8 @@ function BookingDetails({
     const [previewImage, setPreviewImage] = useState(null);
     const [approvalLoading, setApprovalLoading] = useState(false);
     const [approvalAction, setApprovalAction] = useState('');
+    const [showRejectionNoteForm, setShowRejectionNoteForm] = useState(false);
+    const [rejectionNote, setRejectionNote] = useState('');
     const hasAnyCleanedImages = (currentBooking.sneakers || []).some(
         (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0
     );
@@ -29,10 +31,19 @@ function BookingDetails({
 
     useEffect(() => {
         setCurrentBooking(booking);
+        setShowRejectionNoteForm(false);
+        setRejectionNote('');
     }, [booking]);
 
-    const handleApprovalUpdate = async (nextStatus) => {
+    const handleApprovalUpdate = async (nextStatus, noteOverride = '') => {
         if (!hasAnyCleanedImages || approvalLoading) return;
+
+        const trimmedNote = noteOverride.trim();
+
+        if (nextStatus === 'rejected' && !trimmedNote) {
+            alert('Please add a note before rejecting.');
+            return;
+        }
 
         setApprovalLoading(true);
         setApprovalAction(nextStatus);
@@ -49,6 +60,7 @@ function BookingDetails({
                     actionType: 'UPDATE_CLEANING_APPROVAL',
                     bookingID,
                     approvalStatus: nextStatus,
+                    ...(nextStatus === 'rejected' ? { approvalNote: trimmedNote } : {}),
                     ...(accessToken ? { accessToken } : { email: (currentBooking.email || currentBooking.guestInfo?.email || '').trim() }),
                 }),
             });
@@ -60,6 +72,8 @@ function BookingDetails({
             }
 
             setCurrentBooking(data.booking);
+            setShowRejectionNoteForm(false);
+            setRejectionNote('');
             onBookingUpdate?.(data.booking);
         } catch (error) {
             console.error('Failed to update cleaned image approval:', error);
@@ -151,6 +165,14 @@ function BookingDetails({
                                             : 'Not available'}
                             </span>
                         </div>
+                        {approvalStatus === 'rejected' && currentBooking.cleanedImagesApprovalNote && (
+                            <div className="detail-item detail-item--full">
+                                <span className="detail-item__label">Rejection Note</span>
+                                <span className="detail-item__value detail-item__value--note">
+                                    {currentBooking.cleanedImagesApprovalNote}
+                                </span>
+                            </div>
+                        )}
                         <div className="detail-item">
                             <span className="detail-item__label">Last Cleaning</span>
                             <span className="detail-item__value">
@@ -187,7 +209,11 @@ function BookingDetails({
                             <button
                                 type="button"
                                 className="btn btn--primary btn--small"
-                                onClick={() => handleApprovalUpdate('approved')}
+                                onClick={() => {
+                                    setShowRejectionNoteForm(false);
+                                    setRejectionNote('');
+                                    handleApprovalUpdate('approved');
+                                }}
                                 disabled={approvalLoading || currentBooking.cleanedImagesApprovalStatus === 'approved'}
                             >
                                 {approvalLoading && approvalAction === 'approved' ? 'Saving...' : 'Approve After Cleaning'}
@@ -195,11 +221,47 @@ function BookingDetails({
                             <button
                                 type="button"
                                 className="btn btn--secondary btn--small"
-                                onClick={() => handleApprovalUpdate('rejected')}
+                                onClick={() => setShowRejectionNoteForm(true)}
                                 disabled={approvalLoading || currentBooking.cleanedImagesApprovalStatus === 'rejected'}
                             >
                                 {approvalLoading && approvalAction === 'rejected' ? 'Saving...' : 'Reject After Cleaning'}
                             </button>
+                        </div>
+                    )}
+                    {hasAnyCleanedImages && showRejectionNoteForm && currentBooking.cleanedImagesApprovalStatus !== 'rejected' && (
+                        <div className="booking-details__note-box">
+                            <label className="booking-details__note-label" htmlFor="rejection-note">
+                                Add a note for rejection
+                            </label>
+                            <textarea
+                                id="rejection-note"
+                                className="booking-details__note-input"
+                                rows={4}
+                                value={rejectionNote}
+                                onChange={(event) => setRejectionNote(event.target.value)}
+                                placeholder="Tell us what still needs attention before approval."
+                            />
+                            <div className="booking-details__note-actions">
+                                <button
+                                    type="button"
+                                    className="btn btn--secondary btn--small"
+                                    onClick={() => {
+                                        setShowRejectionNoteForm(false);
+                                        setRejectionNote('');
+                                    }}
+                                    disabled={approvalLoading}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn--secondary btn--small"
+                                    onClick={() => handleApprovalUpdate('rejected', rejectionNote)}
+                                    disabled={approvalLoading}
+                                >
+                                    {approvalLoading && approvalAction === 'rejected' ? 'Saving...' : 'Submit Rejection'}
+                                </button>
+                            </div>
                         </div>
                     )}
                     <div className="booking-details__sneaker-list">

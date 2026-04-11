@@ -156,6 +156,7 @@ export default function BookingsIndex() {
     const [previewImage, setPreviewImage] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
+    const [approvalNoteDraft, setApprovalNoteDraft] = useState("");
     const [refundLoading, setRefundLoading] = useState(false);
     const [buyShippingBookingId, setBuyShippingBookingId] = useState("");
     const [confirmModal, setConfirmModal] = useState({
@@ -288,6 +289,7 @@ export default function BookingsIndex() {
 
     const handleView = (item) => {
         setViewingBooking(item);
+        setApprovalNoteDraft(item?.cleanedImagesApprovalNote || "");
         viewModalRef.current?.showOverlay?.();
     };
 
@@ -353,10 +355,20 @@ export default function BookingsIndex() {
     };
 
     const handleApprovalUpdate = (bookingId, approvalStatus) => {
+        const trimmedApprovalNote = approvalNoteDraft.trim();
+
+        if (approvalStatus === "rejected" && !trimmedApprovalNote) {
+            shopify.toast.show("Add a rejection note before marking the cleaned images as rejected.", { isError: true });
+            return;
+        }
+
         const formData = new FormData();
         formData.append("actionType", "UPDATE_CLEANING_APPROVAL");
         formData.append("id", getObjectIdString(bookingId));
         formData.append("approvalStatus", approvalStatus);
+        if (approvalStatus === "rejected") {
+            formData.append("approvalNote", trimmedApprovalNote);
+        }
         submit(formData, { method: "post" });
     };
 
@@ -733,6 +745,12 @@ export default function BookingsIndex() {
                                                 : "Not available"}
                                 </s-badge>
                             </div>
+                            {approvalStatus === "rejected" && viewingBooking.cleanedImagesApprovalNote && (
+                                <div className="booking-view-card">
+                                    <s-text color="subdued" tone="auto">REJECTION NOTE</s-text>
+                                    <s-text>{viewingBooking.cleanedImagesApprovalNote}</s-text>
+                                </div>
+                            )}
                             <div className="booking-view-card">
                                 <s-text color="subdued" tone="auto">REFUND</s-text>
                                 {viewingBooking.refund?.status === "completed" ? (
@@ -840,7 +858,8 @@ export default function BookingsIndex() {
                                     {hasPendingCleanedImages(viewingBooking) ? " Newly uploaded images are still processing and will appear automatically." : ""}
                                 </s-text>
                                 {hasCleanedImages(viewingBooking) && (
-                                    <div className="booking-view-approval-actions">
+                                    <div className="booking-view-approval-block">
+                                        <div className="booking-view-approval-actions">
                                         <s-badge tone={
                                             approvalStatus === "approved"
                                                 ? "success"
@@ -857,7 +876,10 @@ export default function BookingsIndex() {
                                         <s-button
                                             size="slim"
                                             variant="secondary"
-                                            onClick={() => handleApprovalUpdate(viewingBooking._id, "approved")}
+                                            onClick={() => {
+                                                setApprovalNoteDraft("");
+                                                handleApprovalUpdate(viewingBooking._id, "approved");
+                                            }}
                                             loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "approved"}
                                         >
                                             Mark approved
@@ -871,6 +893,20 @@ export default function BookingsIndex() {
                                         >
                                             Mark rejected
                                         </s-button>
+                                        </div>
+                                        <div className="booking-view-approval-note">
+                                            <label className="booking-view-approval-note__label" htmlFor="approval-note">
+                                                Rejection note
+                                            </label>
+                                            <textarea
+                                                id="approval-note"
+                                                className="booking-view-approval-note__input"
+                                                rows={3}
+                                                value={approvalNoteDraft}
+                                                onChange={(event) => setApprovalNoteDraft(event.target.value)}
+                                                placeholder="Add what the customer wants corrected before approval."
+                                            />
+                                        </div>
                                     </div>
                                 )}
                             </div>

@@ -45,6 +45,11 @@ const bookingSchema = mongoose.Schema({
         enum: ['approved', 'rejected'],
         default: null
     },
+    cleanedImagesApprovalNote: {
+        type: String,
+        default: null,
+        trim: true
+    },
     lastCleaning: { type: Date, default: null },
     submittedAt: { type: Date, default: Date.now }
 });
