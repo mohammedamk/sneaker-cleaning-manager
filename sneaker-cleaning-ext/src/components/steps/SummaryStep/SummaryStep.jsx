@@ -11,9 +11,18 @@ function getAddonPrice(addonId) {
   return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
 }
 
+function getSneakerImageSrc(image) {
+  if (!image) return '';
+  if (typeof image === 'string') return image;
+  return image.preview || image.url || '';
+}
+
 function SneakerSummaryRow({ sneaker, service }) {
   const tier = SERVICE_TIERS.find((t) => t.id === service?.tier);
   const selectedAddons = ADD_ONS.filter((a) => (service?.addOns || []).includes(a.id));
+  const sneakerImages = (sneaker.images || [])
+    .map(getSneakerImageSrc)
+    .filter(Boolean);
   const subtotal =
     getTierPrice(service?.tier) +
     (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id), 0);
@@ -21,6 +30,18 @@ function SneakerSummaryRow({ sneaker, service }) {
   return (
     <div className="summary-row">
       <div className="summary-row__sneaker">
+        {sneakerImages.length > 0 && (
+          <div className="summary-row__images">
+            {sneakerImages.map((imageSrc, index) => (
+              <img
+                key={`${sneaker.id || sneaker.nickname || 'sneaker'}-${index}`}
+                src={imageSrc}
+                alt={`${sneaker.nickname || 'Sneaker'} ${index + 1}`}
+                className="summary-row__image"
+              />
+            ))}
+          </div>
+        )}
         <strong>{sneaker.nickname}</strong>
         {sneaker.brand && (
           <span className="summary-row__details">

@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://joan-discuss-orange-acquire.trycloudflare.com"
+application_url = "https://job-vision-face-rated.trycloudflare.com"
 embedded = true
 
 [build]
@@ -29,10 +29,10 @@ scopes = "write_products,write_files,read_orders,write_draft_orders,write_orders
 
 [auth]
 redirect_urls = [
-  "https://joan-discuss-orange-acquire.trycloudflare.com/api/auth"
+  "https://job-vision-face-rated.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://joan-discuss-orange-acquire.trycloudflare.com"
+url = "https://job-vision-face-rated.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"
