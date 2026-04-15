@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import './BookingsManagement.css';
+import AppIcon from '../shared/AppIcon/AppIcon.jsx';
 
 function formatDateTime(value, fallback = 'Not completed yet') {
     if (!value) return fallback;
@@ -16,7 +17,7 @@ function BookingDetails({
     onBack,
     onBookingUpdate,
     title = 'Booking Details',
-    backLabel = '← Back to List'
+    backLabel = 'Back to List'
 }) {
     const [currentBooking, setCurrentBooking] = useState(booking);
     const [previewImage, setPreviewImage] = useState(null);
@@ -114,7 +115,12 @@ function BookingDetails({
             <div className="bookings-management booking-details">
                 <div className="bookings-management__header">
                     <h2 className="bookings-management__title">{title}</h2>
-                    <button className="btn btn--secondary" onClick={onBack}>{backLabel}</button>
+                    <button className="btn btn--secondary" onClick={onBack}>
+                        <span className="btn__content">
+                            <AppIcon name="arrowLeft" />
+                            <span>{backLabel}</span>
+                        </span>
+                    </button>
                 </div>
 
                 <div className="booking-details__section">

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import './LandingStep.css';
+import AppIcon from '../../shared/AppIcon/AppIcon.jsx';
 
 function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings, onViewGuestBooking }) {
   return (
@@ -10,13 +11,19 @@ function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings, onVi
             className="btn btn--secondary btn--shoe-rack-top"
             onClick={onViewShoeRack}
           >
-            👟 My Shoe Rack
+            <span className="btn__content">
+              <AppIcon name="shoeRack" />
+              <span>My Shoe Rack</span>
+            </span>
           </button>
           <button
             className="btn btn--secondary btn--shoe-rack-top"
             onClick={onViewBookings}
           >
-            📅 My Bookings
+            <span className="btn__content">
+              <AppIcon name="bookings" />
+              <span>My Bookings</span>
+            </span>
           </button>
         </div>
       )}

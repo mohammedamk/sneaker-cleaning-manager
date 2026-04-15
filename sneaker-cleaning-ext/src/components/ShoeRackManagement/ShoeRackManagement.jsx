@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './ShoeRackManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import ShoeRackSneakerStep from '../steps/ShoeRackSneakerStep/ShoeRackSneakerStep.jsx';
+import AppIcon from '../shared/AppIcon/AppIcon.jsx';
 
 const IMAGE_POLL_INTERVAL_MS = 3000;
 
@@ -162,7 +163,12 @@ function ShoeRackManagement({ customerID, onBack }) {
             <div className="shoe-rack-management__header">
                 <h2>My Shoe Rack</h2>
                 <div className="shoe-rack-management__actions">
-                    <button className="btn btn--secondary" onClick={onBack}>← Back to Booking</button>
+                    <button className="btn btn--secondary" onClick={onBack}>
+                        <span className="btn__content">
+                            <AppIcon name="arrowLeft" />
+                            <span>Back to Booking</span>
+                        </span>
+                    </button>
                     <button className="btn btn--primary" onClick={handleAddClick}>+ Add New Sneaker</button>
                 </div>
             </div>

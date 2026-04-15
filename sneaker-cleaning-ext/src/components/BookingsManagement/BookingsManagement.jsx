@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './BookingsManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import BookingDetails from './BookingDetails.jsx';
+import AppIcon from '../shared/AppIcon/AppIcon.jsx';
 
 function BookingsManagement({ customerID, onBack }) {
     const [bookings, setBookings] = useState([]);
@@ -71,7 +72,12 @@ function BookingsManagement({ customerID, onBack }) {
         <div className="bookings-management">
             <div className="bookings-management__header">
                 <h2 className="bookings-management__title">My Bookings</h2>
-                <button className="btn btn--secondary" onClick={onBack}>← Back</button>
+                <button className="btn btn--secondary" onClick={onBack}>
+                    <span className="btn__content">
+                        <AppIcon name="arrowLeft" />
+                        <span>Back</span>
+                    </span>
+                </button>
             </div>
 
             {isLoading && !bookings.length ? (

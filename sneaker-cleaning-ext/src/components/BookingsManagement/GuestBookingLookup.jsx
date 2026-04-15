@@ -3,6 +3,7 @@ import './BookingsManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import FormField from '../shared/FormField/FormField.jsx';
 import BookingDetails from './BookingDetails.jsx';
+import AppIcon from '../shared/AppIcon/AppIcon.jsx';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -117,7 +118,7 @@ function GuestBookingLookup({ onBack }) {
         onBookingUpdate={setBooking}
         onBack={() => setBooking(null)}
         title="Your Booking"
-        backLabel="← Back to Lookup"
+        backLabel="Back to Lookup"
       />
     );
   }
@@ -127,7 +128,12 @@ function GuestBookingLookup({ onBack }) {
       <div className="bookings-management booking-lookup">
         <div className="bookings-management__header">
           <h2 className="bookings-management__title">Loading Your Booking</h2>
-          <button className="btn btn--secondary" onClick={onBack}>← Back</button>
+          <button className="btn btn--secondary" onClick={onBack}>
+            <span className="btn__content">
+              <AppIcon name="arrowLeft" />
+              <span>Back</span>
+            </span>
+          </button>
         </div>
 
         <p className="booking-lookup__description">
@@ -141,7 +147,12 @@ function GuestBookingLookup({ onBack }) {
     <div className="bookings-management booking-lookup">
       <div className="bookings-management__header">
         <h2 className="bookings-management__title">View Your Booking</h2>
-        <button className="btn btn--secondary" onClick={onBack}>← Back</button>
+        <button className="btn btn--secondary" onClick={onBack}>
+          <span className="btn__content">
+            <AppIcon name="arrowLeft" />
+            <span>Back</span>
+          </span>
+        </button>
       </div>
 
       <p className="booking-lookup__description">
