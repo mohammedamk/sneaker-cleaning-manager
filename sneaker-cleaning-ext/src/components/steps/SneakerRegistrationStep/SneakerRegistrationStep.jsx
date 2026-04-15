@@ -23,7 +23,9 @@ function SneakerRegistrationStep({ editingSneaker, onSave, onPrev }) {
       return {
         ...editingSneaker,
         images: (editingSneaker.images || []).map(img =>
-          typeof img === 'string' ? { preview: img, url: img } : { ...img, preview: img.url }
+          typeof img === 'string'
+            ? { preview: img, url: img }
+            : { ...img, preview: img.preview || img.url }
         )
       };
     }

@@ -821,7 +821,7 @@ export default function BookingsIndex() {
                         <div className="booking-view-qr-section">
                             <div className="booking-view-qr-card">
                                 <div className="booking-view-qr-copy">
-                                    <s-text type="strong">Booking QR Code</s-text>
+                                    <s-text type="strong" color="subdued">Booking QR Code</s-text>
                                     <s-text variant="bodySm" tone="subdued">
                                         Scan this code to open the customer booking details page.
                                     </s-text>
@@ -852,7 +852,9 @@ export default function BookingsIndex() {
 
                         <div className="booking-view-toolbar">
                             <div>
-                                <s-text type="strong">Post-cleaning updates</s-text>
+                                <div>
+                                    <s-text type="strong" color="subdued">Post-cleaning updates</s-text>
+                                </div>
                                 <s-text variant="bodySm" tone="subdued">
                                     Upload cleaned sneaker photos, then email the customer a direct link to view them.
                                     {hasPendingCleanedImages(viewingBooking) ? " Newly uploaded images are still processing and will appear automatically." : ""}
@@ -860,39 +862,39 @@ export default function BookingsIndex() {
                                 {hasCleanedImages(viewingBooking) && (
                                     <div className="booking-view-approval-block">
                                         <div className="booking-view-approval-actions">
-                                        <s-badge tone={
-                                            approvalStatus === "approved"
-                                                ? "success"
-                                                : approvalStatus === "rejected"
-                                                    ? "critical"
-                                                    : "warning"
-                                        }>
-                                            {approvalStatus === "approved"
-                                                ? "Customer Approved"
-                                                : approvalStatus === "rejected"
-                                                    ? "Customer Rejected"
-                                                    : "Approval Pending"}
-                                        </s-badge>
-                                        <s-button
-                                            size="slim"
-                                            variant="secondary"
-                                            onClick={() => {
-                                                setApprovalNoteDraft("");
-                                                handleApprovalUpdate(viewingBooking._id, "approved");
-                                            }}
-                                            loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "approved"}
-                                        >
-                                            Mark approved
-                                        </s-button>
-                                        <s-button
-                                            size="slim"
-                                            variant="secondary"
-                                            tone="critical"
-                                            onClick={() => handleApprovalUpdate(viewingBooking._id, "rejected")}
-                                            loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "rejected"}
-                                        >
-                                            Mark rejected
-                                        </s-button>
+                                            <s-badge tone={
+                                                approvalStatus === "approved"
+                                                    ? "success"
+                                                    : approvalStatus === "rejected"
+                                                        ? "critical"
+                                                        : "warning"
+                                            }>
+                                                {approvalStatus === "approved"
+                                                    ? "Customer Approved"
+                                                    : approvalStatus === "rejected"
+                                                        ? "Customer Rejected"
+                                                        : "Approval Pending"}
+                                            </s-badge>
+                                            <s-button
+                                                size="slim"
+                                                variant="secondary"
+                                                onClick={() => {
+                                                    setApprovalNoteDraft("");
+                                                    handleApprovalUpdate(viewingBooking._id, "approved");
+                                                }}
+                                                loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "approved"}
+                                            >
+                                                Mark approved
+                                            </s-button>
+                                            <s-button
+                                                size="slim"
+                                                variant="secondary"
+                                                tone="critical"
+                                                onClick={() => handleApprovalUpdate(viewingBooking._id, "rejected")}
+                                                loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "rejected"}
+                                            >
+                                                Mark rejected
+                                            </s-button>
                                         </div>
                                         <div className="booking-view-approval-note">
                                             <label className="booking-view-approval-note__label" htmlFor="approval-note">
