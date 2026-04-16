@@ -125,12 +125,13 @@ export const action = async ({ request }) => {
                 customerAddress: shippingContact,
             });
 
-        if (purchaseResult.status !== "purchased") {
-            return Response.json({
-                success: false,
-                message: "The selected return shipping rate changed and was not purchased.",
-            }, { status: 409 });
-        }
+        // in case the selected return shipping rate changed
+        // if (purchaseResult.status !== "purchased") {
+        //     return Response.json({
+        //         success: false,
+        //         message: "The selected return shipping rate changed and was not purchased.",
+        //     }, { status: 409 });
+        // }
 
         booking.shipping = {
             ...shippingSelection,

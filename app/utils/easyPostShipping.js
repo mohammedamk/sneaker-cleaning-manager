@@ -261,19 +261,20 @@ export async function verifyAndBuySelectedRate({
 
   const currentRate = findMatchingRate(shipment, selectedRate);
 
-  if (!currentRate || !selectedRateSupportsCurrentAmount(selectedRate, currentRate.rate, direction)) {
-    return {
-      status: "rate_changed",
-      changedRates: [
-        {
-          direction,
-          quotedRate: selectedRate,
-          currentRate: currentRate ? mapRate(currentRate) : null,
-        },
-      ],
-      storeAddress,
-    };
-  }
+  // rate changed code.
+  // if (!currentRate || !selectedRateSupportsCurrentAmount(selectedRate, currentRate.rate, direction)) {
+  //   return {
+  //     status: "rate_changed",
+  //     changedRates: [
+  //       {
+  //         direction,
+  //         quotedRate: selectedRate,
+  //         currentRate: currentRate ? mapRate(currentRate) : null,
+  //       },
+  //     ],
+  //     storeAddress,
+  //   };
+  // }
 
   const purchasedShipment = await client.Shipment.buy(shipment.id, currentRate.id);
 

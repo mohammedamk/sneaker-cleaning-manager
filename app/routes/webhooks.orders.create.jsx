@@ -451,24 +451,31 @@ export const action = async ({ request }) => {
             purchasedAt: new Date(),
           };
         } else {
-          bookingDoc.shipping = {
-            ...bookingDoc.shipping,
-            purchaseStatus: "customer_to_store_rate_changed",
-            changedRates: verificationResult.changedRates,
-            storeAddress: verificationResult.storeAddress,
-            flaggedAt: new Date(),
-          };
+          console.log(`shipping rate changed for sneaker booking of shipping selection:`, {
+            bookingDoc,
+            orderPayload: payload,
+            shippingSelection: bookingData.shippingSelection,
+            verificationResult,
+          });
+          // in case of rate changed
+          // bookingDoc.shipping = {
+          //   ...bookingDoc.shipping,
+          //   purchaseStatus: "customer_to_store_rate_changed",
+          //   changedRates: verificationResult.changedRates,
+          //   storeAddress: verificationResult.storeAddress,
+          //   flaggedAt: new Date(),
+          // };
 
-          await sendEmail(
-            ADMIN_NOTIFICATION_EMAIL,
-            "EasyPost shipping rate changed for sneaker booking",
-            buildRateChangedEmail({
-              bookingDoc,
-              orderPayload: payload,
-              shippingSelection: bookingData.shippingSelection,
-              verificationResult,
-            }),
-          );
+          // await sendEmail(
+          //   ADMIN_NOTIFICATION_EMAIL,
+          //   "EasyPost shipping rate changed for sneaker booking",
+          //   buildRateChangedEmail({
+          //     bookingDoc,
+          //     orderPayload: payload,
+          //     shippingSelection: bookingData.shippingSelection,
+          //     verificationResult,
+          //   }),
+          // );
         }
       }
 
