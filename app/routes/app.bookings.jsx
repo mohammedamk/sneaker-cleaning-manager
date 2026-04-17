@@ -129,10 +129,14 @@ function buildBookingEmailContent({ booking, heading, message, buttonLabel = "Vi
   `;
 }
 
-function buildCleanedSneakersEmail(booking) {
-  const cleanedSneakers = (booking?.sneakers || []).filter(
+function buildCleanedSneakersEmail(booking, sneakerIndexToInclude = null) {
+  let cleanedSneakers = (booking?.sneakers || []).filter(
     (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
   );
+
+  if (Number.isInteger(sneakerIndexToInclude)) {
+    cleanedSneakers = cleanedSneakers.filter((_, idx) => idx === sneakerIndexToInclude);
+  }
 
   const sneakerList = cleanedSneakers
     .map((sneaker) => {
@@ -344,6 +348,8 @@ export const action = async ({ request }) => {
             ...(Array.isArray(sneakers[sneakerIndex].cleanedImages) ? sneakers[sneakerIndex].cleanedImages : []),
             ...uploadedImageIds,
           ],
+          cleanedImagesApprovalStatus: null,
+          cleanedImagesApprovalNote: null,
         };
       }
 
@@ -417,9 +423,13 @@ export const action = async ({ request }) => {
       };
 
       booking.sneakers = sneakers;
-      if (!hasCleanedImages(booking)) {
-        booking.cleanedImagesApprovalStatus = null;
-        booking.cleanedImagesApprovalNote = null;
+      if (!Array.isArray(sneaker.cleanedImages) || sneaker.cleanedImages.length <= 1) {
+        // If this was the last cleaned image, clear the approval status
+        sneakers[sneakerIndex] = {
+          ...sneakers[sneakerIndex],
+          cleanedImagesApprovalStatus: null,
+          cleanedImagesApprovalNote: null,
+        };
       }
       await booking.save();
 
@@ -432,6 +442,7 @@ export const action = async ({ request }) => {
     }
     if (actionType === "SEND_CLEANED_EMAIL") {
       const id = formData.get("id");
+      const sneakerIndex = formData.get("sneakerIndex");
       const booking = await BookingModel.findById(id);
 
       if (!booking) {
@@ -444,18 +455,26 @@ export const action = async ({ request }) => {
         return { success: false, actionType, message: "Customer email is missing for this booking." };
       }
 
-      const hasCleanedImages = (booking.sneakers || []).some(
+      const sneakerIndexToInclude = sneakerIndex !== null && sneakerIndex !== undefined && sneakerIndex !== "" 
+        ? Number(sneakerIndex) 
+        : null;
+
+      let cleanedSneakersToNotify = (booking.sneakers || []).filter(
         (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
       );
 
-      if (!hasCleanedImages) {
-        return { success: false, actionType, message: "Upload cleaned sneaker images before sending the email." };
+      if (Number.isInteger(sneakerIndexToInclude)) {
+        cleanedSneakersToNotify = cleanedSneakersToNotify.filter((_, idx) => idx === sneakerIndexToInclude);
+      }
+
+      if (!cleanedSneakersToNotify.length) {
+        return { success: false, actionType, message: "No cleaned sneaker images available to send." };
       }
 
       await sendEmail(
         recipientEmail,
         `Your sneakers are cleaned: booking ${booking._id.toString()}`,
-        buildCleanedSneakersEmail(booking),
+        buildCleanedSneakersEmail(booking, sneakerIndexToInclude),
       );
       return {
         success: true,
@@ -464,13 +483,51 @@ export const action = async ({ request }) => {
         booking: await getNormalizedBooking(admin, booking),
       };
     }
+    if (actionType === "UPDATE_SNEAKER_STATUS") {
+      const bookingId = formData.get("bookingId");
+      const sneakerIndex = Number(formData.get("sneakerIndex"));
+      const status = formData.get("status");
+
+      if (!bookingId || !Number.isInteger(sneakerIndex) || !["Pending", "In Cleaning", "Cleaning Complete"].includes(status)) {
+        return { success: false, actionType, message: "Valid booking, sneaker index, and status are required." };
+      }
+
+      const booking = await BookingModel.findById(bookingId);
+
+      if (!booking) {
+        return { success: false, actionType, message: "Booking not found." };
+      }
+
+      const sneakers = [...(booking.sneakers || [])];
+      const sneaker = sneakers[sneakerIndex];
+
+      if (!sneaker) {
+        return { success: false, actionType, message: "Sneaker not found." };
+      }
+
+      sneakers[sneakerIndex] = {
+        ...sneaker,
+        status,
+      };
+
+      booking.sneakers = sneakers;
+      await booking.save();
+
+      return {
+        success: true,
+        actionType,
+        message: "Sneaker status updated successfully.",
+        booking: await getNormalizedBooking(admin, booking),
+      };
+    }
     if (actionType === "UPDATE_CLEANING_APPROVAL") {
       const id = formData.get("id");
+      const sneakerIndex = Number(formData.get("sneakerIndex"));
       const approvalStatus = formData.get("approvalStatus");
       const approvalNote = formData.get("approvalNote")?.toString().trim();
 
-      if (!id || !["approved", "rejected"].includes(approvalStatus)) {
-        return { success: false, actionType, message: "A valid booking and approval status are required." };
+      if (!id || !Number.isInteger(sneakerIndex) || !["approved", "rejected"].includes(approvalStatus)) {
+        return { success: false, actionType, message: "A valid booking, sneaker, and approval status are required." };
       }
 
       const booking = await BookingModel.findById(id);
@@ -479,22 +536,34 @@ export const action = async ({ request }) => {
         return { success: false, actionType, message: "Booking not found." };
       }
 
-      if (!hasCleanedImages(booking)) {
-        return { success: false, actionType, message: "No cleaned images are available for approval yet." };
+      const sneakers = [...(booking.sneakers || [])];
+      const sneaker = sneakers[sneakerIndex];
+
+      if (!sneaker) {
+        return { success: false, actionType, message: "Sneaker not found." };
+      }
+
+      if (!Array.isArray(sneaker.cleanedImages) || sneaker.cleanedImages.length === 0) {
+        return { success: false, actionType, message: "No cleaned images available for this sneaker." };
       }
 
       if (approvalStatus === "rejected" && !approvalNote) {
         return { success: false, actionType, message: "Add a note before marking the cleaned images as rejected." };
       }
 
-      booking.cleanedImagesApprovalStatus = approvalStatus;
-      booking.cleanedImagesApprovalNote = approvalStatus === "rejected" ? approvalNote : null;
+      sneakers[sneakerIndex] = {
+        ...sneaker,
+        cleanedImagesApprovalStatus: approvalStatus,
+        cleanedImagesApprovalNote: approvalStatus === "rejected" ? approvalNote : null,
+      };
+
+      booking.sneakers = sneakers;
       await booking.save();
 
       return {
         success: true,
         actionType,
-        message: `Customer marked cleaned images as ${approvalStatus}.`,
+        message: `Sneaker cleaned images marked as ${approvalStatus}.`,
         booking: await getNormalizedBooking(admin, booking),
       };
     }

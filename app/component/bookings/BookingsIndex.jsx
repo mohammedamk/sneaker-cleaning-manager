@@ -157,6 +157,7 @@ export default function BookingsIndex() {
     const [itemToDelete, setItemToDelete] = useState(null);
     const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
     const [approvalNoteDraft, setApprovalNoteDraft] = useState("");
+    const [approvalNoteDraftBySneaker, setApprovalNoteDraftBySneaker] = useState({});
     const [refundLoading, setRefundLoading] = useState(false);
     const [buyShippingBookingId, setBuyShippingBookingId] = useState("");
     const [confirmModal, setConfirmModal] = useState({
@@ -308,6 +309,17 @@ export default function BookingsIndex() {
         }
     };
 
+    const handleUpdateSneakerStatus = (sneakerIndex, status) => {
+        if (Number.isInteger(sneakerIndex) && viewingBooking) {
+            const formData = new FormData();
+            formData.append("actionType", "UPDATE_SNEAKER_STATUS");
+            formData.append("bookingId", getObjectIdString(viewingBooking._id));
+            formData.append("sneakerIndex", String(sneakerIndex));
+            formData.append("status", status);
+            submit(formData, { method: "post" });
+        }
+    };
+
     const handleSendCleanedEmail = () => {
         if (!viewingBooking) return;
 
@@ -369,6 +381,36 @@ export default function BookingsIndex() {
         if (approvalStatus === "rejected") {
             formData.append("approvalNote", trimmedApprovalNote);
         }
+        submit(formData, { method: "post" });
+    };
+
+    const handleSneakerApprovalUpdate = (bookingId, sneakerIndex, approvalStatus) => {
+        const draftKey = `${getObjectIdString(bookingId)}-${sneakerIndex}`;
+        const trimmedApprovalNote = (approvalNoteDraftBySneaker[draftKey] || "").trim();
+
+        if (approvalStatus === "rejected" && !trimmedApprovalNote) {
+            shopify.toast.show("Add a rejection note before marking the cleaned images as rejected.", { isError: true });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("actionType", "UPDATE_CLEANING_APPROVAL");
+        formData.append("id", getObjectIdString(bookingId));
+        formData.append("sneakerIndex", String(sneakerIndex));
+        formData.append("approvalStatus", approvalStatus);
+        if (approvalStatus === "rejected") {
+            formData.append("approvalNote", trimmedApprovalNote);
+        }
+        submit(formData, { method: "post" });
+    };
+
+    const handleSendCleanedEmailPerSneaker = (sneakerIndex) => {
+        if (!viewingBooking) return;
+
+        const formData = new FormData();
+        formData.append("actionType", "SEND_CLEANED_EMAIL");
+        formData.append("id", getObjectIdString(viewingBooking._id));
+        formData.append("sneakerIndex", String(sneakerIndex));
         submit(formData, { method: "post" });
     };
 
@@ -960,6 +1002,25 @@ export default function BookingsIndex() {
                                                 )}
                                             </div>
 
+                                            <div className="booking-view-sneaker__status-section">
+                                                <div>
+                                                    <s-text type="strong" color="subdued">Sneaker Status</s-text>
+                                                    <div className="booking-view-status-buttons">
+                                                        {["Pending", "In Cleaning", "Cleaning Complete"].map((status) => (
+                                                            <s-button
+                                                                key={status}
+                                                                size="slim"
+                                                                variant={(sneaker.status || "Pending") === status ? "primary" : "secondary"}
+                                                                onClick={() => handleUpdateSneakerStatus(sneakerIndex, status)}
+                                                                loading={isSubmitting && activeActionType === "UPDATE_SNEAKER_STATUS"}
+                                                            >
+                                                                {status}
+                                                            </s-button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div className="booking-view-image-group">
                                                 <s-text type="strong">Before cleaning</s-text>
                                                 <div className="booking-view-images">
@@ -1048,6 +1109,100 @@ export default function BookingsIndex() {
                                                         )
                                                     )}
                                                 </div>
+
+                                                {(sneaker.cleanedImages?.length > 0) && (
+                                                    <div className="booking-view-sneaker__approval-section">
+                                                        <div>
+                                                            <s-text type="strong" color="subdued">Cleaned Images Approval</s-text>
+                                                            <s-badge tone={
+                                                                sneaker.cleanedImagesApprovalStatus === "approved"
+                                                                    ? "success"
+                                                                    : sneaker.cleanedImagesApprovalStatus === "rejected"
+                                                                        ? "critical"
+                                                                        : "warning"
+                                                            }>
+                                                                {sneaker.cleanedImagesApprovalStatus === "approved"
+                                                                    ? "Approved"
+                                                                    : sneaker.cleanedImagesApprovalStatus === "rejected"
+                                                                        ? "Rejected"
+                                                                        : "Pending"}
+                                                            </s-badge>
+                                                        </div>
+                                                        <div className="booking-view-approval-actions">
+                                                            <s-button
+                                                                size="slim"
+                                                                variant="secondary"
+                                                                onClick={() => {
+                                                                    const draftKey = `${bookingId}-${sneakerIndex}`;
+                                                                    setApprovalNoteDraftBySneaker((prev) => ({
+                                                                        ...prev,
+                                                                        [draftKey]: "",
+                                                                    }));
+                                                                    handleSneakerApprovalUpdate(viewingBooking._id, sneakerIndex, "approved");
+                                                                }}
+                                                                loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL"}
+                                                                disabled={sneaker.cleanedImagesApprovalStatus === "approved"}
+                                                            >
+                                                                Approve
+                                                            </s-button>
+                                                            <s-button
+                                                                size="slim"
+                                                                variant="secondary"
+                                                                tone="critical"
+                                                                onClick={() => {
+                                                                    // Focus on rejection form
+                                                                }}
+                                                                loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL"}
+                                                                disabled={sneaker.cleanedImagesApprovalStatus === "rejected"}
+                                                            >
+                                                                Reject
+                                                            </s-button>
+                                                            <s-button
+                                                                size="slim"
+                                                                variant="primary"
+                                                                onClick={() => handleSendCleanedEmailPerSneaker(sneakerIndex)}
+                                                                loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
+                                                            >
+                                                                Send Email to Customer
+                                                            </s-button>
+                                                        </div>
+                                                        {sneaker.cleanedImagesApprovalStatus !== "rejected" && (
+                                                            <div className="booking-view-approval-note">
+                                                                <label className="booking-view-approval-note__label" htmlFor={`approval-note-${sneakerIndex}`}>
+                                                                    Rejection note (if rejecting)
+                                                                </label>
+                                                                <textarea
+                                                                    id={`approval-note-${sneakerIndex}`}
+                                                                    className="booking-view-approval-note__input"
+                                                                    rows={2}
+                                                                    value={approvalNoteDraftBySneaker[`${bookingId}-${sneakerIndex}`] || ""}
+                                                                    onChange={(event) => {
+                                                                        const draftKey = `${bookingId}-${sneakerIndex}`;
+                                                                        setApprovalNoteDraftBySneaker((prev) => ({
+                                                                            ...prev,
+                                                                            [draftKey]: event.target.value,
+                                                                        }));
+                                                                    }}
+                                                                    placeholder="Describe what needs to be corrected before approval."
+                                                                />
+                                                                <s-button
+                                                                    size="slim"
+                                                                    tone="critical"
+                                                                    onClick={() => handleSneakerApprovalUpdate(viewingBooking._id, sneakerIndex, "rejected")}
+                                                                    loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL"}
+                                                                >
+                                                                    Submit Rejection
+                                                                </s-button>
+                                                            </div>
+                                                        )}
+                                                        {sneaker.cleanedImagesApprovalStatus === "rejected" && sneaker.cleanedImagesApprovalNote && (
+                                                            <div className="booking-view-approval-note">
+                                                                <label className="booking-view-approval-note__label">Rejection Reason</label>
+                                                                <s-text variant="bodySm">{sneaker.cleanedImagesApprovalNote}</s-text>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
 
                                                 <div className="booking-view-upload-box">
                                                     <label className="booking-view-upload-label" htmlFor={`cleaned-images-${uploadKey}`}>

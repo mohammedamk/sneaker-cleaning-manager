@@ -14,12 +14,6 @@ function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function hasCleanedImages(booking) {
-  return (booking?.sneakers || []).some(
-    (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
-  );
-}
-
 export const action = async ({ request }) => {
   try {
     const { admin } = await authenticate.public.appProxy(request);
@@ -29,6 +23,7 @@ export const action = async ({ request }) => {
     const email = body.email?.trim().toLowerCase();
     const accessToken = body.accessToken?.trim();
     const actionType = body.actionType?.trim();
+    const sneakerIndex = Number(body.sneakerIndex);
     const approvalStatus = body.approvalStatus?.trim();
     const approvalNote = body.approvalNote?.trim();
 
@@ -93,14 +88,24 @@ export const action = async ({ request }) => {
     }
 
     if (actionType === "UPDATE_CLEANING_APPROVAL") {
-      if (!["approved", "rejected"].includes(approvalStatus)) {
+      if (!Number.isInteger(sneakerIndex) || !["approved", "rejected"].includes(approvalStatus)) {
         return new Response(
-          JSON.stringify({ success: false, message: "Choose approve or reject." }),
+          JSON.stringify({ success: false, message: "Choose a sneaker and approve or reject." }),
           { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
 
-      if (!hasCleanedImages(booking)) {
+      const sneakers = [...(booking.sneakers || [])];
+      const sneaker = sneakers[sneakerIndex];
+
+      if (!sneaker) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Sneaker not found." }),
+          { status: 404, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (!Array.isArray(sneaker.cleanedImages) || sneaker.cleanedImages.length === 0) {
         return new Response(
           JSON.stringify({ success: false, message: "No cleaned images are available for approval yet." }),
           { status: 400, headers: { "Content-Type": "application/json" } }
@@ -114,8 +119,13 @@ export const action = async ({ request }) => {
         );
       }
 
-      booking.cleanedImagesApprovalStatus = approvalStatus;
-      booking.cleanedImagesApprovalNote = approvalStatus === "rejected" ? approvalNote : null;
+      sneakers[sneakerIndex] = {
+        ...sneaker,
+        cleanedImagesApprovalStatus: approvalStatus,
+        cleanedImagesApprovalNote: approvalStatus === "rejected" ? approvalNote : null,
+      };
+
+      booking.sneakers = sneakers;
       await booking.save();
     }
 

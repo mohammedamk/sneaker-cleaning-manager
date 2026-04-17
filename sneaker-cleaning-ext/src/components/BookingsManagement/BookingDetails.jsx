@@ -21,23 +21,20 @@ function BookingDetails({
 }) {
     const [currentBooking, setCurrentBooking] = useState(booking);
     const [previewImage, setPreviewImage] = useState(null);
-    const [approvalLoading, setApprovalLoading] = useState(false);
-    const [approvalAction, setApprovalAction] = useState('');
-    const [showRejectionNoteForm, setShowRejectionNoteForm] = useState(false);
-    const [rejectionNote, setRejectionNote] = useState('');
-    const hasAnyCleanedImages = (currentBooking.sneakers || []).some(
-        (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0
-    );
-    const approvalStatus = currentBooking.cleanedImagesApprovalStatus || (hasAnyCleanedImages ? 'pending' : null);
+    const [approvalLoadingBySneaker, setApprovalLoadingBySneaker] = useState({});
+    const [approvalActionBySneaker, setApprovalActionBySneaker] = useState({});
+    const [showRejectionNoteFormBySneaker, setShowRejectionNoteFormBySneaker] = useState({});
+    const [rejectionNoteBySneaker, setRejectionNoteBySneaker] = useState({});
 
     useEffect(() => {
         setCurrentBooking(booking);
-        setShowRejectionNoteForm(false);
-        setRejectionNote('');
+        setShowRejectionNoteFormBySneaker({});
+        setRejectionNoteBySneaker({});
     }, [booking]);
 
-    const handleApprovalUpdate = async (nextStatus, noteOverride = '') => {
-        if (!hasAnyCleanedImages || approvalLoading) return;
+    const handleSneakerApprovalUpdate = async (sneakerIndex, nextStatus, noteOverride = '') => {
+        const sneaker = currentBooking.sneakers?.[sneakerIndex];
+        if (!sneaker || !Array.isArray(sneaker.cleanedImages) || sneaker.cleanedImages.length === 0 || approvalLoadingBySneaker[sneakerIndex]) return;
 
         const trimmedNote = noteOverride.trim();
 
@@ -46,8 +43,8 @@ function BookingDetails({
             return;
         }
 
-        setApprovalLoading(true);
-        setApprovalAction(nextStatus);
+        setApprovalLoadingBySneaker((prev) => ({ ...prev, [sneakerIndex]: true }));
+        setApprovalActionBySneaker((prev) => ({ ...prev, [sneakerIndex]: nextStatus }));
 
         try {
             const params = new URLSearchParams(window.location.search);
@@ -60,6 +57,7 @@ function BookingDetails({
                 body: JSON.stringify({
                     actionType: 'UPDATE_CLEANING_APPROVAL',
                     bookingID,
+                    sneakerIndex,
                     approvalStatus: nextStatus,
                     ...(nextStatus === 'rejected' ? { approvalNote: trimmedNote } : {}),
                     ...(accessToken ? { accessToken } : { email: (currentBooking.email || currentBooking.guestInfo?.email || '').trim() }),
@@ -73,15 +71,15 @@ function BookingDetails({
             }
 
             setCurrentBooking(data.booking);
-            setShowRejectionNoteForm(false);
-            setRejectionNote('');
+            setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [sneakerIndex]: false }));
+            setRejectionNoteBySneaker((prev) => ({ ...prev, [sneakerIndex]: '' }));
             onBookingUpdate?.(data.booking);
         } catch (error) {
             console.error('Failed to update cleaned image approval:', error);
             alert(error.message || 'Failed to update approval status.');
         } finally {
-            setApprovalLoading(false);
-            setApprovalAction('');
+            setApprovalLoadingBySneaker((prev) => ({ ...prev, [sneakerIndex]: false }));
+            setApprovalActionBySneaker((prev) => ({ ...prev, [sneakerIndex]: '' }));
         }
     };
 
@@ -156,29 +154,9 @@ function BookingDetails({
                         <div className="detail-item">
                             <span className="detail-item__label">Cleaning Photos</span>
                             <span className="detail-item__value">
-                                {hasAnyCleanedImages ? 'Uploaded and ready to view' : 'Will appear after cleaning is completed'}
+                                Check each sneaker below for individual cleaning photo status
                             </span>
                         </div>
-                        <div className="detail-item">
-                            <span className="detail-item__label">After Cleaning Approval</span>
-                            <span className={`booking-approval-pill booking-approval-pill--${approvalStatus || 'not-available'}`}>
-                                {approvalStatus === 'approved'
-                                    ? 'Approved'
-                                    : approvalStatus === 'rejected'
-                                        ? 'Rejected'
-                                        : approvalStatus === 'pending'
-                                            ? 'Approval Pending'
-                                            : 'Not available'}
-                            </span>
-                        </div>
-                        {approvalStatus === 'rejected' && currentBooking.cleanedImagesApprovalNote && (
-                            <div className="detail-item detail-item--full">
-                                <span className="detail-item__label">Rejection Note</span>
-                                <span className="detail-item__value detail-item__value--note">
-                                    {currentBooking.cleanedImagesApprovalNote}
-                                </span>
-                            </div>
-                        )}
                         <div className="detail-item">
                             <span className="detail-item__label">Last Cleaning</span>
                             <span className="detail-item__value">
@@ -210,70 +188,13 @@ function BookingDetails({
 
                 <div className="booking-details__section">
                     <span className="booking-details__section-title">Registered Sneakers ({currentBooking.sneakers?.length || 0})</span>
-                    {hasAnyCleanedImages && (
-                        <div className="booking-details__approval-actions">
-                            <button
-                                type="button"
-                                className="btn btn--primary btn--small"
-                                onClick={() => {
-                                    setShowRejectionNoteForm(false);
-                                    setRejectionNote('');
-                                    handleApprovalUpdate('approved');
-                                }}
-                                disabled={approvalLoading || currentBooking.cleanedImagesApprovalStatus === 'approved'}
-                            >
-                                {approvalLoading && approvalAction === 'approved' ? 'Saving...' : 'Approve After Cleaning'}
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn--secondary btn--small"
-                                onClick={() => setShowRejectionNoteForm(true)}
-                                disabled={approvalLoading || currentBooking.cleanedImagesApprovalStatus === 'rejected'}
-                            >
-                                {approvalLoading && approvalAction === 'rejected' ? 'Saving...' : 'Reject After Cleaning'}
-                            </button>
-                        </div>
-                    )}
-                    {hasAnyCleanedImages && showRejectionNoteForm && currentBooking.cleanedImagesApprovalStatus !== 'rejected' && (
-                        <div className="booking-details__note-box">
-                            <label className="booking-details__note-label" htmlFor="rejection-note">
-                                Add a note for rejection
-                            </label>
-                            <textarea
-                                id="rejection-note"
-                                className="booking-details__note-input"
-                                rows={4}
-                                value={rejectionNote}
-                                onChange={(event) => setRejectionNote(event.target.value)}
-                                placeholder="Tell us what still needs attention before approval."
-                            />
-                            <div className="booking-details__note-actions">
-                                <button
-                                    type="button"
-                                    className="btn btn--secondary btn--small"
-                                    onClick={() => {
-                                        setShowRejectionNoteForm(false);
-                                        setRejectionNote('');
-                                    }}
-                                    disabled={approvalLoading}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn--secondary btn--small"
-                                    onClick={() => handleApprovalUpdate('rejected', rejectionNote)}
-                                    disabled={approvalLoading}
-                                >
-                                    {approvalLoading && approvalAction === 'rejected' ? 'Saving...' : 'Submit Rejection'}
-                                </button>
-                            </div>
-                        </div>
-                    )}
                     <div className="booking-details__sneaker-list">
-                        {currentBooking.sneakers?.map((snk, i) => (
-                            <div key={i} className="sneaker-item">
-                                <div className="sneaker-item__gallery">
+                        {currentBooking.sneakers?.map((snk, i) => {
+                            const sneakerHasCleanedImages = Array.isArray(snk.cleanedImages) && snk.cleanedImages.length > 0;
+                            const sneakerApprovalStatus = snk.cleanedImagesApprovalStatus || (sneakerHasCleanedImages ? 'pending' : null);
+                            return (
+                                <div key={i} className="sneaker-item">
+                                    <div className="sneaker-item__gallery">
                                     <div className="sneaker-item__gallery-section">
                                         <span className="sneaker-item__gallery-title">Before cleaning</span>
                                         <div className="sneaker-item__gallery-grid">
@@ -313,11 +234,11 @@ function BookingDetails({
                                     <div className="sneaker-item__gallery-section sneaker-item__gallery-section--cleaned">
                                         <div className="sneaker-item__gallery-header">
                                             <span className="sneaker-item__gallery-title">After cleaning</span>
-                                            {hasAnyCleanedImages && (
-                                                <span className={`booking-approval-pill booking-approval-pill--${approvalStatus}`}>
-                                                    {approvalStatus === 'approved'
+                                            {sneakerHasCleanedImages && (
+                                                <span className={`booking-approval-pill booking-approval-pill--${sneakerApprovalStatus}`}>
+                                                    {sneakerApprovalStatus === 'approved'
                                                         ? 'Approved'
-                                                        : approvalStatus === 'rejected'
+                                                        : sneakerApprovalStatus === 'rejected'
                                                             ? 'Rejected'
                                                             : 'Approval Pending'}
                                                 </span>
@@ -356,12 +277,88 @@ function BookingDetails({
                                             )}
                                         </div>
                                     </div>
+
+                                    {sneakerHasCleanedImages && (
+                                        <div className="sneaker-item__approval-section">
+                                            <div className="sneaker-item__approval-actions">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn--primary btn--small"
+                                                    onClick={() => {
+                                                        setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [i]: false }));
+                                                        setRejectionNoteBySneaker((prev) => ({ ...prev, [i]: '' }));
+                                                        handleSneakerApprovalUpdate(i, 'approved');
+                                                    }}
+                                                    disabled={approvalLoadingBySneaker[i] || snk.cleanedImagesApprovalStatus === 'approved'}
+                                                >
+                                                    {approvalLoadingBySneaker[i] && approvalActionBySneaker[i] === 'approved' ? 'Saving...' : 'Approve'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn--secondary btn--small"
+                                                    onClick={() => setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [i]: true }))}
+                                                    disabled={approvalLoadingBySneaker[i] || snk.cleanedImagesApprovalStatus === 'rejected'}
+                                                >
+                                                    {approvalLoadingBySneaker[i] && approvalActionBySneaker[i] === 'rejected' ? 'Saving...' : 'Reject'}
+                                                </button>
+                                            </div>
+                                            {snk.cleanedImagesApprovalStatus === 'rejected' && snk.cleanedImagesApprovalNote && (
+                                                <div className="booking-details__note-box">
+                                                    <label className="booking-details__note-label">Rejection Reason</label>
+                                                    <div className="booking-details__note-display">
+                                                        {snk.cleanedImagesApprovalNote}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {showRejectionNoteFormBySneaker[i] && snk.cleanedImagesApprovalStatus !== 'rejected' && (
+                                                <div className="booking-details__note-box">
+                                                    <label className="booking-details__note-label" htmlFor={`rejection-note-${i}`}>
+                                                        What needs correction?
+                                                    </label>
+                                                    <textarea
+                                                        id={`rejection-note-${i}`}
+                                                        className="booking-details__note-input"
+                                                        rows={3}
+                                                        value={rejectionNoteBySneaker[i] || ''}
+                                                        onChange={(event) => setRejectionNoteBySneaker((prev) => ({ ...prev, [i]: event.target.value }))}
+                                                        placeholder="Tell us what still needs attention before approval."
+                                                    />
+                                                    <div className="booking-details__note-actions">
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn--secondary btn--small"
+                                                            onClick={() => {
+                                                                setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [i]: false }));
+                                                                setRejectionNoteBySneaker((prev) => ({ ...prev, [i]: '' }));
+                                                            }}
+                                                            disabled={approvalLoadingBySneaker[i]}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn--secondary btn--small"
+                                                            onClick={() => handleSneakerApprovalUpdate(i, 'rejected', rejectionNoteBySneaker[i])}
+                                                            disabled={approvalLoadingBySneaker[i]}
+                                                        >
+                                                            {approvalLoadingBySneaker[i] && approvalActionBySneaker[i] === 'rejected' ? 'Saving...' : 'Submit Rejection'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="sneaker-item__info">
                                     <span className="sneaker-item__name">{snk.nickname || 'Unnamed'}</span>
                                     <span className="sneaker-item__brand">
                                         {snk.brand} {snk.model} {snk.colorway && ` - ${snk.colorway}`}
                                     </span>
+                                    {snk.status && (
+                                        <div className="sneaker-item__status">
+                                            <strong>Status:</strong> {snk.status}
+                                        </div>
+                                    )}
                                     {snk.services && (
                                         <div className="sneaker-item__service">
                                             <strong>Service:</strong> {snk.services.tier}
@@ -370,7 +367,8 @@ function BookingDetails({
                                     )}
                                 </div>
                             </div>
-                        ))}
+                        );
+                        })}
                     </div>
                 </div>
 

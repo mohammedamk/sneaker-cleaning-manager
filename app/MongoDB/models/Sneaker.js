@@ -16,18 +16,24 @@ const sneakerSchema = mongoose.Schema({
     notes: String,
     services: mongoose.Schema.Types.Mixed,
     images: [String],
+    cleanedImages: [String],
+    cleanedImageProcessing: { type: Boolean, default: false },
+    cleanedImagesApprovalStatus: {
+        type: String,
+        enum: ['approved', 'rejected'],
+        default: null
+    },
+    cleanedImagesApprovalNote: {
+        type: String,
+        default: null,
+        trim: true
+    },
     status: {
         type: String,
         enum: [
             'Pending',
-            'Received',
-            'Under Inspection',
             'In Cleaning',
-            'Awaiting Customer Approval',
-            'Cleaning Complete',
-            'Ready for Pickup / Shipment',
-            'Completed',
-            'Canceled'
+            'Cleaning Complete'
         ],
         default: 'Pending'
     },

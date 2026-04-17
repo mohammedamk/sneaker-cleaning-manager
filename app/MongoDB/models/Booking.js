@@ -40,16 +40,6 @@ const bookingSchema = mongoose.Schema({
         refundId: { type: String, default: null },
         processedAt: { type: Date, default: null }
     },
-    cleanedImagesApprovalStatus: {
-        type: String,
-        enum: ['approved', 'rejected'],
-        default: null
-    },
-    cleanedImagesApprovalNote: {
-        type: String,
-        default: null,
-        trim: true
-    },
     lastCleaning: { type: Date, default: null },
     submittedAt: { type: Date, default: Date.now }
 });
