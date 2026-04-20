@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://cable-evolution-cancellation-circulation.trycloudflare.com"
+application_url = "https://testament-planners-obligations-forestry.trycloudflare.com"
 embedded = true
 
 [build]
@@ -29,10 +29,10 @@ scopes = "read_orders,write_draft_orders,write_files,write_orders,write_products
 
 [auth]
 redirect_urls = [
-  "https://cable-evolution-cancellation-circulation.trycloudflare.com/api/auth"
+  "https://testament-planners-obligations-forestry.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://cable-evolution-cancellation-circulation.trycloudflare.com"
+url = "https://testament-planners-obligations-forestry.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"

@@ -5,7 +5,6 @@ import {
   formatMoney,
   formatRateSummary,
   getAddressLines,
-  getApprovalBadgeLabel,
   getApprovalBadgeTone,
   getBookingQrCodeUrl,
   getObjectIdString,
@@ -18,8 +17,8 @@ import {
 function BookingSummaryCard({ label, children }) {
   return (
     <div className="booking-view-card">
-      <s-text color="subdued" tone="auto">{label}</s-text>
-      {children}
+      <s-text color="subdued" tone="auto" className="booking-view-card__label">{label}</s-text>
+      <div className="booking-view-card__content">{children}</div>
     </div>
   );
 }
@@ -179,10 +178,10 @@ function BookingSneakerCard({
         </div>
 
         {sneaker.cleanedImages?.length > 0 && (
-          <div className="booking-view-sneaker__approval-section">
-            <div>
-              <s-text type="strong" color="subdued">Cleaned Images Approval</s-text>
-              <s-badge tone={getApprovalBadgeTone(sneaker.cleanedImagesApprovalStatus || "pending")}>
+      <div className="booking-view-sneaker__approval-section">
+        <div>
+          <s-text type="strong" color="subdued">Cleaned Images Approval</s-text>
+          <s-badge tone={getApprovalBadgeTone(sneaker.cleanedImagesApprovalStatus || "pending")}>
                 {sneaker.cleanedImagesApprovalStatus === "approved"
                   ? "Approved"
                   : sneaker.cleanedImagesApprovalStatus === "rejected"
@@ -199,16 +198,6 @@ function BookingSneakerCard({
                 disabled={sneaker.cleanedImagesApprovalStatus === "approved"}
               >
                 Approve
-              </s-button>
-              <s-button
-                size="slim"
-                variant="secondary"
-                tone="critical"
-                onClick={() => {}}
-                loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL"}
-                disabled={sneaker.cleanedImagesApprovalStatus === "rejected"}
-              >
-                Reject
               </s-button>
               <s-button
                 size="slim"
@@ -298,18 +287,14 @@ export default function BookingViewModal({
   viewingBooking,
   cleanedImageDrafts,
   approvalStatus,
-  approvalNoteDraft,
   approvalNoteDraftBySneaker,
   bookingShippingSelection,
   isSubmitting,
   activeActionType,
-  activeApprovalStatus,
   refundLoading,
   onPreviewImage,
   onDownloadImage,
-  onApprovalNoteDraftChange,
   onSneakerApprovalNoteDraftChange,
-  onApprovalUpdate,
   onRefundBooking,
   onSendCleanedEmail,
   onUpdateSneakerStatus,
@@ -325,68 +310,128 @@ export default function BookingViewModal({
   const packageDetails = bookingShippingSelection?.parcel;
   const selectedForwardRate = bookingShippingSelection?.selectedForwardRate;
   const selectedReturnRate = bookingShippingSelection?.selectedReturnRate;
+  const sneakersWithCleanedImages = (viewingBooking?.sneakers || []).filter(
+    (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
+  );
+  const displayApprovalStatus = sneakersWithCleanedImages.length > 0
+    && sneakersWithCleanedImages.every((sneaker) => sneaker.cleanedImagesApprovalStatus === "approved")
+    ? "approved"
+    : approvalStatus;
 
   return (
     <s-modal id="view-modal" ref={modalRef} heading="Booking Details">
       {viewingBooking && (
         <div className="booking-view-modal">
-          <div className="booking-view-grid">
-            <BookingSummaryCard label="BOOKING ID">
-              <s-text type="strong">#{getObjectIdString(viewingBooking._id)}</s-text>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="Shopify Order ID">
-              <s-text type="strong">#{getObjectIdString(viewingBooking.shopifyOrderID.split("/").pop())}</s-text>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="STATUS">
-              <s-badge tone={getStatusTone(viewingBooking.status)}>{viewingBooking.status}</s-badge>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="CUSTOMER">
-              <s-text type="strong">{viewingBooking.name || viewingBooking.guestInfo?.name || "Guest User"}</s-text>
-              <s-text variant="bodySm" tone="subdued">{viewingBooking.email || viewingBooking.guestInfo?.email || "No email"}</s-text>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="HANDOFF">
-              <s-text>{viewingBooking.handoffMethod || "N/A"}</s-text>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="SUBMITTED">
-              <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="LAST CLEANING">
-              <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
-            </BookingSummaryCard>
-            <BookingSummaryCard label="AFTER CLEANING APPROVAL">
-              <s-badge tone={getApprovalBadgeTone(approvalStatus)}>
-                {getApprovalBadgeLabel(approvalStatus)}
-              </s-badge>
-            </BookingSummaryCard>
-            {approvalStatus === "rejected" && viewingBooking.cleanedImagesApprovalNote && (
-              <BookingSummaryCard label="REJECTION NOTE">
-                <s-text>{viewingBooking.cleanedImagesApprovalNote}</s-text>
-              </BookingSummaryCard>
+          <div className="booking-view-topbar">
+            <div className="booking-view-topbar__summary">
+              <div className="booking-view-topbar__ids">
+                <span className="booking-view-pill">Booking #{getObjectIdString(viewingBooking._id)}</span>
+                <span className="booking-view-pill">Order #{getObjectIdString(viewingBooking.shopifyOrderID.split("/").pop())}</span>
+              </div>
+              <div className="booking-view-topbar__badges">
+                <s-badge tone={getStatusTone(viewingBooking.status)}>{viewingBooking.status}</s-badge>
+                <s-badge tone={getApprovalBadgeTone(displayApprovalStatus)}>
+                  {displayApprovalStatus === "approved"
+                    ? "After Cleaning Approved"
+                    : displayApprovalStatus === "rejected"
+                      ? "After Cleaning Rejected"
+                      : displayApprovalStatus === "pending"
+                        ? "After Cleaning Pending"
+                        : "After Cleaning Not Available"}
+                </s-badge>
+              </div>
+            </div>
+            {(viewingBooking.status === "Canceled"
+              && viewingBooking.refund?.status !== "completed"
+              && viewingBooking.handoffMethod === "shipping") && (
+              <div className="booking-view-topbar__actions">
+                <s-button
+                  variant="primary"
+                  tone="critical"
+                  onClick={onRefundBooking}
+                  loading={refundLoading}
+                >
+                  Refund customer
+                </s-button>
+              </div>
             )}
-            <BookingSummaryCard label="REFUND">
-              {viewingBooking.refund?.status === "completed" ? (
-                <>
-                  <s-badge tone="success">Refunded</s-badge>
-                  <s-text>
-                    {formatMoney(viewingBooking.refund.amount, viewingBooking.refund.currencyCode)}
-                  </s-text>
-                  <s-text variant="bodySm" tone="subdued">
-                    {formatDateTime(viewingBooking.refund.processedAt)}
-                  </s-text>
-                </>
-              ) : (
-                <s-text>
-                  {(viewingBooking.status === "Canceled" && viewingBooking.handoffMethod === "shipping") ? "Pending refund" : "Not available"}
-                </s-text>
-              )}
-            </BookingSummaryCard>
-            <BookingSummaryCard label="PHONE">
-              <s-text>{viewingBooking.guestInfo?.phone || viewingBooking.phone || "N/A"}</s-text>
-            </BookingSummaryCard>
+            {hasCleanedImages(viewingBooking) && (
+              <div className="booking-view-topbar__actions">
+                <s-button
+                  variant="primary"
+                  onClick={onSendCleanedEmail}
+                  loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
+                  disabled={hasPendingCleanedImages(viewingBooking)}
+                >
+                  Send email to customer
+                </s-button>
+              </div>
+            )}
           </div>
 
+          <section className="booking-view-block">
+            <div className="booking-view-block__header">
+              <s-text type="strong">Overview</s-text>
+            </div>
+            <div className="booking-view-grid booking-view-grid--overview">
+              <BookingSummaryCard label="CUSTOMER">
+                <s-text type="strong">{viewingBooking.name || viewingBooking.guestInfo?.name || "Guest User"}</s-text>
+                <s-text variant="bodySm" tone="subdued">{viewingBooking.email || viewingBooking.guestInfo?.email || "No email"}</s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="PHONE">
+                <s-text>{viewingBooking.guestInfo?.phone || viewingBooking.phone || "N/A"}</s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="HANDOFF">
+                <s-text>{viewingBooking.handoffMethod || "N/A"}</s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="SUBMITTED">
+                <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="LAST CLEANING">
+                <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="AFTER CLEANING APPROVAL">
+                <s-badge tone={getApprovalBadgeTone(displayApprovalStatus)}>
+                  {displayApprovalStatus === "approved"
+                    ? "Approved"
+                    : displayApprovalStatus === "rejected"
+                      ? "Rejected"
+                      : displayApprovalStatus === "pending"
+                        ? "Pending"
+                        : "Not available"}
+                </s-badge>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="REFUND">
+                {viewingBooking.refund?.status === "completed" ? (
+                  <>
+                    <s-badge tone="success">Refunded</s-badge>
+                    <s-text>
+                      {formatMoney(viewingBooking.refund.amount, viewingBooking.refund.currencyCode)}
+                    </s-text>
+                    <s-text variant="bodySm" tone="subdued">
+                      {formatDateTime(viewingBooking.refund.processedAt)}
+                    </s-text>
+                  </>
+                ) : (
+                  <s-text>
+                    {(viewingBooking.status === "Canceled" && viewingBooking.handoffMethod === "shipping") ? "Pending refund" : "Not available"}
+                  </s-text>
+                )}
+              </BookingSummaryCard>
+              {displayApprovalStatus === "rejected" && viewingBooking.cleanedImagesApprovalNote && (
+                <BookingSummaryCard label="REJECTION NOTE">
+                  <s-text>{viewingBooking.cleanedImagesApprovalNote}</s-text>
+                </BookingSummaryCard>
+              )}
+            </div>
+          </section>
+
           {(viewingBooking.handoffMethod === "shipping" || viewingBooking.handoffMethod === "pickup_delivery") && (
-            <div className="booking-view-grid">
+            <section className="booking-view-block">
+              <div className="booking-view-block__header">
+                <s-text type="strong">Logistics</s-text>
+              </div>
+              <div className="booking-view-grid booking-view-grid--logistics">
               {viewingBooking.handoffMethod === "shipping" && customerShippingAddress && (
                 <BookingSummaryCard label="CUSTOMER SHIPPING ADDRESS">
                   {getAddressLines(customerShippingAddress).map((line, index) => (
@@ -422,10 +467,14 @@ export default function BookingViewModal({
                   </BookingSummaryCard>
                 </>
               )}
-            </div>
+              </div>
+            </section>
           )}
 
-          <div className="booking-view-qr-section">
+          <section className="booking-view-block booking-view-qr-section">
+            <div className="booking-view-block__header">
+              <s-text type="strong">Access</s-text>
+            </div>
             <div className="booking-view-qr-card">
               <div className="booking-view-qr-copy">
                 <s-text type="strong" color="subdued">Booking QR Code</s-text>
@@ -455,91 +504,12 @@ export default function BookingViewModal({
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
-          <div className="booking-view-toolbar">
-            <div>
-              <div>
-                <s-text type="strong" color="subdued">Post-cleaning updates</s-text>
-              </div>
-              <s-text variant="bodySm" tone="subdued">
-                Upload cleaned sneaker photos, then email the customer a direct link to view them.
-                {hasPendingCleanedImages(viewingBooking)
-                  ? " Newly uploaded images are still processing and will appear automatically."
-                  : ""}
-              </s-text>
-              {hasCleanedImages(viewingBooking) && (
-                <div className="booking-view-approval-block">
-                  <div className="booking-view-approval-actions">
-                    <s-badge tone={getApprovalBadgeTone(approvalStatus === "not-available" ? "pending" : approvalStatus)}>
-                      {approvalStatus === "approved"
-                        ? "Customer Approved"
-                        : approvalStatus === "rejected"
-                          ? "Customer Rejected"
-                          : "Approval Pending"}
-                    </s-badge>
-                    <s-button
-                      size="slim"
-                      variant="secondary"
-                      onClick={() => onApprovalUpdate("approved")}
-                      loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "approved"}
-                    >
-                      Mark approved
-                    </s-button>
-                    <s-button
-                      size="slim"
-                      variant="secondary"
-                      tone="critical"
-                      onClick={() => onApprovalUpdate("rejected")}
-                      loading={isSubmitting && activeActionType === "UPDATE_CLEANING_APPROVAL" && activeApprovalStatus === "rejected"}
-                    >
-                      Mark rejected
-                    </s-button>
-                  </div>
-                  <div className="booking-view-approval-note">
-                    <label className="booking-view-approval-note__label" htmlFor="approval-note">
-                      Rejection note
-                    </label>
-                    <textarea
-                      id="approval-note"
-                      className="booking-view-approval-note__input"
-                      rows={3}
-                      value={approvalNoteDraft}
-                      onChange={(event) => onApprovalNoteDraftChange(event.target.value)}
-                      placeholder="Add what the customer wants corrected before approval."
-                    />
-                  </div>
-                </div>
-              )}
+          <section className="booking-view-block booking-view-section">
+            <div className="booking-view-block__header">
+              <s-text type="strong">Sneakers ({Array.isArray(viewingBooking.sneakers) ? viewingBooking.sneakers.length : 0})</s-text>
             </div>
-            <div className="actions-container">
-              {viewingBooking.status === "Canceled"
-                && viewingBooking.refund?.status !== "completed"
-                && viewingBooking.handoffMethod === "shipping" && (
-                <s-button
-                  variant="primary"
-                  tone="critical"
-                  onClick={onRefundBooking}
-                  loading={refundLoading}
-                >
-                  Refund customer
-                </s-button>
-              )}
-              {hasCleanedImages(viewingBooking) && (
-                <s-button
-                  variant="primary"
-                  onClick={onSendCleanedEmail}
-                  loading={isSubmitting && activeActionType === "SEND_CLEANED_EMAIL"}
-                  disabled={hasPendingCleanedImages(viewingBooking)}
-                >
-                  Send email to customer
-                </s-button>
-              )}
-            </div>
-          </div>
-
-          <div className="booking-view-section">
-            <s-text type="strong">Sneakers ({Array.isArray(viewingBooking.sneakers) ? viewingBooking.sneakers.length : 0})</s-text>
             <div className="booking-view-sneakers">
               {(viewingBooking.sneakers || []).map((sneaker, sneakerIndex) => (
                 <BookingSneakerCard
@@ -564,7 +534,7 @@ export default function BookingViewModal({
                 />
               ))}
             </div>
-          </div>
+          </section>
         </div>
       )}
     </s-modal>

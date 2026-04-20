@@ -39,7 +39,6 @@ export default function BookingsIndex() {
   const [previewImage, setPreviewImage] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
-  const [approvalNoteDraft, setApprovalNoteDraft] = useState("");
   const [approvalNoteDraftBySneaker, setApprovalNoteDraftBySneaker] = useState({});
   const [refundLoading, setRefundLoading] = useState(false);
   const [buyShippingBookingId, setBuyShippingBookingId] = useState("");
@@ -172,7 +171,6 @@ export default function BookingsIndex() {
 
   const handleView = (item) => {
     setViewingBooking(item);
-    setApprovalNoteDraft(item?.cleanedImagesApprovalNote || "");
     viewModalRef.current?.showOverlay?.();
   };
 
@@ -245,26 +243,6 @@ export default function BookingsIndex() {
     formData.append("id", getObjectIdString(bookingId));
     formData.append("sneakerIndex", String(sneakerIndex));
     formData.append("imageIndex", String(imageIndex));
-    submit(formData, { method: "post" });
-  };
-
-  const handleApprovalUpdate = (bookingId, approvalStatus) => {
-    const trimmedApprovalNote = approvalNoteDraft.trim();
-
-    if (approvalStatus === "rejected" && !trimmedApprovalNote) {
-      shopify.toast.show("Add a rejection note before marking the cleaned images as rejected.", { isError: true });
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("actionType", "UPDATE_CLEANING_APPROVAL");
-    formData.append("id", getObjectIdString(bookingId));
-    formData.append("approvalStatus", approvalStatus);
-
-    if (approvalStatus === "rejected") {
-      formData.append("approvalNote", trimmedApprovalNote);
-    }
-
     submit(formData, { method: "post" });
   };
 
@@ -480,7 +458,6 @@ export default function BookingsIndex() {
   };
 
   const activeActionType = navigation.formData?.get("actionType");
-  const activeApprovalStatus = navigation.formData?.get("approvalStatus");
   const isSubmitting = navigation.state === "submitting";
   const approvalStatus = getCleanedImagesApprovalStatus(viewingBooking);
   const bookingShippingSelection = getBookingShippingSelection(viewingBooking);
@@ -534,27 +511,18 @@ export default function BookingsIndex() {
         viewingBooking={viewingBooking}
         cleanedImageDrafts={cleanedImageDrafts}
         approvalStatus={approvalStatus}
-        approvalNoteDraft={approvalNoteDraft}
         approvalNoteDraftBySneaker={approvalNoteDraftBySneaker}
         bookingShippingSelection={bookingShippingSelection}
         isSubmitting={isSubmitting}
         activeActionType={activeActionType}
-        activeApprovalStatus={activeApprovalStatus}
         refundLoading={refundLoading}
         onPreviewImage={handlePreviewImage}
         onDownloadImage={handleDownloadImage}
-        onApprovalNoteDraftChange={setApprovalNoteDraft}
         onSneakerApprovalNoteDraftChange={(draftKey, value) => {
           setApprovalNoteDraftBySneaker((currentDrafts) => ({
             ...currentDrafts,
             [draftKey]: value,
           }));
-        }}
-        onApprovalUpdate={(nextStatus) => {
-          if (nextStatus === "approved") {
-            setApprovalNoteDraft("");
-          }
-          handleApprovalUpdate(viewingBooking?._id, nextStatus);
         }}
         onRefundBooking={handleRefundBooking}
         onSendCleanedEmail={handleSendCleanedEmail}
