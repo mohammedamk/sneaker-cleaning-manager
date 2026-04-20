@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import './BookingsManagement.css';
 import AppIcon from '../shared/AppIcon/AppIcon.jsx';
-
-function formatDateTime(value, fallback = 'Not completed yet') {
-    if (!value) return fallback;
-
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return fallback;
-
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-}
+import BookingInfoSection from './components/BookingInfoSection.jsx';
+import BookingImagePreviewModal from './components/BookingImagePreviewModal.jsx';
+import BookingSneakerCard from './components/BookingSneakerCard.jsx';
+import {
+    downloadImage,
+    formatDateTime,
+    getBookingStatusClassName,
+} from './bookingDetails.helpers.js';
 
 function BookingDetails({
     booking,
@@ -34,7 +33,10 @@ function BookingDetails({
 
     const handleSneakerApprovalUpdate = async (sneakerIndex, nextStatus, noteOverride = '') => {
         const sneaker = currentBooking.sneakers?.[sneakerIndex];
-        if (!sneaker || !Array.isArray(sneaker.cleanedImages) || sneaker.cleanedImages.length === 0 || approvalLoadingBySneaker[sneakerIndex]) return;
+
+        if (!sneaker || !Array.isArray(sneaker.cleanedImages) || sneaker.cleanedImages.length === 0 || approvalLoadingBySneaker[sneakerIndex]) {
+            return;
+        }
 
         const trimmedNote = noteOverride.trim();
 
@@ -83,29 +85,27 @@ function BookingDetails({
         }
     };
 
-    const handleDownloadImage = async (imageUrl, sneakerName, imageIndex) => {
-        if (!imageUrl) return;
+    const handleApprove = (sneakerIndex) => {
+        setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [sneakerIndex]: false }));
+        setRejectionNoteBySneaker((prev) => ({ ...prev, [sneakerIndex]: '' }));
+        handleSneakerApprovalUpdate(sneakerIndex, 'approved');
+    };
 
-        try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const objectUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            const sanitizedName = (sneakerName || 'sneaker')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)/g, '');
+    const handleShowRejectForm = (sneakerIndex) => {
+        setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [sneakerIndex]: true }));
+    };
 
-            link.href = objectUrl;
-            link.download = `${sanitizedName || 'sneaker'}-${imageIndex + 1}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(objectUrl);
-        } catch (error) {
-            console.error('Failed to download sneaker image:', error);
-            window.open(imageUrl, '_blank', 'noopener,noreferrer');
-        }
+    const handleHideRejectForm = (sneakerIndex) => {
+        setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [sneakerIndex]: false }));
+        setRejectionNoteBySneaker((prev) => ({ ...prev, [sneakerIndex]: '' }));
+    };
+
+    const handleRejectionNoteChange = (sneakerIndex, value) => {
+        setRejectionNoteBySneaker((prev) => ({ ...prev, [sneakerIndex]: value }));
+    };
+
+    const handleSubmitReject = (sneakerIndex) => {
+        handleSneakerApprovalUpdate(sneakerIndex, 'rejected', rejectionNoteBySneaker[sneakerIndex]);
     };
 
     return (
@@ -121,8 +121,7 @@ function BookingDetails({
                     </button>
                 </div>
 
-                <div className="booking-details__section">
-                    <span className="booking-details__section-title">General Information</span>
+                <BookingInfoSection title="General Information">
                     <div className="booking-details__grid">
                         <div className="detail-item">
                             <span className="detail-item__label">Booking ID</span>
@@ -130,12 +129,7 @@ function BookingDetails({
                         </div>
                         <div className="detail-item">
                             <span className="detail-item__label">Status</span>
-                            <span
-                                className={`booking-card__status booking-card__status--${currentBooking.status
-                                    .toLowerCase()
-                                    .replace(/\s+/g, "-")
-                                    .replace(/\//g, "-")}`}
-                            >
+                            <span className={getBookingStatusClassName(currentBooking.status)}>
                                 {currentBooking.status}
                             </span>
                         </div>
@@ -164,10 +158,9 @@ function BookingDetails({
                             </span>
                         </div>
                     </div>
-                </div>
+                </BookingInfoSection>
 
-                <div className="booking-details__section">
-                    <span className="booking-details__section-title">Customer Information</span>
+                <BookingInfoSection title="Customer Information">
                     <div className="booking-details__grid">
                         <div className="detail-item">
                             <span className="detail-item__label">Name</span>
@@ -184,231 +177,36 @@ function BookingDetails({
                             </div>
                         )}
                     </div>
-                </div>
+                </BookingInfoSection>
 
-                <div className="booking-details__section">
-                    <span className="booking-details__section-title">Registered Sneakers ({currentBooking.sneakers?.length || 0})</span>
+                <BookingInfoSection title={`Registered Sneakers (${currentBooking.sneakers?.length || 0})`}>
                     <div className="booking-details__sneaker-list">
-                        {currentBooking.sneakers?.map((snk, i) => {
-                            const sneakerHasCleanedImages = Array.isArray(snk.cleanedImages) && snk.cleanedImages.length > 0;
-                            const sneakerApprovalStatus = snk.cleanedImagesApprovalStatus || (sneakerHasCleanedImages ? 'pending' : null);
-                            return (
-                                <div key={i} className="sneaker-item">
-                                    <div className="sneaker-item__gallery">
-                                    <div className="sneaker-item__gallery-section">
-                                        <span className="sneaker-item__gallery-title">Before cleaning</span>
-                                        <div className="sneaker-item__gallery-grid">
-                                            {snk.images?.length ? (
-                                                snk.images.map((imageUrl, imageIndex) => (
-                                                    <div key={`${snk._id || i}-before-${imageIndex}`} className="sneaker-item__image-card">
-                                                        <img
-                                                            src={imageUrl}
-                                                            alt={`${snk.nickname || 'Sneaker'} before cleaning ${imageIndex + 1}`}
-                                                            className="sneaker-item__img sneaker-item__img--interactive"
-                                                            onClick={() => setPreviewImage(imageUrl)}
-                                                        />
-                                                        <div className="sneaker-item__image-actions">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn--secondary btn--small"
-                                                                onClick={() => setPreviewImage(imageUrl)}
-                                                            >
-                                                                Preview
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn--secondary btn--small"
-                                                                onClick={() => handleDownloadImage(imageUrl, `${snk.nickname || 'sneaker'}-before`, imageIndex)}
-                                                            >
-                                                                Download
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="sneaker-item__empty-image">No image uploaded</div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="sneaker-item__gallery-section sneaker-item__gallery-section--cleaned">
-                                        <div className="sneaker-item__gallery-header">
-                                            <span className="sneaker-item__gallery-title">After cleaning</span>
-                                            {sneakerHasCleanedImages && (
-                                                <span className={`booking-approval-pill booking-approval-pill--${sneakerApprovalStatus}`}>
-                                                    {sneakerApprovalStatus === 'approved'
-                                                        ? 'Approved'
-                                                        : sneakerApprovalStatus === 'rejected'
-                                                            ? 'Rejected'
-                                                            : 'Approval Pending'}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="sneaker-item__gallery-grid">
-                                            {snk.cleanedImages?.length ? (
-                                                snk.cleanedImages.map((imageUrl, imageIndex) => (
-                                                    <div key={`${snk._id || i}-after-${imageIndex}`} className="sneaker-item__image-card">
-                                                        <img
-                                                            src={imageUrl}
-                                                            alt={`${snk.nickname || 'Sneaker'} after cleaning ${imageIndex + 1}`}
-                                                            className="sneaker-item__img sneaker-item__img--interactive"
-                                                            onClick={() => setPreviewImage(imageUrl)}
-                                                        />
-                                                        <div className="sneaker-item__image-actions">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn--secondary btn--small"
-                                                                onClick={() => setPreviewImage(imageUrl)}
-                                                            >
-                                                                Preview
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn--secondary btn--small"
-                                                                onClick={() => handleDownloadImage(imageUrl, `${snk.nickname || 'sneaker'}-after`, imageIndex)}
-                                                            >
-                                                                Download
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="sneaker-item__empty-image">Cleaning photos will appear here once uploaded</div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {sneakerHasCleanedImages && (
-                                        <div className="sneaker-item__approval-section">
-                                            <div className="sneaker-item__approval-actions">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn--primary btn--small"
-                                                    onClick={() => {
-                                                        setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [i]: false }));
-                                                        setRejectionNoteBySneaker((prev) => ({ ...prev, [i]: '' }));
-                                                        handleSneakerApprovalUpdate(i, 'approved');
-                                                    }}
-                                                    disabled={approvalLoadingBySneaker[i] || snk.cleanedImagesApprovalStatus === 'approved'}
-                                                >
-                                                    {approvalLoadingBySneaker[i] && approvalActionBySneaker[i] === 'approved' ? 'Saving...' : 'Approve'}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn--secondary btn--small"
-                                                    onClick={() => setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [i]: true }))}
-                                                    disabled={approvalLoadingBySneaker[i] || snk.cleanedImagesApprovalStatus === 'rejected'}
-                                                >
-                                                    {approvalLoadingBySneaker[i] && approvalActionBySneaker[i] === 'rejected' ? 'Saving...' : 'Reject'}
-                                                </button>
-                                            </div>
-                                            {snk.cleanedImagesApprovalStatus === 'rejected' && snk.cleanedImagesApprovalNote && (
-                                                <div className="booking-details__note-box">
-                                                    <label className="booking-details__note-label">Rejection Reason</label>
-                                                    <div className="booking-details__note-display">
-                                                        {snk.cleanedImagesApprovalNote}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {showRejectionNoteFormBySneaker[i] && snk.cleanedImagesApprovalStatus !== 'rejected' && (
-                                                <div className="booking-details__note-box">
-                                                    <label className="booking-details__note-label" htmlFor={`rejection-note-${i}`}>
-                                                        What needs correction?
-                                                    </label>
-                                                    <textarea
-                                                        id={`rejection-note-${i}`}
-                                                        className="booking-details__note-input"
-                                                        rows={3}
-                                                        value={rejectionNoteBySneaker[i] || ''}
-                                                        onChange={(event) => setRejectionNoteBySneaker((prev) => ({ ...prev, [i]: event.target.value }))}
-                                                        placeholder="Tell us what still needs attention before approval."
-                                                    />
-                                                    <div className="booking-details__note-actions">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn--secondary btn--small"
-                                                            onClick={() => {
-                                                                setShowRejectionNoteFormBySneaker((prev) => ({ ...prev, [i]: false }));
-                                                                setRejectionNoteBySneaker((prev) => ({ ...prev, [i]: '' }));
-                                                            }}
-                                                            disabled={approvalLoadingBySneaker[i]}
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn--secondary btn--small"
-                                                            onClick={() => handleSneakerApprovalUpdate(i, 'rejected', rejectionNoteBySneaker[i])}
-                                                            disabled={approvalLoadingBySneaker[i]}
-                                                        >
-                                                            {approvalLoadingBySneaker[i] && approvalActionBySneaker[i] === 'rejected' ? 'Saving...' : 'Submit Rejection'}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="sneaker-item__info">
-                                    <span className="sneaker-item__name">{snk.nickname || 'Unnamed'}</span>
-                                    <span className="sneaker-item__brand">
-                                        {snk.brand} {snk.model} {snk.colorway && ` - ${snk.colorway}`}
-                                    </span>
-                                    {snk.status && (
-                                        <div className="sneaker-item__status">
-                                            <strong>Status:</strong> {snk.status}
-                                        </div>
-                                    )}
-                                    {snk.services && (
-                                        <div className="sneaker-item__service">
-                                            <strong>Service:</strong> {snk.services.tier}
-                                            {snk.services.addOns?.length > 0 && ` + ${snk.services.addOns.join(', ')}`}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                        })}
+                        {currentBooking.sneakers?.map((sneaker, sneakerIndex) => (
+                            <BookingSneakerCard
+                                key={sneaker._id || sneakerIndex}
+                                sneaker={sneaker}
+                                sneakerIndex={sneakerIndex}
+                                approvalLoadingBySneaker={approvalLoadingBySneaker}
+                                approvalActionBySneaker={approvalActionBySneaker}
+                                showRejectionNoteFormBySneaker={showRejectionNoteFormBySneaker}
+                                rejectionNoteBySneaker={rejectionNoteBySneaker}
+                                onPreviewImage={setPreviewImage}
+                                onDownloadImage={downloadImage}
+                                onApprove={handleApprove}
+                                onShowRejectForm={handleShowRejectForm}
+                                onHideRejectForm={handleHideRejectForm}
+                                onRejectionNoteChange={handleRejectionNoteChange}
+                                onSubmitReject={handleSubmitReject}
+                            />
+                        ))}
                     </div>
-                </div>
-
-                {/* <div className="booking-details__actions">
-                    <button 
-                        className="btn btn--secondary" 
-                        onClick={() => alert("Edit feature coming soon. Please contact us for changes.")}
-                    >
-                        Edit Booking
-                    </button>
-                    <button 
-                        className="btn btn--danger" 
-                        onClick={() => onDelete(booking._id)}
-                    >
-                        Delete Booking
-                    </button>
-                </div> */}
+                </BookingInfoSection>
             </div>
 
-            {previewImage && (
-                <div className="image-preview-modal" role="dialog" aria-modal="true" aria-label="Sneaker image preview">
-                    <button
-                        type="button"
-                        className="image-preview-modal__backdrop"
-                        onClick={() => setPreviewImage(null)}
-                        aria-label="Close image preview"
-                    />
-                    <div className="image-preview-modal__content">
-                        <button
-                            type="button"
-                            className="image-preview-modal__close"
-                            onClick={() => setPreviewImage(null)}
-                            aria-label="Close image preview"
-                        >
-                            ×
-                        </button>
-                        <img src={previewImage} alt="Sneaker preview" className="image-preview-modal__image" />
-                    </div>
-                </div>
-            )}
+            <BookingImagePreviewModal
+                imageUrl={previewImage}
+                onClose={() => setPreviewImage(null)}
+            />
         </>
     );
 }

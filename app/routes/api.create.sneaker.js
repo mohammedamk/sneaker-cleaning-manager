@@ -78,7 +78,7 @@ export const action = async ({ request }) => {
       history,
       notes,
       images: uploadedImageIds,
-      status: "Received",
+      status: "Pending",
       submittedAt: new Date(),
     });
 
