@@ -209,32 +209,47 @@ export default function BookingsIndex() {
     submit(formData, { method: "post" });
   };
 
-  const handleBuyShipping = (bookingId) => {
+  const executeBuyShipping = async (bookingId) => {
+    closeConfirmModal();
     const normalizedBookingId = getObjectIdString(bookingId);
     setBuyShippingBookingId(normalizedBookingId);
 
-    fetch("/api/buy/return-shipping", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ bookingId: normalizedBookingId }),
-    })
-      .then(async (response) => {
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.message || "We could not buy return shipping.");
-        }
-
-        shopify.toast.show(result.message || "Store-to-customer shipping purchased successfully.");
-        await fetchPage(page, search);
-      })
-      .catch((error) => {
-        console.error("Failed to buy return shipping:", error);
-        shopify.toast.show(error.message || "We could not buy return shipping.", { isError: true });
-      })
-      .finally(() => {
-        setBuyShippingBookingId("");
+    try {
+      const response = await fetch("/api/buy/return-shipping", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId: normalizedBookingId }),
       });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "We could not buy return shipping.");
+      }
+
+      shopify.toast.show(result.message || "Store-to-customer shipping purchased successfully.");
+      await fetchPage(page, search);
+    } catch (error) {
+      console.error("Failed to buy return shipping:", error);
+      shopify.toast.show(error.message || "We could not buy return shipping.", { isError: true });
+    } finally {
+      setBuyShippingBookingId("");
+    }
+  };
+
+  const handleBuyShipping = (bookingId) => {
+    // const booking = items.find((item) => getObjectIdString(item._id) === getObjectIdString(bookingId));
+    // const shippingSelection = getBookingShippingSelection(booking);
+    // const rateSummary = shippingSelection?.selectedReturnRate
+    //   ? `${shippingSelection.selectedReturnRate.service} - ${formatMoney(shippingSelection.selectedReturnRate.rate, shippingSelection.selectedReturnRate.currency)}`
+    //   : "Shipping rate not available";
+
+    openConfirmModal({
+      heading: "Confirm Shipping Purchase",
+      // message: `Are you sure you want to purchase the return shipping label for booking #${getObjectIdString(bookingId)}? Rate: ${rateSummary}`,
+      message: `Are you sure you want to purchase the return shipping label for booking #${getObjectIdString(bookingId)}?`,
+      tone: "default",
+      confirmLabel: "Buy Shipping",
+    }, () => executeBuyShipping(bookingId));
   };
 
   const handleDeleteCleanedImage = (bookingId, sneakerIndex, imageIndex) => {

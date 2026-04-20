@@ -249,7 +249,6 @@ function BookingSneakerCard({
             className="booking-view-file-input"
             type="file"
             accept="image/*"
-            multiple
             onChange={(event) => onCleanedImagesChange(bookingId, sneakerIndex, event.target.files)}
           />
           {draftFiles.length > 0 && (
@@ -273,7 +272,7 @@ function BookingSneakerCard({
               Upload cleaned images
             </s-button>
             <s-text variant="bodySm" tone="subdued">
-              You can upload multiple after-cleaning images at once, and new uploads are added to the current gallery.
+              Upload one image at a time. New uploads are added to the current gallery.
             </s-text>
           </div>
         </div>
@@ -355,7 +354,7 @@ export default function BookingViewModal({
                 </s-button>
               </div>
             )}
-            {hasCleanedImages(viewingBooking) && (
+            {/* {hasCleanedImages(viewingBooking) && (
               <div className="booking-view-topbar__actions">
                 <s-button
                   variant="primary"
@@ -366,7 +365,7 @@ export default function BookingViewModal({
                   Send email to customer
                 </s-button>
               </div>
-            )}
+            )} */}
           </div>
 
           <section className="booking-view-block">
