@@ -9,6 +9,286 @@ import sendEmail from "../utils/sendEmail";
 import { verifyAndBuySelectedRate } from "../utils/easyPostShipping";
 import { uploadImageToShopify } from "../utils/shopifyImages.server";
 
+// In-memory lock to prevent concurrent processing of the same order
+const processingLocks = new Map();
+const LOCK_TIMEOUT = 60000; // 60 seconds lock timeout
+
+/**
+ * Acquire a processing lock for an order
+ * Returns true if lock was acquired, false if already processing
+ */
+function tryAcquireLock(orderId) {
+  const existingLock = processingLocks.get(orderId);
+  if (existingLock) {
+    // Check if lock has timed out
+    if (Date.now() - existingLock.timestamp < LOCK_TIMEOUT) {
+      return false;
+    }
+    // Lock has timed out, remove it
+    processingLocks.delete(orderId);
+  }
+  processingLocks.set(orderId, { timestamp: Date.now() });
+  return true;
+}
+
+/**
+ * Release a processing lock for an order
+ */
+function releaseLock(orderId) {
+  processingLocks.delete(orderId);
+}
+
+/**
+ * Clean up expired locks periodically
+ */
+setInterval(() => {
+  const now = Date.now();
+  for (const [orderId, lock] of processingLocks.entries()) {
+    if (now - lock.timestamp > LOCK_TIMEOUT) {
+      processingLocks.delete(orderId);
+    }
+  }
+}, 30000); // Clean up every 30 seconds
+
+/**
+ * Process booking creation in the background
+ */
+async function processBookingInBackground({
+  admin,
+  payload,
+  shop,
+  shopifyOrderId,
+  tempBooking,
+  tempBookingIdAttr
+}) {
+  try {
+    console.log(`Starting background processing for order: ${shopifyOrderId}`);
+    
+    const bookingData = tempBooking.payload;
+    let customerName = null;
+    let customerEmail = null;
+    let customerPhone = null;
+
+    // if customerID is present, it's a logged-in customer (not a guest)
+    if (bookingData.customerID && payload.customer) {
+      customerName = `${payload.customer.first_name || ""} ${payload.customer.last_name || ""}`.trim() || null;
+      customerEmail = payload.customer.email || null;
+      customerPhone = payload.customer.phone || payload.customer.default_address?.phone || null;
+
+      // converting numeric ID to Shopify GID for consistency in DB
+      if (!String(bookingData.customerID).startsWith("gid://")) {
+        bookingData.customerID = payload.customer.admin_graphql_api_id || `gid://shopify/Customer/${payload.customer.id}`;
+      }
+      console.log("Populated customer data from Shopify webhook for logged-in user:", bookingData.customerID);
+    }
+
+    console.log("Finalizing booking for:", customerEmail || bookingData.guestInfo?.email || bookingData.customerID);
+
+    const processedSneakers = [];
+
+    // processing images and preparing data
+    if (bookingData.sneakers && Array.isArray(bookingData.sneakers)) {
+      for (let i = 0; i < bookingData.sneakers.length; i++) {
+        const sneakerInput = bookingData.sneakers[i];
+        const uploadedImageIds = [];
+
+        if (sneakerInput.images && Array.isArray(sneakerInput.images)) {
+          for (let j = 0; j < sneakerInput.images.length; j++) {
+            const b64OrGid = sneakerInput.images[j];
+            if (!b64OrGid) continue;
+
+            if (typeof b64OrGid === "string" && b64OrGid.startsWith("gid://shopify/")) {
+              uploadedImageIds.push(b64OrGid);
+              continue;
+            }
+
+            // deferred upload happens here
+            const result = await uploadImageToShopify(admin, b64OrGid, {
+              filename: `sneaker-${Date.now()}-${j}.jpg`,
+              alt: sneakerInput?.nickname || "Sneaker image",
+            });
+
+            if (result?.id) {
+              uploadedImageIds.push(result.id);
+            }
+          }
+        }
+
+        processedSneakers.push({
+          ...sneakerInput,
+          images: uploadedImageIds
+        });
+      }
+    }
+
+    const normalizedBookingPayload = {
+      ...bookingData,
+      sneakers: processedSneakers,
+    };
+
+    const bookingDoc = new BookingModel({
+      customerID: bookingData.customerID,
+      name: customerName,
+      email: customerEmail,
+      phone: customerPhone,
+      guestInfo: bookingData.customerID ? null : bookingData.guestInfo,
+      handoffMethod: bookingData.handoffMethod,
+      sneakers: processedSneakers,
+      fullPayload: normalizedBookingPayload,
+      shopifyOrderID: shopifyOrderId,
+      submittedAt: bookingData.submittedAt ? new Date(bookingData.submittedAt) : new Date(),
+      status: "Pending"
+    });
+
+    const accessToken = randomBytes(32).toString("hex");
+    bookingDoc.accessTokenHash = createHash("sha256").update(accessToken).digest("hex");
+    
+    try {
+      await bookingDoc.save();
+    } catch (saveError) {
+      if (saveError.code === 11000) {
+        // Duplicate key error - another process already created this booking
+        console.log("Duplicate booking detected (likely created by concurrent process):", shopifyOrderId);
+        return;
+      }
+      throw saveError;
+    }
+
+    bookingDoc.secureAccessUrl = buildSecureBookingAccess(shop, bookingDoc._id.toString(), accessToken);
+    bookingDoc.qrCodeImageUrl = buildQrCodeImageUrl(bookingDoc.secureAccessUrl);
+    await bookingDoc.save();
+
+    if (bookingData.handoffMethod === "shipping" && bookingData.shippingSelection) {
+      bookingDoc.shipping = {
+        ...bookingData.shippingSelection,
+      };
+
+      const shippingContact = {
+        ...bookingData.shippingSelection.customerAddress,
+        email: bookingData.shippingSelection.customerAddress?.email || customerEmail || bookingData.guestInfo?.email || "",
+      };
+
+      if (bookingData.shippingSelection.selectedForwardRate) {
+        const verificationResult = process.env.EASYPOST_API_KEY
+          ? await verifyAndBuySelectedRate({
+            customerAddress: shippingContact,
+            parcel: bookingData.shippingSelection.parcel,
+            selectedRate: bookingData.shippingSelection.selectedForwardRate,
+            direction: "customer_to_store",
+            referencePrefix: bookingDoc._id.toString(),
+          })
+          : buildTestShippingPurchase({
+            bookingId: bookingDoc._id.toString(),
+            shippingSelection: bookingData.shippingSelection,
+            shippingContact,
+          });
+
+        if (verificationResult.status === "purchased") {
+          bookingDoc.shipping = {
+            ...bookingDoc.shipping,
+            purchaseStatus: "customer_to_store_purchased",
+            labels: {
+              ...(bookingDoc.shipping?.labels || {}),
+              customerToStore: verificationResult.label,
+            },
+            storeAddress: verificationResult.storeAddress,
+            isTestData: Boolean(verificationResult.isTestData),
+            purchasedAt: new Date(),
+          };
+        } else {
+          console.log(`shipping rate changed for sneaker booking of shipping selection:`, {
+            bookingDoc,
+            orderPayload: payload,
+            shippingSelection: bookingData.shippingSelection,
+            verificationResult,
+          });
+          // in case of rate changed
+          // bookingDoc.shipping = {
+          //   ...bookingDoc.shipping,
+          //   purchaseStatus: "customer_to_store_rate_changed",
+          //   changedRates: verificationResult.changedRates,
+          //   storeAddress: verificationResult.storeAddress,
+          //   flaggedAt: new Date(),
+          // };
+
+          // await sendEmail(
+          //   ADMIN_NOTIFICATION_EMAIL,
+          //   "EasyPost shipping rate changed for sneaker booking",
+          //   buildRateChangedEmail({
+          //     bookingDoc,
+          //     orderPayload: payload,
+          //     shippingSelection: bookingData.shippingSelection,
+          //     verificationResult,
+          //   }),
+          // );
+        }
+      }
+
+      await bookingDoc.save();
+    }
+
+    await saveBookingAccessToOrder(admin, shopifyOrderId, bookingDoc, payload.note_attributes);
+
+    const recipientEmail = customerEmail || bookingData.guestInfo?.email;
+    if (recipientEmail) {
+      await sendEmail(
+        recipientEmail,
+        `Booking confirmed: ${bookingDoc._id.toString()}`,
+        buildCustomerBookingEmail({
+          bookingDoc,
+          orderPayload: payload,
+          accessUrl: bookingDoc.secureAccessUrl,
+          qrCodeImageUrl: bookingDoc.qrCodeImageUrl,
+        }),
+      );
+    }
+
+    // registry logic
+    if (bookingData.customerID) {
+      for (const processedSnk of processedSneakers) {
+        const sneakerFields = {
+          customerID: bookingData.customerID,
+          bookingID: bookingDoc._id,
+          nickname: processedSnk.nickname,
+          brand: processedSnk.brand,
+          model: processedSnk.model,
+          colorway: processedSnk.colorway,
+          size: processedSnk.size,
+          sizeUnit: processedSnk.sizeUnit,
+          history: processedSnk.history,
+          notes: processedSnk.notes,
+          services: bookingData.services ? bookingData.services[processedSnk.id || processedSnk._id] : null,
+          images: processedSnk.images,
+          status: "Pending",
+          submittedAt: bookingData.submittedAt ? new Date(bookingData.submittedAt) : new Date(),
+        };
+
+        const sneakerId = processedSnk.id || processedSnk._id;
+        if (sneakerId && mongoose.Types.ObjectId.isValid(sneakerId)) {
+          await SneakerModel.findOneAndUpdate(
+            { _id: sneakerId },
+            { $set: sneakerFields },
+            { upsert: true }
+          );
+        } else {
+          const newSneaker = new SneakerModel(sneakerFields);
+          await newSneaker.save();
+        }
+      }
+    }
+
+    // cleanup temp data
+    await TempBookingModel.findByIdAndDelete(tempBookingIdAttr.value);
+    console.log("Background booking process completed successfully for order:", shopifyOrderId);
+
+  } catch (err) {
+    console.error("Error in background booking processing:", err);
+  } finally {
+    // Always release the lock when processing is done
+    releaseLock(shopifyOrderId);
+  }
+}
+
 const TEST_STORE_ADDRESS = {
   name: "Sneaker Cleaning Manager Test Store",
   company: "Sneaker Cleaning Manager",
@@ -21,7 +301,7 @@ const TEST_STORE_ADDRESS = {
   phone: "2125550100",
 };
 
-const ADMIN_NOTIFICATION_EMAIL = "vowelweb113@gmail.com";
+const ADMIN_NOTIFICATION_EMAIL = "test@gmail.com";
 const ORDER_UPDATE_MUTATION = `
 mutation orderUpdate($input: OrderInput!) {
   orderUpdate(input: $input) {
@@ -329,217 +609,41 @@ export const action = async ({ request }) => {
       return new Response();
     }
 
-    const bookingData = tempBooking.payload;
-    let customerName = null;
-    let customerEmail = null;
-    let customerPhone = null;
-
-    // if customerID is present, it's a logged-in customer (not a guest)
-    if (bookingData.customerID && payload.customer) {
-      customerName = `${payload.customer.first_name || ""} ${payload.customer.last_name || ""}`.trim() || null;
-      customerEmail = payload.customer.email || null;
-      customerPhone = payload.customer.phone || payload.customer.default_address?.phone || null;
-
-      // converting numeric ID to Shopify GID for consistency in DB
-      if (!String(bookingData.customerID).startsWith("gid://")) {
-        bookingData.customerID = payload.customer.admin_graphql_api_id || `gid://shopify/Customer/${payload.customer.id}`;
-      }
-      console.log("Populated customer data from Shopify webhook for logged-in user:", bookingData.customerID);
+    // Check if we can acquire a lock for this order
+    if (!tryAcquireLock(shopifyOrderId)) {
+      console.log("Order is already being processed:", shopifyOrderId);
+      return new Response();
     }
 
-    console.log("Finalizing booking for:", customerEmail || bookingData.guestInfo?.email || bookingData.customerID);
-
-    const processedSneakers = [];
-
-    // processing images and preparing data
-    if (bookingData.sneakers && Array.isArray(bookingData.sneakers)) {
-      for (let i = 0; i < bookingData.sneakers.length; i++) {
-        const sneakerInput = bookingData.sneakers[i];
-        const uploadedImageIds = [];
-
-        if (sneakerInput.images && Array.isArray(sneakerInput.images)) {
-          for (let j = 0; j < sneakerInput.images.length; j++) {
-            const b64OrGid = sneakerInput.images[j];
-            if (!b64OrGid) continue;
-
-            if (typeof b64OrGid === "string" && b64OrGid.startsWith("gid://shopify/")) {
-              uploadedImageIds.push(b64OrGid);
-              continue;
-            }
-
-            // deferred upload happens here
-            const result = await uploadImageToShopify(admin, b64OrGid, {
-              filename: `sneaker-${Date.now()}-${j}.jpg`,
-              alt: sneakerInput?.nickname || "Sneaker image",
-            });
-
-            if (result?.id) {
-              uploadedImageIds.push(result.id);
-            }
-          }
-        }
-
-        processedSneakers.push({
-          ...sneakerInput,
-          images: uploadedImageIds
-        });
-      }
-    }
-
-    const normalizedBookingPayload = {
-      ...bookingData,
-      sneakers: processedSneakers,
-    };
-
-    bookingDoc = new BookingModel({
-      customerID: bookingData.customerID,
-      name: customerName,
-      email: customerEmail,
-      phone: customerPhone,
-      guestInfo: bookingData.customerID ? null : bookingData.guestInfo,
-      handoffMethod: bookingData.handoffMethod,
-      sneakers: processedSneakers,
-      fullPayload: normalizedBookingPayload,
-      shopifyOrderID: shopifyOrderId,
-      submittedAt: bookingData.submittedAt ? new Date(bookingData.submittedAt) : new Date(),
-      status: "Pending"
+    // Send immediate response to Shopify to prevent retries
+    const response = new Response("Webhook received", {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain",
+      },
     });
 
-    const accessToken = randomBytes(32).toString("hex");
-    bookingDoc.accessTokenHash = createHash("sha256").update(accessToken).digest("hex");
-    await bookingDoc.save();
+    // Process booking in the background
+    // Use setImmediate to ensure the response is sent first
+    setImmediate(() => {
+      processBookingInBackground({
+        admin,
+        payload,
+        shop,
+        shopifyOrderId,
+        tempBooking,
+        tempBookingIdAttr
+      }).catch((err) => {
+        console.error("Background booking processing failed:", err);
+        // Release lock on error
+        releaseLock(shopifyOrderId);
+      });
+    });
 
-    bookingDoc.secureAccessUrl = buildSecureBookingAccess(shop, bookingDoc._id.toString(), accessToken);
-    bookingDoc.qrCodeImageUrl = buildQrCodeImageUrl(bookingDoc.secureAccessUrl);
-    await bookingDoc.save();
-
-    if (bookingData.handoffMethod === "shipping" && bookingData.shippingSelection) {
-      bookingDoc.shipping = {
-        ...bookingData.shippingSelection,
-      };
-
-      const shippingContact = {
-        ...bookingData.shippingSelection.customerAddress,
-        email: bookingData.shippingSelection.customerAddress?.email || customerEmail || bookingData.guestInfo?.email || "",
-      };
-
-      if (bookingData.shippingSelection.selectedForwardRate) {
-        const verificationResult = process.env.EASYPOST_API_KEY
-          ? await verifyAndBuySelectedRate({
-            customerAddress: shippingContact,
-            parcel: bookingData.shippingSelection.parcel,
-            selectedRate: bookingData.shippingSelection.selectedForwardRate,
-            direction: "customer_to_store",
-            referencePrefix: bookingDoc._id.toString(),
-          })
-          : buildTestShippingPurchase({
-            bookingId: bookingDoc._id.toString(),
-            shippingSelection: bookingData.shippingSelection,
-            shippingContact,
-          });
-
-        if (verificationResult.status === "purchased") {
-          bookingDoc.shipping = {
-            ...bookingDoc.shipping,
-            purchaseStatus: "customer_to_store_purchased",
-            labels: {
-              ...(bookingDoc.shipping?.labels || {}),
-              customerToStore: verificationResult.label,
-            },
-            storeAddress: verificationResult.storeAddress,
-            isTestData: Boolean(verificationResult.isTestData),
-            purchasedAt: new Date(),
-          };
-        } else {
-          console.log(`shipping rate changed for sneaker booking of shipping selection:`, {
-            bookingDoc,
-            orderPayload: payload,
-            shippingSelection: bookingData.shippingSelection,
-            verificationResult,
-          });
-          // in case of rate changed
-          // bookingDoc.shipping = {
-          //   ...bookingDoc.shipping,
-          //   purchaseStatus: "customer_to_store_rate_changed",
-          //   changedRates: verificationResult.changedRates,
-          //   storeAddress: verificationResult.storeAddress,
-          //   flaggedAt: new Date(),
-          // };
-
-          // await sendEmail(
-          //   ADMIN_NOTIFICATION_EMAIL,
-          //   "EasyPost shipping rate changed for sneaker booking",
-          //   buildRateChangedEmail({
-          //     bookingDoc,
-          //     orderPayload: payload,
-          //     shippingSelection: bookingData.shippingSelection,
-          //     verificationResult,
-          //   }),
-          // );
-        }
-      }
-
-      await bookingDoc.save();
-    }
-
-    await saveBookingAccessToOrder(admin, shopifyOrderId, bookingDoc, payload.note_attributes);
-
-    const recipientEmail = customerEmail || bookingData.guestInfo?.email;
-    if (recipientEmail) {
-      await sendEmail(
-        recipientEmail,
-        `Booking confirmed: ${bookingDoc._id.toString()}`,
-        buildCustomerBookingEmail({
-          bookingDoc,
-          orderPayload: payload,
-          accessUrl: bookingDoc.secureAccessUrl,
-          qrCodeImageUrl: bookingDoc.qrCodeImageUrl,
-        }),
-      );
-    }
-
-    // registry logic
-    if (bookingData.customerID) {
-      for (const processedSnk of processedSneakers) {
-        const sneakerFields = {
-          customerID: bookingData.customerID,
-          bookingID: bookingDoc._id,
-          nickname: processedSnk.nickname,
-          brand: processedSnk.brand,
-          model: processedSnk.model,
-          colorway: processedSnk.colorway,
-          size: processedSnk.size,
-          sizeUnit: processedSnk.sizeUnit,
-          history: processedSnk.history,
-          notes: processedSnk.notes,
-          services: bookingData.services ? bookingData.services[processedSnk.id || processedSnk._id] : null,
-          images: processedSnk.images,
-          status: "Pending",
-          submittedAt: bookingData.submittedAt ? new Date(bookingData.submittedAt) : new Date(),
-        };
-
-        const sneakerId = processedSnk.id || processedSnk._id;
-        if (sneakerId && mongoose.Types.ObjectId.isValid(sneakerId)) {
-          await SneakerModel.findOneAndUpdate(
-            { _id: sneakerId },
-            { $set: sneakerFields },
-            { upsert: true }
-          );
-        } else {
-          const newSneaker = new SneakerModel(sneakerFields);
-          await newSneaker.save();
-        }
-      }
-    }
-
-    // cleanup temp data
-    await TempBookingModel.findByIdAndDelete(tempBookingIdAttr.value);
-    console.log("Deferred booking process completed successfully for order:", shopifyOrderId);
+    return response;
 
   } catch (err) {
-    console.error("Error in deferred booking webhook:", err);
+    console.error("Error in webhook handler:", err);
     return new Response(null, { status: 500 });
   }
-
-  return new Response();
 };

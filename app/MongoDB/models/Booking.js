@@ -44,6 +44,8 @@ const bookingSchema = mongoose.Schema({
     submittedAt: { type: Date, default: Date.now }
 });
 
+bookingSchema.index({ shopifyOrderID: 1 }, { unique: true, sparse: true });
+
 const BookingModel = mongoose.models.Booking || mongoose.model("Booking", bookingSchema);
 
 export default BookingModel;
