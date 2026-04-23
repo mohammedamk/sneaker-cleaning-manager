@@ -28,6 +28,23 @@ export default function BookingsTable({
   // checking if we're on mobile for responsive adjustments
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
+  // empty message if items is empty
+  if (!items || items.length === 0) {
+    return (
+      <div className="empty-state-container">
+        <div className="empty-state-content">
+          <div className="empty-state-icon">📦</div>
+          <s-text type="strong"className="empty-state-title">
+            No bookings found
+          </s-text>
+          <s-text variant="body" tone="subdued" className="empty-state-description">
+            No cleaning bookings match your current search criteria
+          </s-text>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <s-table
       paginate
@@ -54,7 +71,7 @@ export default function BookingsTable({
                 #{getObjectIdString(item._id)}
               </code>
               {isMobile && (
-                <div style={{ marginTop: '4px', fontSize: '12px', color: '#6b7280' }}>
+                <div className="mobile-booking-info">
                   {item.name || item.guestInfo?.name || "Guest"}<br />
                   {item.handoffMethod}
                 </div>

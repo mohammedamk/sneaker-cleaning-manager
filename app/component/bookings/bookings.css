@@ -92,6 +92,58 @@ s-button {
     word-break: break-word;
 }
 
+/* empty state of bookings table*/
+.empty-state-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+  background-color: var(--s-color-background-default, #ffffff);
+  border-radius: var(--s-border-radius-medium, 8px);
+  border: 1px solid var(--s-color-border-default, #e5e7eb);
+}
+
+.empty-state-content {
+  text-align: center;
+  padding: 64px 32px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 36px;
+  opacity: 0.7;
+}
+
+.empty-state-title {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.empty-state-description {
+  display: block;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mobile-booking-info {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--s-color-text-subdued, #6b7280);
+}
+
+.empty-state {
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+    border: 1.5px dashed #ddd;
+    border-radius: 8px;
+}
+
 @media (max-width: 768px) {
     .bookings-header {
         flex-direction: column;
