@@ -6,3 +6,24 @@
     border: 1.5px dashed #ddd;
     border-radius: 8px;
 }
+
+@media (max-width: 768px) {
+    .empty-state {
+        padding: 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 600px) {
+    .empty-state {
+        padding: 14px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .empty-state {
+        padding: 12px;
+        font-size: 11px;
+    }
+}

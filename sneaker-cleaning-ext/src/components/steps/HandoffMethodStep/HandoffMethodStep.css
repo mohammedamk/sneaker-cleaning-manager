@@ -205,13 +205,108 @@
     font-weight: 600;
 }
 
+@media (max-width: 768px) {
+    .handoff-options {
+        gap: 12px;
+    }
+    
+    .handoff-card {
+        padding: 20px;
+    }
+    
+    .handoff-card__icon {
+        font-size: 24px;
+    }
+    
+    .handoff-card__title {
+        font-size: 15px;
+    }
+    
+    .handoff-card__desc {
+        font-size: 12px;
+    }
+    
+    .shipping-grid,
+    .shipping-grid--parcel {
+        gap: 10px;
+    }
+}
+
 @media (max-width: 600px) {
     .handoff-options {
         grid-template-columns: 1fr;
     }
 
+    .handoff-card {
+        padding: 16px;
+    }
+    
+    .handoff-card__icon {
+        font-size: 22px;
+    }
+    
+    .handoff-card__title {
+        font-size: 14px;
+    }
+    
+    .handoff-card__desc {
+        font-size: 12px;
+    }
+    
     .shipping-grid,
     .shipping-grid--parcel {
         grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .shipping-rates__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .shipping-rate-card {
+        padding: 10px;
+    }
+    
+    .shipping-total {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .handoff-card {
+        padding: 14px;
+    }
+    
+    .handoff-card__icon {
+        font-size: 20px;
+    }
+    
+    .handoff-card__title {
+        font-size: 13px;
+    }
+    
+    .handoff-card__desc {
+        font-size: 11px;
+    }
+    
+    .shipping-grid,
+    .shipping-grid--parcel {
+        gap: 6px;
+    }
+    
+    .shipping-rates__header {
+        gap: 4px;
+    }
+    
+    .shipping-rate-card {
+        padding: 8px;
+    }
+    
+    .shipping-total {
+        padding: 10px 12px;
+        font-size: 12px;
     }
 }

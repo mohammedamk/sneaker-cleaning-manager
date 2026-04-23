@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://luis-airports-deposits-unsigned.trycloudflare.com"
+application_url = "https://addresses-hammer-accommodate-saints.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,12 +16,12 @@ api_version = "2026-04"
   uri = "/webhooks/app/uninstalled"
 
   [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
-
-  [[webhooks.subscriptions]]
   topics = [ "orders/create" ]
   uri = "/webhooks/orders/create"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -29,10 +29,10 @@ scopes = "read_orders,write_draft_orders,write_files,write_orders,write_products
 
 [auth]
 redirect_urls = [
-  "https://luis-airports-deposits-unsigned.trycloudflare.com/api/auth"
+  "https://addresses-hammer-accommodate-saints.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://luis-airports-deposits-unsigned.trycloudflare.com"
+url = "https://addresses-hammer-accommodate-saints.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"

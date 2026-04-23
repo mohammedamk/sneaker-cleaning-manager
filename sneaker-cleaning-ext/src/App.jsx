@@ -3,7 +3,7 @@ import './index.css';
 
 function App() {
   return (
-    <div className="app" style={{ width: '100%', height: '100%', marginTop: '40px' }}>
+    <div className="app">
       <BookingWizard />
     </div>
   );

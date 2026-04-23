@@ -60,3 +60,132 @@
     font-weight: 600;
     color: #2e7d32;
 }
+
+@media (max-width: 768px) {
+    .confirmation-step {
+        padding: 14px 0;
+        gap: 16px;
+    }
+    
+    .confirmation-step__icon {
+        font-size: 44px;
+    }
+    
+    .confirmation-step__title {
+        font-size: 22px;
+    }
+    
+    .confirmation-step__subtitle {
+        font-size: 14px;
+    }
+    
+    .confirmation-step__info {
+        padding: 16px 20px;
+    }
+    
+    .confirmation-step__info h3 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .confirmation-step__steps {
+        padding-left: 18px;
+        gap: 6px;
+        font-size: 13px;
+    }
+    
+    .confirmation-step__note {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+    
+    .confirmation-step__thanks {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .confirmation-step {
+        padding: 12px 0;
+        gap: 14px;
+    }
+    
+    .confirmation-step__icon {
+        font-size: 40px;
+    }
+    
+    .confirmation-step__title {
+        font-size: 20px;
+    }
+    
+    .confirmation-step__subtitle {
+        font-size: 13px;
+    }
+    
+    .confirmation-step__info {
+        padding: 14px 16px;
+    }
+    
+    .confirmation-step__info h3 {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    
+    .confirmation-step__steps {
+        padding-left: 16px;
+        gap: 4px;
+        font-size: 12px;
+    }
+    
+    .confirmation-step__note {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+    
+    .confirmation-step__thanks {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .confirmation-step {
+        padding: 10px 0;
+        gap: 12px;
+    }
+    
+    .confirmation-step__icon {
+        font-size: 36px;
+    }
+    
+    .confirmation-step__title {
+        font-size: 18px;
+    }
+    
+    .confirmation-step__subtitle {
+        font-size: 12px;
+    }
+    
+    .confirmation-step__info {
+        padding: 12px 14px;
+    }
+    
+    .confirmation-step__info h3 {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .confirmation-step__steps {
+        padding-left: 14px;
+        gap: 3px;
+        font-size: 11px;
+    }
+    
+    .confirmation-step__note {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+    
+    .confirmation-step__thanks {
+        font-size: 12px;
+    }
+}

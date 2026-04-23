@@ -6,8 +6,9 @@
 
 .landing-step__top-right {
     display: flex;
-    justify-content: flex-end;
-    margin: auto auto 38px auto;
+    justify-content: center; 
+    flex-wrap: wrap;
+    margin: 0 0 38px 0;
     gap: 12px;
 }
 
@@ -34,6 +35,7 @@
     padding: 8px 16px;
     border-radius: 6px;
     transition: all 0.2s ease;
+    max-width: 100%;
     width: auto;
 }
 
@@ -64,4 +66,96 @@
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .landing-step__top-right {
+        margin: auto auto 28px auto;
+        gap: 8px;
+    }
+    
+    .landing-step__title {
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+    
+    .landing-step__description {
+        font-size: 14px;
+        margin: 0 auto 14px;
+    }
+    
+    .landing-step__features {
+        margin: 0 auto 24px;
+        max-width: 300px;
+        gap: 6px;
+    }
+    
+    .landing-step__actions {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .landing-step {
+        padding: 16px 0;
+    }
+    
+    .landing-step__top-right {
+        margin: auto auto 24px auto;
+        gap: 6px;
+    }
+    
+    .landing-step__title {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+    
+    .landing-step__description {
+        font-size: 13px;
+        margin: 0 auto 12px;
+    }
+    
+    .landing-step__features {
+        margin: 0 auto 20px;
+        max-width: 280px;
+        gap: 5px;
+    }
+    
+    .landing-step__actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-step {
+        padding: 12px 0;
+    }
+    
+    .landing-step__top-right {
+        margin: 0 0 20px 0;
+        justify-content: center;
+        flex-direction: row; 
+    }
+    
+    .landing-step__title {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    
+    .landing-step__description {
+        font-size: 12px;
+        margin: 0 auto 10px;
+    }
+    
+    .landing-step__features {
+        margin: 0 auto 16px;
+        max-width: 260px;
+        gap: 4px;
+    }
+    
+    .landing-step__actions {
+        gap: 6px;
+    }
 }

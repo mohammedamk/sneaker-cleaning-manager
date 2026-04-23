@@ -4,10 +4,22 @@
     gap: 5px;
 }
 
+@media (max-width: 480px) {
+    .form-field {
+        gap: 4px;
+    }
+}
+
 .form-field__label {
     font-size: 13px;
     font-weight: 600;
     color: #333;
+}
+
+@media (max-width: 480px) {
+    .form-field__label {
+        font-size: 12px;
+    }
 }
 
 .form-field__required {
@@ -17,4 +29,10 @@
 .form-field__error {
     font-size: 12px;
     color: #c62828;
+}
+
+@media (max-width: 480px) {
+    .form-field__error {
+        font-size: 11px;
+    }
 }

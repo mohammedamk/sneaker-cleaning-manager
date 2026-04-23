@@ -4,6 +4,35 @@
   border-radius: 12px;
 }
 
+@media (max-width: 768px) {
+  .bookings-management {
+    padding: 20px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookings-management {
+    padding: 16px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookings-management {
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .sneaker-item__empty-image {
+    max-width: 204px;
+  }
+
+  .sneaker-item__gallery-section--cleaned {
+    max-width: 202px;
+  }
+}
+
 .booking-lookup {
   max-width: 640px;
   margin: 0 auto;
@@ -14,15 +43,47 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+  .booking-lookup__description {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-lookup__description {
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+}
+
 .booking-lookup__form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+@media (max-width: 768px) {
+  .booking-lookup__form {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-lookup__form {
+    gap: 12px;
+  }
+}
+
 .booking-lookup__actions {
   display: flex;
   justify-content: flex-start;
+}
+
+@media (max-width: 600px) {
+  .booking-lookup__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .booking-lookup__error {
@@ -31,11 +92,45 @@
   font-weight: 500;
 }
 
+@media (max-width: 480px) {
+  .booking-lookup__error {
+    font-size: 13px;
+  }
+}
+
 .bookings-management__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .bookings-management__header {
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookings-management__header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 16px;
+    gap: 8px;
+  }
+
+  .bookings-management__header .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookings-management__header {
+    margin-bottom: 12px;
+    gap: 6px;
+  }
 }
 
 .bookings-management__title {
@@ -45,10 +140,49 @@
   margin: 0;
 }
 
+@media (max-width: 768px) {
+  .bookings-management__title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookings-management__title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookings-management__title {
+    font-size: 18px;
+  }
+}
+
 .bookings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .bookings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookings-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookings-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .booking-card {
@@ -58,6 +192,20 @@
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
   background: #fdfdfd;
+}
+
+@media (max-width: 768px) {
+  .booking-card {
+    padding: 14px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card {
+    padding: 12px;
+    border-radius: 6px;
+  }
 }
 
 .booking-card:hover {
@@ -71,12 +219,35 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .booking-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card__header {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 }
 
 .booking-card__id {
   font-size: 13px;
   color: #666;
   font-family: monospace;
+}
+
+@media (max-width: 480px) {
+  .booking-card__id {
+    font-size: 12px;
+  }
 }
 
 .booking-card__status {
@@ -95,12 +266,27 @@
   max-width: max-content;
 }
 
+@media (max-width: 480px) {
+  .booking-card__status {
+    font-size: 10px;
+    padding: 5px 8px;
+    gap: 4px;
+  }
+}
+
 .booking-card__status::before {
   content: "";
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
+}
+
+@media (max-width: 480px) {
+  .booking-card__status::before {
+    width: 5px;
+    height: 5px;
+  }
 }
 
 
@@ -162,6 +348,12 @@
   margin-bottom: 12px;
 }
 
+@media (max-width: 480px) {
+  .booking-card__body {
+    margin-bottom: 10px;
+  }
+}
+
 .booking-card__sneakers {
   font-weight: 600;
   font-size: 15px;
@@ -170,14 +362,40 @@
   margin-bottom: 4px;
 }
 
+@media (max-width: 768px) {
+  .booking-card__sneakers {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card__sneakers {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+}
+
 .booking-card__date {
   font-size: 13px;
   color: #777;
 }
 
+@media (max-width: 480px) {
+  .booking-card__date {
+    font-size: 12px;
+  }
+}
+
 .booking-card__footer {
   display: flex;
   gap: 2px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .booking-card__footer {
+    gap: 4px;
+  }
 }
 
 .booking-card__thumb {
@@ -188,6 +406,13 @@
   border: 1px solid #eee;
 }
 
+@media (max-width: 480px) {
+  .booking-card__thumb {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 /* Pagination */
 .pagination {
   display: flex;
@@ -195,6 +420,21 @@
   align-items: center;
   gap: 16px;
   margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    gap: 12px;
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    gap: 10px;
+    margin-top: 16px;
+  }
 }
 
 /* Details Page */
@@ -220,6 +460,20 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
+@media (max-width: 768px) {
+  .booking-details__section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__section {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+}
+
 .booking-details__section-title {
   font-size: 16px;
   font-weight: 700;
@@ -228,10 +482,44 @@
   display: block;
 }
 
+@media (max-width: 768px) {
+  .booking-details__section-title {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__section-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+}
+
 .booking-details__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .booking-details__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .booking-details__grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__grid {
+    gap: 10px;
+  }
 }
 
 .detail-item--full {
@@ -250,9 +538,22 @@
   margin-bottom: 4px;
 }
 
+@media (max-width: 480px) {
+  .detail-item__label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+}
+
 .detail-item__value {
   font-weight: 600;
   color: #333;
+}
+
+@media (max-width: 480px) {
+  .detail-item__value {
+    font-size: 14px;
+  }
 }
 
 .detail-item__value--note {
@@ -265,11 +566,42 @@
   gap: 16px;
 }
 
+@media (max-width: 768px) {
+  .booking-details__sneaker-list {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__sneaker-list {
+    gap: 12px;
+  }
+}
+
 .booking-details__approval-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .booking-details__approval-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .booking-details__approval-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__approval-actions {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
 }
 
 .booking-details__note-box {
@@ -280,12 +612,35 @@
   background: #fff8f8;
 }
 
+@media (max-width: 768px) {
+  .booking-details__note-box {
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__note-box {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+}
+
 .booking-details__note-label {
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 700;
   color: #7f1d1d;
+}
+
+@media (max-width: 480px) {
+  .booking-details__note-label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
 }
 
 .booking-details__note-input {
@@ -297,6 +652,22 @@
   font: inherit;
   resize: vertical;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .booking-details__note-input {
+    min-height: 100px;
+    padding: 11px;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-details__note-input {
+    min-height: 90px;
+    padding: 10px;
+    font-size: 16px;
+  }
 }
 
 .booking-details__note-actions {
@@ -423,6 +794,7 @@
   background: #fafafa;
   color: #777;
   font-size: 13px;
+  padding: 6px;
 }
 
 .sneaker-item__info {

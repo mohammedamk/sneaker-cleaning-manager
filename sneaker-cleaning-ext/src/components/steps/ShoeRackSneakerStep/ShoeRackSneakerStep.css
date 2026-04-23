@@ -4,9 +4,30 @@
   border-radius: 12px;
 }
 
+@media (max-width: 768px) {
+  .shoe-rack-sneaker-form {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shoe-rack-sneaker-form {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+}
+
 .shoe-rack-sneaker-form__header {
   margin-bottom: 6px;
   padding-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+  .shoe-rack-sneaker-form__header {
+    margin-bottom: 4px;
+    padding-bottom: 0.75rem;
+  }
 }
 
 .form-field__label {
@@ -17,14 +38,52 @@
   margin-bottom: 2px;
 }
 
+@media (max-width: 768px) {
+  .form-field__label {
+    font-size: 12px;
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-field__label {
+    font-size: 11px;
+    margin-top: 12px;
+  }
+}
+
 .shoe-rack-sneaker-form__title {
   font-size: 22px;
   font-weight: 700;
   color: #1a1a1a;
 }
 
+@media (max-width: 768px) {
+  .shoe-rack-sneaker-form__title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shoe-rack-sneaker-form__title {
+    font-size: 18px;
+  }
+}
+
 .shoe-rack-sneaker-form__body {
   margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .shoe-rack-sneaker-form__body {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .shoe-rack-sneaker-form__body {
+    margin-bottom: 1rem;
+  }
 }
 
 .shoe-rack-sneaker-form__footer {
@@ -35,8 +94,30 @@
   padding-top: 1.5rem;
 }
 
+@media (max-width: 600px) {
+  .shoe-rack-sneaker-form__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .shoe-rack-sneaker-form__footer {
+    gap: 0.5rem;
+    padding-top: 1rem;
+  }
+}
+
 .shoe-rack-sneaker-form__save-btn {
   min-width: 132px;
+}
+
+@media (max-width: 600px) {
+  .shoe-rack-sneaker-form__save-btn {
+    min-width: auto;
+  }
 }
 
 .shoe-rack-sneaker-form__spinner {
@@ -59,9 +140,27 @@
   gap: 0.5rem;
 }
 
+@media (max-width: 480px) {
+  .size-selector {
+    gap: 0.25rem;
+  }
+}
+
 .size-selector .select {
   width: auto;
   min-width: 80px;
+}
+
+@media (max-width: 768px) {
+  .size-selector .select {
+    min-width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .size-selector .select {
+    min-width: 60px;
+  }
 }
 
 .size-selector .input {

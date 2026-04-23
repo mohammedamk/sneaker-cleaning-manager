@@ -5,11 +5,45 @@
     background: #fafafa;
 }
 
+@media (max-width: 768px) {
+    .sneaker-card {
+        padding: 14px;
+        border-radius: 7px;
+    }
+}
+
+@media (max-width: 600px) {
+    .sneaker-card {
+        padding: 12px;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card {
+        padding: 10px;
+        border-radius: 5px;
+    }
+}
+
 .sneaker-card__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .sneaker-card__header {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__header {
+        gap: 8px;
+    }
 }
 
 .sneaker-card__info {
@@ -24,6 +58,18 @@
     font-weight: 700;
 }
 
+@media (max-width: 768px) {
+    .sneaker-card__nickname {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__nickname {
+        font-size: 13px;
+    }
+}
+
 .sneaker-card__brand,
 .sneaker-card__colorway,
 .sneaker-card__size {
@@ -31,11 +77,35 @@
     color: #555;
 }
 
+@media (max-width: 768px) {
+    .sneaker-card__brand,
+    .sneaker-card__colorway,
+    .sneaker-card__size {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__brand,
+    .sneaker-card__colorway,
+    .sneaker-card__size {
+        font-size: 11px;
+    }
+}
+
 .sneaker-card__thumbnails {
     display: flex;
     gap: 5px;
     margin-top: 8px;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__thumbnails {
+        gap: 4px;
+        margin-top: 6px;
+    }
 }
 
 .sneaker-card__thumbnail {
@@ -44,6 +114,20 @@
     object-fit: cover;
     border-radius: 4px;
     border: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+    .sneaker-card__thumbnail {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__thumbnail {
+        width: 40px;
+        height: 40px;
+    }
 }
 
 .sneaker-card__thumbnail--placeholder {
@@ -63,10 +147,36 @@
     color: #777;
 }
 
+@media (max-width: 480px) {
+    .sneaker-card__more-images {
+        font-size: 11px;
+    }
+}
+
 .sneaker-card__actions {
     display: flex;
     gap: 6px;
     flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .sneaker-card__actions {
+        width: 100%;
+        gap: 8px;
+        flex-shrink: 1;
+    }
+    
+    .sneaker-card__actions .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__actions {
+        flex-direction: column-reverse;
+        gap: 6px;
+    }
 }
 
 /* ── service selection inside sneakercard ──────── */
@@ -79,6 +189,22 @@
     gap: 14px;
 }
 
+@media (max-width: 768px) {
+    .sneaker-card__services {
+        margin-top: 12px;
+        padding-top: 12px;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__services {
+        margin-top: 10px;
+        padding-top: 10px;
+        gap: 10px;
+    }
+}
+
 .sneaker-card__section-label {
     font-size: 13px;
     font-weight: 700;
@@ -86,11 +212,32 @@
     color: #333;
 }
 
+@media (max-width: 768px) {
+    .sneaker-card__section-label {
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__section-label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+}
+
 .tier-options,
 .addon-options {
     display: flex;
     flex-direction: column;
     gap: 7px;
+}
+
+@media (max-width: 480px) {
+    .tier-options,
+    .addon-options {
+        gap: 6px;
+    }
 }
 
 .tier-option,
@@ -102,6 +249,21 @@
     cursor: pointer;
 }
 
+@media (max-width: 768px) {
+    .tier-option,
+    .addon-option {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tier-option,
+    .addon-option {
+        font-size: 12px;
+        gap: 8px;
+    }
+}
+
 .tier-option input,
 .addon-option input {
     width: 16px;
@@ -110,8 +272,30 @@
     flex-shrink: 0;
 }
 
+@media (max-width: 480px) {
+    .tier-option input,
+    .addon-option input {
+        width: 14px;
+        height: 14px;
+    }
+}
+
 .tier-option__price,
 .addon-option__price {
     color: #777;
     font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .tier-option__price,
+    .addon-option__price {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tier-option__price,
+    .addon-option__price {
+        font-size: 11px;
+    }
 }

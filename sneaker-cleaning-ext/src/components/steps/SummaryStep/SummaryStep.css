@@ -46,6 +46,18 @@
     color: #666;
 }
 
+@media (max-width: 768px) {
+    .summary-row__details {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-row__details {
+        font-size: 10px;
+    }
+}
+
 .summary-row__services {
     flex: 1;
     display: flex;
@@ -53,9 +65,27 @@
     gap: 4px;
 }
 
+@media (max-width: 480px) {
+    .summary-row__services {
+        gap: 3px;
+    }
+}
+
 .summary-row__tier {
     font-size: 14px;
     font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .summary-row__tier {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-row__tier {
+        font-size: 12px;
+    }
 }
 
 .summary-row__missing {
@@ -63,9 +93,27 @@
     font-weight: 600;
 }
 
+@media (max-width: 480px) {
+    .summary-row__missing {
+        font-size: 12px;
+    }
+}
+
 .summary-row__price {
     color: #555;
     font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .summary-row__price {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-row__price {
+        font-size: 11px;
+    }
 }
 
 .summary-row__addons {
@@ -73,6 +121,19 @@
     font-size: 13px;
     color: #444;
     padding-left: 4px;
+}
+
+@media (max-width: 768px) {
+    .summary-row__addons {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-row__addons {
+        font-size: 11px;
+        padding-left: 2px;
+    }
 }
 
 .summary-row__subtotal {
@@ -83,6 +144,18 @@
     padding-top: 4px;
 }
 
+@media (max-width: 768px) {
+    .summary-row__subtotal {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-row__subtotal {
+        font-size: 11px;
+    }
+}
+
 .summary-row__notes {
     padding: 10px 12px;
     background: #f7f7f7;
@@ -90,6 +163,20 @@
     border: 1px solid #e6e6e6;
     font-size: 13px;
     margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .summary-row__notes {
+        padding: 9px 11px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-row__notes {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
 }
 
 .summary-row__notes p {
@@ -122,10 +209,46 @@
     border-radius: 6px;
 }
 
+@media (max-width: 768px) {
+    .summary {
+        gap: 14px;
+    }
+
+    .summary__sneakers {
+        gap: 10px;
+    }
+
+    .summary-row {
+        padding: 10px 12px;
+    }
+
+    .summary-row__image {
+        width: 64px;
+        height: 64px;
+    }
+
+    .summary__total {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .summary__total-price {
+        font-size: 16px;
+    }
+}
+
 @media (max-width: 600px) {
+    .summary {
+        gap: 12px;
+    }
+
+    .summary__sneakers {
+        gap: 8px;
+    }
 
     .summary-row {
         flex-direction: column;
+        padding: 8px 10px;
     }
 
     .summary-row__sneaker {
@@ -133,7 +256,54 @@
     }
 
     .summary-row__image {
-        width: 64px;
-        height: 64px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .summary__total {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .summary__total-price {
+        font-size: 15px;
+    }
+
+    .summary__disclaimer {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary {
+        gap: 10px;
+    }
+
+    .summary__sneakers {
+        gap: 6px;
+    }
+
+    .summary-row {
+        padding: 6px 8px;
+    }
+
+    .summary-row__image {
+        width: 48px;
+        height: 48px;
+    }
+
+    .summary__total {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .summary__total-price {
+        font-size: 14px;
+    }
+
+    .summary__disclaimer {
+        padding: 6px 8px;
+        font-size: 11px;
     }
 }

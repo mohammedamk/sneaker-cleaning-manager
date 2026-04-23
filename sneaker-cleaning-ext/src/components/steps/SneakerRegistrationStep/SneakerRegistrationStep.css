@@ -11,3 +11,34 @@
 .size-selector .input {
     flex: 1;
 }
+
+@media (max-width:
+ 768px) {
+    .size-selector {
+        gap: 6px;
+    }
+    
+    .size-selector .select {
+        width: 80px;
+    }
+}
+
+@media (max-width: 600px) {
+    .size-selector {
+        gap: 4px;
+    }
+    
+    .size-selector .select {
+        width: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    .size-selector {
+        gap: 2px;
+    }
+    
+    .size-selector .select {
+        width: 60px;
+    }
+}

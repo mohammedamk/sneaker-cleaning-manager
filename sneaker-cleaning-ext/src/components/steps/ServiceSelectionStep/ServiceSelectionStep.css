@@ -1,0 +1,17 @@
+@media (max-width: 768px) {
+    .sneaker-list {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .sneaker-list {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sneaker-list {
+        gap: 6px;
+    }
+}

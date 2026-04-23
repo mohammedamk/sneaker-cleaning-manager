@@ -5,8 +5,28 @@
   gap: 8px;
 }
 
+@media (max-width: 480px) {
+  .btn__content {
+    gap: 6px;
+  }
+}
+
 .btn__icon {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .btn__icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn__icon {
+    width: 14px;
+    height: 14px;
+  }
 }
