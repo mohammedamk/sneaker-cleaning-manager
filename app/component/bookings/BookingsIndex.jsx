@@ -383,7 +383,7 @@ export default function BookingsIndex() {
 
       openConfirmModal({
         heading: "Confirm Refund",
-        message: `Refund ${refundAmountText} to the customer? Shipping charges are excluded from this refund.`,
+        message: `Refund ${refundAmountText} to the customer? If any Shipping charges were part of the order, they are excluded from this refund.`,
         tone: "critical",
         confirmLabel: "Process Refund",
       }, async () => {

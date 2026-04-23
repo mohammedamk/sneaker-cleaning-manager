@@ -259,7 +259,7 @@ async function getRefundPreview(admin, shopifyOrderID) {
       lineItemId: lineItem.id,
       quantity: Number(lineItem.refundableQuantity),
     }));
-    // console.log("refundableMerchandiseLineItems........", JSON.stringify(refundableMerchandiseLineItems));
+  // console.log("refundableMerchandiseLineItems........", JSON.stringify(refundableMerchandiseLineItems));
 
   if (!nonShippingLineItems.length) {
     throw new Error("No non-shipping line items were found on this order.");
@@ -319,6 +319,19 @@ function buildRefundConfirmationEmail({ booking, refundAmount, currencyCode, ord
     currency: currencyCode || "USD",
   }).format(refundAmount);
 
+  // return `
+  //   <div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;max-width:680px;margin:0 auto;">
+  //     <h2 style="margin-bottom:8px;">Your Refund Has Been Processed</h2>
+  //     <p>Hello ${customerName},</p>
+  //     <p>We have processed your refund for the canceled sneaker cleaning order.</p>
+  //     <p><strong>Booking ID:</strong> ${bookingId}</p>
+  //     <p><strong>Order:</strong> ${orderName || booking?.shopifyOrderID || "N/A"}</p>
+  //     <p><strong>Refund Amount:</strong> ${amountText}</p>
+  //     <p>This refund excludes shipping charges, if any shipping charges were part of your order.</p>
+  //     <p>Please allow your payment provider time to post the refund to your account.</p>
+  //   </div>
+  // `;
+
   return `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;max-width:680px;margin:0 auto;">
       <h2 style="margin-bottom:8px;">Your Refund Has Been Processed</h2>
@@ -328,7 +341,6 @@ function buildRefundConfirmationEmail({ booking, refundAmount, currencyCode, ord
       <p><strong>Order:</strong> ${orderName || booking?.shopifyOrderID || "N/A"}</p>
       <p><strong>Refund Amount:</strong> ${amountText}</p>
       <p>This refund excludes shipping charges, if any shipping charges were part of your order.</p>
-      <p>Please allow your payment provider time to post the refund to your account.</p>
     </div>
   `;
 }

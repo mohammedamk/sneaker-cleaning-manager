@@ -18,6 +18,7 @@ function buildEmailTemplate(subject, emailHTML) {
 
 export default async function sendEmail(sendMailTo, emailSubject, emailHTML) {
     try {
+        console.log("..........................email template: ", buildEmailTemplate(emailSubject, emailHTML));
         sgMail.setApiKey(process.env.SENDGRID_MAIL_APIKEY);
 
         const emailMsg = {

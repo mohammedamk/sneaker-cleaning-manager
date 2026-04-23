@@ -343,8 +343,7 @@ export default function BookingViewModal({
               </div>
             </div>
             {(viewingBooking.status === "Canceled"
-              && viewingBooking.refund?.status !== "completed"
-              && viewingBooking.handoffMethod === "shipping") && (
+              && viewingBooking.refund?.status !== "completed") && (
                 <div className="booking-view-topbar__actions">
                   <s-button
                     variant="primary"
