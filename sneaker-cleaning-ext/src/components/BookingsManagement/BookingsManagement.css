@@ -829,6 +829,10 @@
   font-size: 12px;
 }
 
+.approve-button {
+  margin-right: 10px;
+}
+
 .image-preview-modal {
   position: fixed;
   inset: 0;

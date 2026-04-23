@@ -119,7 +119,7 @@ export default function BookingSneakerCard({
                         <div className="sneaker-item__approval-actions">
                             <button
                                 type="button"
-                                className="btn btn--primary btn--small"
+                                className="btn btn--primary btn--small approve-button"
                                 onClick={() => onApprove(sneakerIndex)}
                                 disabled={approvalLoadingBySneaker[sneakerIndex] || sneaker.cleanedImagesApprovalStatus === 'approved'}
                             >

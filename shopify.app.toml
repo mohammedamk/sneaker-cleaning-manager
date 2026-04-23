@@ -2,7 +2,7 @@
 
 client_id = "cf15053c97e794faeb492035cb80ce8a"
 name = "Sneaker Cleaning Manager "
-application_url = "https://came-dubai-passes-nations.trycloudflare.com"
+application_url = "https://fancy-zone-evaluations-blocked.trycloudflare.com"
 embedded = true
 
 [build]
@@ -29,10 +29,10 @@ scopes = "read_orders,write_draft_orders,write_files,write_orders,write_products
 
 [auth]
 redirect_urls = [
-  "https://came-dubai-passes-nations.trycloudflare.com/api/auth"
+  "https://fancy-zone-evaluations-blocked.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://came-dubai-passes-nations.trycloudflare.com"
+url = "https://fancy-zone-evaluations-blocked.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"
