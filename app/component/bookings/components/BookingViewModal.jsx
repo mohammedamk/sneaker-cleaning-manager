@@ -178,10 +178,10 @@ function BookingSneakerCard({
         </div>
 
         {sneaker.cleanedImages?.length > 0 && (
-      <div className="booking-view-sneaker__approval-section">
-        <div>
-          <s-text type="strong" color="subdued">Cleaned Images Approval</s-text>
-          <s-badge tone={getApprovalBadgeTone(sneaker.cleanedImagesApprovalStatus || "pending")}>
+          <div className="booking-view-sneaker__approval-section">
+            <div>
+              <s-text type="strong" color="subdued">Cleaned Images Approval</s-text>
+              <s-badge tone={getApprovalBadgeTone(sneaker.cleanedImagesApprovalStatus || "pending")}>
                 {sneaker.cleanedImagesApprovalStatus === "approved"
                   ? "Approved"
                   : sneaker.cleanedImagesApprovalStatus === "rejected"
@@ -317,6 +317,8 @@ export default function BookingViewModal({
     ? "approved"
     : approvalStatus;
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
   return (
     <s-modal id="view-modal" ref={modalRef} heading="Booking Details">
       {viewingBooking && (
@@ -343,17 +345,18 @@ export default function BookingViewModal({
             {(viewingBooking.status === "Canceled"
               && viewingBooking.refund?.status !== "completed"
               && viewingBooking.handoffMethod === "shipping") && (
-              <div className="booking-view-topbar__actions">
-                <s-button
-                  variant="primary"
-                  tone="critical"
-                  onClick={onRefundBooking}
-                  loading={refundLoading}
-                >
-                  Refund customer
-                </s-button>
-              </div>
-            )}
+                <div className="booking-view-topbar__actions">
+                  <s-button
+                    variant="primary"
+                    tone="critical"
+                    onClick={onRefundBooking}
+                    loading={refundLoading}
+                    style={isMobile ? { width: '100%' } : {}}
+                  >
+                    Refund customer
+                  </s-button>
+                </div>
+              )}
             {/* {hasCleanedImages(viewingBooking) && (
               <div className="booking-view-topbar__actions">
                 <s-button
@@ -384,7 +387,7 @@ export default function BookingViewModal({
                 <s-text>{viewingBooking.handoffMethod || "N/A"}</s-text>
               </BookingSummaryCard>
               <BookingSummaryCard label="SUBMITTED">
-                <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
+                <s-text>{new Date(viewingBooking.submittedAt).toLocaleDateString()} {!isMobile && new Date(viewingBooking.submittedAt).toLocaleTimeString()}</s-text>
               </BookingSummaryCard>
               <BookingSummaryCard label="LAST CLEANING">
                 <s-text>{formatDateTime(viewingBooking.lastCleaning)}</s-text>
@@ -431,41 +434,41 @@ export default function BookingViewModal({
                 <s-text type="strong">Logistics</s-text>
               </div>
               <div className="booking-view-grid booking-view-grid--logistics">
-              {viewingBooking.handoffMethod === "shipping" && customerShippingAddress && (
-                <BookingSummaryCard label="CUSTOMER SHIPPING ADDRESS">
-                  {getAddressLines(customerShippingAddress).map((line, index) => (
-                    <s-text key={`shipping-address-${index}`}>{line}</s-text>
-                  ))}
-                </BookingSummaryCard>
-              )}
-
-              {viewingBooking.handoffMethod === "pickup_delivery" && pickupReturnAddress && (
-                <BookingSummaryCard label="PICKUP & RETURN ADDRESS">
-                  {getAddressLines(pickupReturnAddress).map((line, index) => (
-                    <s-text key={`pickup-address-${index}`}>{line}</s-text>
-                  ))}
-                </BookingSummaryCard>
-              )}
-
-              {viewingBooking.handoffMethod === "shipping" && packageDetails && (
-                <BookingSummaryCard label="PACKAGE DETAILS">
-                  <s-text>Length: {packageDetails.length || "N/A"}</s-text>
-                  <s-text>Width: {packageDetails.width || "N/A"}</s-text>
-                  <s-text>Height: {packageDetails.height || "N/A"}</s-text>
-                  <s-text>Weight: {packageDetails.weight || "N/A"}</s-text>
-                </BookingSummaryCard>
-              )}
-
-              {viewingBooking.handoffMethod === "shipping" && (
-                <>
-                  <BookingSummaryCard label="CUSTOMER TO STORE RATE">
-                    <s-text>{formatRateSummary(selectedForwardRate)}</s-text>
+                {viewingBooking.handoffMethod === "shipping" && customerShippingAddress && (
+                  <BookingSummaryCard label="CUSTOMER SHIPPING ADDRESS">
+                    {getAddressLines(customerShippingAddress).map((line, index) => (
+                      <s-text key={`shipping-address-${index}`}>{line}</s-text>
+                    ))}
                   </BookingSummaryCard>
-                  <BookingSummaryCard label="STORE TO CUSTOMER RATE">
-                    <s-text>{formatRateSummary(selectedReturnRate)}</s-text>
+                )}
+
+                {viewingBooking.handoffMethod === "pickup_delivery" && pickupReturnAddress && (
+                  <BookingSummaryCard label="PICKUP & RETURN ADDRESS">
+                    {getAddressLines(pickupReturnAddress).map((line, index) => (
+                      <s-text key={`pickup-address-${index}`}>{line}</s-text>
+                    ))}
                   </BookingSummaryCard>
-                </>
-              )}
+                )}
+
+                {viewingBooking.handoffMethod === "shipping" && packageDetails && (
+                  <BookingSummaryCard label="PACKAGE DETAILS">
+                    <s-text>Length: {packageDetails.length || "N/A"}</s-text>
+                    <s-text>Width: {packageDetails.width || "N/A"}</s-text>
+                    <s-text>Height: {packageDetails.height || "N/A"}</s-text>
+                    <s-text>Weight: {packageDetails.weight || "N/A"}</s-text>
+                  </BookingSummaryCard>
+                )}
+
+                {viewingBooking.handoffMethod === "shipping" && (
+                  <>
+                    <BookingSummaryCard label="CUSTOMER TO STORE RATE">
+                      <s-text>{formatRateSummary(selectedForwardRate)}</s-text>
+                    </BookingSummaryCard>
+                    <BookingSummaryCard label="STORE TO CUSTOMER RATE">
+                      <s-text>{formatRateSummary(selectedReturnRate)}</s-text>
+                    </BookingSummaryCard>
+                  </>
+                )}
               </div>
             </section>
           )}
@@ -486,6 +489,7 @@ export default function BookingViewModal({
                     variant="secondary"
                     href={viewingBooking.secureAccessUrl}
                     target="_blank"
+                    style={isMobile ? { textAlign: 'center', width: '100%' } : {}}
                   >
                     Open booking page
                   </s-button>

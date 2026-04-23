@@ -25,6 +25,9 @@ export default function BookingsTable({
     );
   }
 
+  // checking if we're on mobile for responsive adjustments
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
   return (
     <s-table
       paginate
@@ -35,11 +38,11 @@ export default function BookingsTable({
     >
       <s-table-header-row>
         <s-table-header>Order</s-table-header>
-        <s-table-header>Customer</s-table-header>
+        {!isMobile && <s-table-header>Customer</s-table-header>}
         <s-table-header>Qty</s-table-header>
-        <s-table-header>Method</s-table-header>
+        {!isMobile && <s-table-header>Method</s-table-header>}
         <s-table-header>Status</s-table-header>
-        <s-table-header>Date</s-table-header>
+        {!isMobile && <s-table-header>Date</s-table-header>}
         <s-table-header>Actions</s-table-header>
       </s-table-header-row>
 
@@ -50,27 +53,39 @@ export default function BookingsTable({
               <code className="order-id-code">
                 #{getObjectIdString(item._id)}
               </code>
+              {isMobile && (
+                <div style={{ marginTop: '4px', fontSize: '12px', color: '#6b7280' }}>
+                  {item.name || item.guestInfo?.name || "Guest"}<br />
+                  {item.handoffMethod}
+                </div>
+              )}
             </s-table-cell>
-            <s-table-cell>
-              <div className="customer-info">
-                <s-text type="strong">{item.name || item.guestInfo?.name || "Guest User"}</s-text>
-                <s-text variant="bodySm" tone="subdued">{item.email || item.guestInfo?.email}</s-text>
-              </div>
-            </s-table-cell>
+            {!isMobile && (
+              <s-table-cell>
+                <div className="customer-info">
+                  <s-text type="strong">{item.name || item.guestInfo?.name || "Guest User"}</s-text>
+                  <s-text variant="bodySm" tone="subdued">{item.email || item.guestInfo?.email}</s-text>
+                </div>
+              </s-table-cell>
+            )}
             <s-table-cell>
               <s-badge tone="info">{Array.isArray(item.sneakers) ? item.sneakers.length : 0} Pairs</s-badge>
             </s-table-cell>
-            <s-table-cell>
-              <s-text variant="bodySm">{item.handoffMethod}</s-text>
-            </s-table-cell>
+            {!isMobile && (
+              <s-table-cell>
+                <s-text variant="bodySm">{item.handoffMethod}</s-text>
+              </s-table-cell>
+            )}
             <s-table-cell>
               <s-badge tone={getStatusTone(item.status)}>
                 {item.status}
               </s-badge>
             </s-table-cell>
-            <s-table-cell>
-              <s-text variant="bodySm">{new Date(item.submittedAt).toLocaleDateString()}</s-text>
-            </s-table-cell>
+            {!isMobile && (
+              <s-table-cell>
+                <s-text variant="bodySm">{new Date(item.submittedAt).toLocaleDateString()}</s-text>
+              </s-table-cell>
+            )}
             <s-table-cell>
               <div className="actions-container">
                 <s-button size="slim" variant="secondary" onClick={() => onView(item)}>View</s-button>

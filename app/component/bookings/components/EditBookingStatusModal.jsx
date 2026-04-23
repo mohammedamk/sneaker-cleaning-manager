@@ -8,6 +8,9 @@ export default function EditBookingStatusModal({
   activeActionType,
   onStatusUpdate,
 }) {
+  // detecting mobile for responsive layout
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
+
   return (
     <s-modal id="edit-modal" ref={modalRef} heading="Manage Booking Status">
       {editingBooking && (
@@ -35,6 +38,7 @@ export default function EditBookingStatusModal({
                     variant={editingBooking.status === status ? "primary" : "secondary"}
                     onClick={() => onStatusUpdate(status)}
                     loading={isSubmitting && activeActionType === "UPDATE_STATUS"}
+                    style={isMobile ? { width: '100%' } : {}}
                   >
                     {status}
                   </s-button>

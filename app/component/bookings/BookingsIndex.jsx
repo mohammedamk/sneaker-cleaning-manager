@@ -33,6 +33,7 @@ export default function BookingsIndex() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [tableLoading, setTableLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const [editingBooking, setEditingBooking] = useState(null);
   const [viewingBooking, setViewingBooking] = useState(null);
@@ -49,6 +50,28 @@ export default function BookingsIndex() {
     confirmLabel: "Confirm",
     loading: false,
   });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const modals = [editModalRef.current, viewModalRef.current, confirmModalRef.current];
+    const hasOpenModal = modals.some(modal => modal?.current?.hasAttribute('open'));
+
+    if (hasOpenModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+
+    return () => document.body.classList.remove('modal-open');
+  }, [editingBooking, viewingBooking, previewImage]);
 
   const totalPages = Math.ceil(total / PAGE_LIMIT);
 
@@ -405,6 +428,10 @@ export default function BookingsIndex() {
   const changePage = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
     fetchPage(newPage, search);
+    // scroll to top on page change for mobile
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleDownloadImage = async (imageUrl, sneakerName, imageIndex) => {
@@ -478,98 +505,102 @@ export default function BookingsIndex() {
   const bookingShippingSelection = getBookingShippingSelection(viewingBooking);
 
   return (
-    <s-page heading="Sneaker Cleaning Bookings" subtitle="Manage and track customer cleaning orders">
-      <div className="bookings-header">
-        <div className="search-container">
-          <s-text-field
-            placeholder="Search by ID, Name or Email..."
-            value={search}
-            onInput={(event) => handleSearch(event.target.value)}
-            prefix="🔍"
-          />
+    <>
+      <s-page heading="Sneaker Cleaning Bookings" subtitle="Manage and track customer cleaning orders">
+        <div className="bookings-header">
+          <div className="search-container">
+            <s-text-field
+              placeholder="Search by ID, Name or Email..."
+              value={search}
+              onInput={(event) => handleSearch(event.target.value)}
+              prefix="🔍"
+            />
+          </div>
+          <s-text variant="bodySm" tone="subdued">
+            Showing {items.length} of {total} results
+          </s-text>
         </div>
-        <s-text variant="bodySm" tone="subdued">
-          Showing {items.length} of {total} results
-        </s-text>
-      </div>
 
-      <s-section padding="none">
-        <BookingsTable
-          items={items}
-          page={page}
-          totalPages={totalPages}
-          tableLoading={tableLoading}
-          buyShippingBookingId={buyShippingBookingId}
-          onView={handleView}
-          onEdit={handleEdit}
-          onBuyShipping={handleBuyShipping}
-          onChangePage={changePage}
+        <div className="bookings-table-wrapper">
+          <s-section padding="none">
+            <BookingsTable
+              items={items}
+              page={page}
+              totalPages={totalPages}
+              tableLoading={tableLoading}
+              buyShippingBookingId={buyShippingBookingId}
+              onView={handleView}
+              onEdit={handleEdit}
+              onBuyShipping={handleBuyShipping}
+              onChangePage={changePage}
+            />
+          </s-section>
+        </div>
+
+        <div className="pagination-footer">
+          <div className="pagination-controls">
+            <s-text variant="bodySm">Page <b>{page}</b> of {totalPages}</s-text>
+          </div>
+        </div>
+
+        <EditBookingStatusModal
+          modalRef={editModalRef}
+          editingBooking={editingBooking}
+          isSubmitting={isSubmitting}
+          activeActionType={activeActionType}
+          onStatusUpdate={handleStatusUpdate}
         />
-      </s-section>
 
-      <div className="pagination-footer">
-        <div className="pagination-controls">
-          <s-text variant="bodySm">Page <b>{page}</b> of {totalPages}</s-text>
-        </div>
-      </div>
+        <BookingViewModal
+          modalRef={viewModalRef}
+          viewingBooking={viewingBooking}
+          cleanedImageDrafts={cleanedImageDrafts}
+          approvalStatus={approvalStatus}
+          approvalNoteDraftBySneaker={approvalNoteDraftBySneaker}
+          bookingShippingSelection={bookingShippingSelection}
+          isSubmitting={isSubmitting}
+          activeActionType={activeActionType}
+          refundLoading={refundLoading}
+          onPreviewImage={handlePreviewImage}
+          onDownloadImage={handleDownloadImage}
+          onSneakerApprovalNoteDraftChange={(draftKey, value) => {
+            setApprovalNoteDraftBySneaker((currentDrafts) => ({
+              ...currentDrafts,
+              [draftKey]: value,
+            }));
+          }}
+          onRefundBooking={handleRefundBooking}
+          onSendCleanedEmail={handleSendCleanedEmail}
+          onUpdateSneakerStatus={handleUpdateSneakerStatus}
+          onDeleteCleanedImage={handleDeleteCleanedImage}
+          onApproveSneaker={(sneakerIndex) => {
+            const draftKey = `${getObjectIdString(viewingBooking?._id)}-${sneakerIndex}`;
+            setApprovalNoteDraftBySneaker((currentDrafts) => ({
+              ...currentDrafts,
+              [draftKey]: "",
+            }));
+            handleSneakerApprovalUpdate(viewingBooking?._id, sneakerIndex, "approved");
+          }}
+          onRejectSneaker={(sneakerIndex) => handleSneakerApprovalUpdate(viewingBooking?._id, sneakerIndex, "rejected")}
+          onSendCleanedEmailPerSneaker={handleSendCleanedEmailPerSneaker}
+          onCleanedImagesChange={handleCleanedImagesChange}
+          onUploadCleanedImages={handleUploadCleanedImages}
+        />
 
-      <EditBookingStatusModal
-        modalRef={editModalRef}
-        editingBooking={editingBooking}
-        isSubmitting={isSubmitting}
-        activeActionType={activeActionType}
-        onStatusUpdate={handleStatusUpdate}
-      />
+        <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
 
-      <BookingViewModal
-        modalRef={viewModalRef}
-        viewingBooking={viewingBooking}
-        cleanedImageDrafts={cleanedImageDrafts}
-        approvalStatus={approvalStatus}
-        approvalNoteDraftBySneaker={approvalNoteDraftBySneaker}
-        bookingShippingSelection={bookingShippingSelection}
-        isSubmitting={isSubmitting}
-        activeActionType={activeActionType}
-        refundLoading={refundLoading}
-        onPreviewImage={handlePreviewImage}
-        onDownloadImage={handleDownloadImage}
-        onSneakerApprovalNoteDraftChange={(draftKey, value) => {
-          setApprovalNoteDraftBySneaker((currentDrafts) => ({
-            ...currentDrafts,
-            [draftKey]: value,
-          }));
-        }}
-        onRefundBooking={handleRefundBooking}
-        onSendCleanedEmail={handleSendCleanedEmail}
-        onUpdateSneakerStatus={handleUpdateSneakerStatus}
-        onDeleteCleanedImage={handleDeleteCleanedImage}
-        onApproveSneaker={(sneakerIndex) => {
-          const draftKey = `${getObjectIdString(viewingBooking?._id)}-${sneakerIndex}`;
-          setApprovalNoteDraftBySneaker((currentDrafts) => ({
-            ...currentDrafts,
-            [draftKey]: "",
-          }));
-          handleSneakerApprovalUpdate(viewingBooking?._id, sneakerIndex, "approved");
-        }}
-        onRejectSneaker={(sneakerIndex) => handleSneakerApprovalUpdate(viewingBooking?._id, sneakerIndex, "rejected")}
-        onSendCleanedEmailPerSneaker={handleSendCleanedEmailPerSneaker}
-        onCleanedImagesChange={handleCleanedImagesChange}
-        onUploadCleanedImages={handleUploadCleanedImages}
-      />
-
-      <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
-
-      <ConfirmActionModal
-        modalRef={confirmModalRef}
-        confirmModal={confirmModal}
-        itemToDelete={itemToDelete}
-        isSubmitting={isSubmitting}
-        activeActionType={activeActionType}
-        refundLoading={refundLoading}
-        onCancel={closeConfirmModal}
-        onConfirmDelete={confirmDelete}
-        onConfirmAction={handleConfirmModalAction}
-      />
-    </s-page>
+        <ConfirmActionModal
+          modalRef={confirmModalRef}
+          confirmModal={confirmModal}
+          itemToDelete={itemToDelete}
+          isSubmitting={isSubmitting}
+          activeActionType={activeActionType}
+          refundLoading={refundLoading}
+          onCancel={closeConfirmModal}
+          onConfirmDelete={confirmDelete}
+          onConfirmAction={handleConfirmModalAction}
+        />
+      </s-page>
+    </>
   );
 }
