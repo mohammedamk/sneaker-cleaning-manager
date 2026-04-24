@@ -508,6 +508,68 @@ export default function BookingViewModal({
             </div>
           </section>
 
+          {viewingBooking.shipping?.labels && (
+            <section className="booking-view-block">
+              <div className="booking-view-block__header">
+                <s-text type="strong">Shipping Labels</s-text>
+              </div>
+              <div className="booking-view-grid booking-view-grid--shipping-labels">
+                {viewingBooking.shipping.labels.customerToStore && (
+                  <div className="booking-view-shipping-label-card">
+                    <div className="booking-view-shipping-label-header">
+                      <s-text type="strong">Forward Shipping Label</s-text>
+                      <s-text variant="bodySm" tone="subdued">Customer to Store</s-text>
+                    </div>
+                    <div className="booking-view-shipping-label-actions">
+                      <s-button
+                        size="slim"
+                        variant="primary"
+                        href={viewingBooking.shipping.labels.customerToStore.postageLabel?.label_url || viewingBooking.shipping.labels.customerToStore.postageLabel?.label_pdf_url}
+                        target="_blank"
+                        download
+                      >
+                        Open Label
+                      </s-button>
+                    </div>
+                    {viewingBooking.shipping.labels.customerToStore.trackingCode && (
+                      <div className="booking-view-shipping-label-info">
+                        <s-text variant="bodySm" tone="subdued">
+                          Tracking: {viewingBooking.shipping.labels.customerToStore.trackingCode}
+                        </s-text>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {viewingBooking.shipping.labels.storeToCustomer && (
+                  <div className="booking-view-shipping-label-card">
+                    <div className="booking-view-shipping-label-header">
+                      <s-text type="strong">Return Shipping Label</s-text>
+                      <s-text variant="bodySm" tone="subdued">Store to Customer</s-text>
+                    </div>
+                    <div className="booking-view-shipping-label-actions">
+                      <s-button
+                        size="slim"
+                        variant="primary"
+                        href={viewingBooking.shipping.labels.storeToCustomer.postageLabel?.label_url || viewingBooking.shipping.labels.storeToCustomer.postageLabel?.label_pdf_url}
+                        target="_blank"
+                        download
+                      >
+                        Open Label
+                      </s-button>
+                    </div>
+                    {viewingBooking.shipping.labels.storeToCustomer.trackingCode && (
+                      <div className="booking-view-shipping-label-info">
+                        <s-text variant="bodySm" tone="subdued">
+                          Tracking: {viewingBooking.shipping.labels.storeToCustomer.trackingCode}
+                        </s-text>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           <section className="booking-view-block booking-view-section">
             <div className="booking-view-block__header">
               <s-text type="strong">Sneakers ({Array.isArray(viewingBooking.sneakers) ? viewingBooking.sneakers.length : 0})</s-text>

@@ -433,6 +433,65 @@
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
 }
 
+.booking-view-grid--shipping-labels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 14px;
+}
+
+.booking-view-shipping-label-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #d0d5dd;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.booking-view-shipping-label-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.booking-view-shipping-label-header s-text {
+    font-size: 14px;
+}
+
+.booking-view-shipping-label-header s-text:first-child {
+    font-weight: 600;
+    color: #111827;
+}
+
+.booking-view-shipping-label-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.booking-view-shipping-label-actions s-button {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+}
+
+.booking-view-shipping-label-info {
+    padding: 10px;
+    border-radius: 10px;
+    background: #f3f4f6;
+}
+
+.booking-view-shipping-label-info s-text {
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.02em;
+}
+
 @media (max-width: 768px) {
     .booking-view-modal {
         padding: 0.75rem;
@@ -621,6 +680,36 @@
         width: 100%;
         font-size: 12px;
     }
+
+    .booking-view-grid--shipping-labels {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .booking-view-shipping-label-card {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .booking-view-shipping-label-header {
+        gap: 2px;
+        padding-bottom: 6px;
+    }
+
+    .booking-view-shipping-label-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .booking-view-shipping-label-actions s-button {
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    .booking-view-shipping-label-info {
+        padding: 8px;
+    }
 }
 
 @media (max-width: 560px) {
@@ -656,6 +745,51 @@
         width: 120px;
         min-height: 120px;
     }
+
+    .booking-view-grid--shipping-labels {
+        gap: 8px;
+    }
+
+    .booking-view-shipping-label-card {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .booking-view-shipping-label-header {
+        gap: 2px;
+        padding-bottom: 4px;
+    }
+
+    .booking-view-shipping-label-header s-text {
+        font-size: 13px;
+    }
+
+    .booking-view-shipping-label-header s-text:first-child {
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .booking-view-shipping-label-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .booking-view-shipping-label-actions s-button {
+        width: 100%;
+        min-width: auto;
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    .booking-view-shipping-label-info {
+        padding: 6px;
+    }
+
+    .booking-view-shipping-label-info s-text {
+        font-size: 11px;
+        word-break: break-all;
+        line-height: 1.4;
+    }
     
     .booking-view-pill {
         font-size: 11px;
@@ -689,5 +823,42 @@
     .booking-view-image-actions s-button {
         font-size: 11px;
         min-width: 60px;
+    }
+
+    .booking-view-shipping-label-card {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .booking-view-shipping-label-header {
+        padding-bottom: 4px;
+    }
+
+    .booking-view-shipping-label-header s-text {
+        font-size: 12px;
+    }
+
+    .booking-view-shipping-label-header s-text:first-child {
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .booking-view-shipping-label-actions {
+        gap: 3px;
+    }
+
+    .booking-view-shipping-label-actions s-button {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .booking-view-shipping-label-info {
+        padding: 5px;
+        border-radius: 8px;
+    }
+
+    .booking-view-shipping-label-info s-text {
+        font-size: 10px;
+        word-break: break-all;
     }
 }

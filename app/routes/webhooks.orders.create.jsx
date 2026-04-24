@@ -335,6 +335,47 @@ function buildQrCodeImageUrl(accessUrl) {
 
 function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCodeImageUrl }) {
   const customerName = bookingDoc?.name || bookingDoc?.guestInfo?.name || "there";
+  
+  const shippingLabelsSection = bookingDoc?.shipping?.labels
+    ? `
+      <div style="margin-top:24px;">
+        <h3 style="margin:0 0 16px;color:#111827;">Shipping Labels</h3>
+        ${bookingDoc.shipping.labels.customerToStore ? `
+          <div style="margin-bottom:16px;padding:16px;border:1px solid #d0d5dd;border-radius:10px;background:#f8fafc;">
+            <h4 style="margin:0 0 12px 0;color:#374151;font-size:14px;">Forward Shipping Label (Customer to Store)</h4>
+            ${bookingDoc.shipping.labels.customerToStore.trackingCode ? `
+              <p style="margin:0 0 12px 0;font-size:13px;color:#6b7280;">
+                <strong>Tracking Code:</strong> ${bookingDoc.shipping.labels.customerToStore.trackingCode}
+              </p>
+            ` : ""}
+            <p style="margin:0;">
+              <a href="${bookingDoc.shipping.labels.customerToStore.postageLabel?.label_url || bookingDoc.shipping.labels.customerToStore.postageLabel?.label_pdf_url}" 
+                 style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;padding:10px 16px;border-radius:6px;font-weight:600;font-size:13px;margin-right:8px;">
+                Download Label
+              </a>
+            </p>
+          </div>
+        ` : ""}
+        ${bookingDoc.shipping.labels.storeToCustomer ? `
+          <div style="margin-bottom:0;padding:16px;border:1px solid #d0d5dd;border-radius:10px;background:#f8fafc;">
+            <h4 style="margin:0 0 12px 0;color:#374151;font-size:14px;">Return Shipping Label (Store to Customer)</h4>
+            ${bookingDoc.shipping.labels.storeToCustomer.trackingCode ? `
+              <p style="margin:0 0 12px 0;font-size:13px;color:#6b7280;">
+                <strong>Tracking Code:</strong> ${bookingDoc.shipping.labels.storeToCustomer.trackingCode}
+              </p>
+            ` : ""}
+            <p style="margin:0;">
+              <a href="${bookingDoc.shipping.labels.storeToCustomer.postageLabel?.label_url || bookingDoc.shipping.labels.storeToCustomer.postageLabel?.label_pdf_url}" 
+                 style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;padding:10px 16px;border-radius:6px;font-weight:600;font-size:13px;margin-right:8px;">
+                Download Label
+              </a>
+            </p>
+          </div>
+        ` : ""}
+      </div>
+    `
+    : "";
+
   const shippingInstructions = bookingDoc?.handoffMethod === "shipping"
     ? `
       <div style="margin-top:24px;padding:20px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;">
@@ -395,6 +436,7 @@ function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCode
         <tbody>${sneakerRows}</tbody>
       </table>
 
+      ${shippingLabelsSection}
       ${shippingInstructions}
 
       <p style="margin-top:20px;">If the button does not open, use this secure link:</p>
