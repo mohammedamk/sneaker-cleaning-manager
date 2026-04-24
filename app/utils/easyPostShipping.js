@@ -157,7 +157,10 @@ function getShipmentConfigForDirection({
       fromAddress: storeAddress,
       toAddress: normalizedCustomerAddress,
       parcel: normalizedParcel,
-      isReturn: true,
+      // This is an outbound shipment from the store to the customer.
+      // Marking it as an EasyPost return label can cause the printed label
+      // to render the store address as the SHIP TO destination.
+      isReturn: false,
       reference: `${referencePrefix}-return-purchase`,
     };
   }
@@ -181,7 +184,7 @@ export async function getShippingQuotes({ customerAddress, parcel, referencePref
       fromAddress: storeAddress,
       toAddress: normalizedCustomerAddress,
       parcel: normalizedParcel,
-      isReturn: true,
+      isReturn: false,
       reference: `${referencePrefix}-return`,
     }),
   ]);
