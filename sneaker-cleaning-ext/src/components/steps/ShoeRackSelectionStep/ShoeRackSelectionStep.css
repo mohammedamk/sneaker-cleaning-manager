@@ -5,6 +5,10 @@
     margin-top: 20px;
 }
 
+.step-description--warning {
+    color: #c62828;
+}
+
 @media (max-width: 768px) {
     .shoe-rack-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

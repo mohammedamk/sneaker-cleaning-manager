@@ -4,6 +4,7 @@ import { getShippingQuotes } from "../utils/easyPostShipping";
 import {
   applyReturnShippingBufferToQuotes,
   getReturnShippingBufferPercentage,
+  getShippingCreditPerPair,
 } from "../utils/returnShippingBuffer";
 
 function toAmount(value, fallback) {
@@ -77,6 +78,7 @@ export const action = async ({ request }) => {
     await authenticate.public.appProxy(request);
     const body = await request.json();
     const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
+    const shippingCreditPerPair = await getShippingCreditPerPair();
 
     const rawQuotes = process.env.EASYPOST_API_KEY
       ? await getShippingQuotes({
@@ -96,6 +98,7 @@ export const action = async ({ request }) => {
         success: true,
         quotes,
         returnShippingBufferPercentage,
+        shippingCreditPerPair,
       }),
       {
         headers: { "Content-Type": "application/json" },

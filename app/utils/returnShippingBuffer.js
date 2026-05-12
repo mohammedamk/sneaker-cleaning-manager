@@ -12,6 +12,16 @@ export function normalizeReturnShippingBufferPercentage(value) {
     return Number(parsed.toFixed(2));
 }
 
+export function normalizeShippingCreditPerPair(value) {
+    const parsed = Number(value);
+
+    if (!Number.isFinite(parsed) || parsed < 0) {
+        return 0;
+    }
+
+    return Number(parsed.toFixed(2));
+}
+
 function roundCurrencyAmount(value) {
     return Number(Number(value).toFixed(2));
 }
@@ -19,6 +29,11 @@ function roundCurrencyAmount(value) {
 export async function getReturnShippingBufferPercentage() {
     const settings = await AppSettingsModel.findOne({ key: DEFAULT_SETTINGS_KEY });
     return normalizeReturnShippingBufferPercentage(settings?.returnShippingBufferPercentage);
+}
+
+export async function getShippingCreditPerPair() {
+    const settings = await AppSettingsModel.findOne({ key: DEFAULT_SETTINGS_KEY });
+    return normalizeShippingCreditPerPair(settings?.shippingCreditPerPair ?? 10);
 }
 
 export async function saveReturnShippingBufferPercentage(value) {
@@ -30,6 +45,23 @@ export async function saveReturnShippingBufferPercentage(value) {
             $set: {
                 key: DEFAULT_SETTINGS_KEY,
                 returnShippingBufferPercentage: normalizedValue,
+            },
+        },
+        { upsert: true, new: true },
+    );
+
+    return normalizedValue;
+}
+
+export async function saveShippingCreditPerPair(value) {
+    const normalizedValue = normalizeShippingCreditPerPair(value);
+
+    await AppSettingsModel.findOneAndUpdate(
+        { key: DEFAULT_SETTINGS_KEY },
+        {
+            $set: {
+                key: DEFAULT_SETTINGS_KEY,
+                shippingCreditPerPair: normalizedValue,
             },
         },
         { upsert: true, new: true },

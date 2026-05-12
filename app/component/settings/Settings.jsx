@@ -10,6 +10,22 @@ export default function Settings() {
     const [bufferPercentage, setBufferPercentage] = useState(
         String(loaderData.returnShippingBufferPercentage ?? 0),
     );
+    const [shippingCreditPerPair, setShippingCreditPerPair] = useState(
+        String(loaderData.shippingCreditPerPair ?? 10),
+    );
+
+    const savedBufferPercentage = String(
+        actionData?.success
+            ? actionData.returnShippingBufferPercentage
+            : loaderData.returnShippingBufferPercentage ?? 0,
+    );
+    const savedShippingCreditPerPair = String(
+        actionData?.success
+            ? actionData.shippingCreditPerPair
+            : loaderData.shippingCreditPerPair ?? 10,
+    );
+    const isDirty = bufferPercentage !== savedBufferPercentage
+        || shippingCreditPerPair !== savedShippingCreditPerPair;
 
     useEffect(() => {
         if (!actionData?.message) {
@@ -28,14 +44,22 @@ export default function Settings() {
         const nextValue = actionData?.success
             ? actionData.returnShippingBufferPercentage
             : loaderData.returnShippingBufferPercentage;
+        const nextShippingCreditValue = actionData?.success
+            ? actionData.shippingCreditPerPair
+            : loaderData.shippingCreditPerPair;
 
         setBufferPercentage(String(nextValue ?? 0));
-    }, [actionData, loaderData.returnShippingBufferPercentage]);
+        setShippingCreditPerPair(String(nextShippingCreditValue ?? 10));
+    }, [actionData, loaderData.returnShippingBufferPercentage, loaderData.shippingCreditPerPair]);
 
     const handleSaveSettings = () => {
-        console.log("sfsdf")
+        if (!isDirty || isLoading) {
+            return;
+        }
+
         const formData = new FormData();
         formData.append("returnShippingBufferPercentage", bufferPercentage);
+        formData.append("shippingCreditPerPair", shippingCreditPerPair);
         setIsLoading(true);
         submit(formData, { method: "post" });
     };
@@ -68,19 +92,43 @@ export default function Settings() {
                                 }
                             />
                         </div>
+                    </div>
+                </s-section>
 
-                        <div className="settings-actions">
-                            <s-button
-                                variant="primary"
-                                loading={isLoading ? true : undefined}
-                                disabled={isLoading ? true : undefined}
-                                onClick={handleSaveSettings}
-                            >
-                                Save settings
-                            </s-button>
+                <s-section heading="Shipping Credit">
+                    <div className="settings-content">
+                        <s-text tone="subdued">
+                            This fixed credit amount is applied per eligible sneaker pair when
+                            calculating the final customer-facing shipping price.
+                        </s-text>
+
+                        <div className="input-wrapper">
+                            <s-text-field
+                                type="number"
+                                name="shippingCreditPerPair"
+                                label="Shipping credit per pair ($)"
+                                details="Example: entering 10 subtracts $10.00 per pair from the combined shipping amount."
+                                min="0"
+                                step="0.01"
+                                value={shippingCreditPerPair}
+                                onInput={(event) =>
+                                    setShippingCreditPerPair(event.currentTarget.value)
+                                }
+                            />
                         </div>
                     </div>
                 </s-section>
+
+                <div className="settings-actions settings-actions--footer">
+                    <s-button
+                        variant="primary"
+                        loading={isLoading ? true : undefined}
+                        disabled={!isDirty || isLoading ? true : undefined}
+                        onClick={handleSaveSettings}
+                    >
+                        Save settings
+                    </s-button>
+                </div>
             </div>
         </s-page>
     );

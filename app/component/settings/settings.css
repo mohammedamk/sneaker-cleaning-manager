@@ -1,5 +1,7 @@
 .main_wrapper{
     margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
 }
 
 .settings-content {
@@ -15,6 +17,11 @@
 .settings-actions {
   display: flex;
   justify-content: flex-start;
+  padding: 0 4px 8px;
+}
+
+.settings-actions--footer {
+  padding-top: 4px;
 }
 
 @media (max-width: 768px) {

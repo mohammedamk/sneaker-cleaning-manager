@@ -4,9 +4,10 @@ import SneakerCard from '../../shared/SneakerCard/SneakerCard.jsx';
 import './ShoeRackSelectionStep.css';
 import { PROXY_SUB_PATH } from '../../../utils/global.js';
 
-function ShoeRackSelectionStep({ customerID, sneakers, onAddExisting, onAddNew, onEditExisting, onNext, onPrev }) {
+function ShoeRackSelectionStep({ customerID, sneakers, maxSneakers, onAddExisting, onAddNew, onLimitReached, onEditExisting, onNext, onPrev }) {
     const [savedSneakers, setSavedSneakers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const hasReachedLimit = sneakers.length >= maxSneakers;
 
     useEffect(() => {
         if (customerID) {
@@ -43,6 +44,9 @@ function ShoeRackSelectionStep({ customerID, sneakers, onAddExisting, onAddNew, 
             <p className="step-description">
                 Select sneakers from your Shoe Rack or add a new pair for this order.
             </p>
+            {hasReachedLimit && (
+                <p className="step-description step-description--warning">A maximum of {maxSneakers} sneaker pairs is allowed per booking.</p>
+            )}
 
             {isLoading ? (
                 <p>Loading your sneakers...</p>
@@ -58,13 +62,20 @@ function ShoeRackSelectionStep({ customerID, sneakers, onAddExisting, onAddNew, 
                             />
                             <button
                                 className={`btn ${sneakers.some(s => s._id === snk._id) ? 'btn--danger' : 'btn--primary'}`}
-                                onClick={() => onAddExisting(snk)}
+                                onClick={() => {
+                                    if (!sneakers.some(s => s._id === snk._id) && hasReachedLimit) {
+                                        onLimitReached();
+                                        return;
+                                    }
+
+                                    onAddExisting(snk);
+                                }}
                             >
                                 {sneakers.some(s => s._id === snk._id) ? 'Remove from Order' : 'Add to Order'}
                             </button>
                         </div>
                     ))}
-                    <button className="btn btn--secondary btn--add-new" onClick={handleAddNewClick}>
+                    <button className="btn btn--secondary btn--add-new" onClick={hasReachedLimit ? onLimitReached : handleAddNewClick}>
                         + Add New Sneaker
                     </button>
                 </div>

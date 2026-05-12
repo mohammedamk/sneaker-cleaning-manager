@@ -115,6 +115,20 @@
     align-self: flex-start;
 }
 
+.shipping-box-summary {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #f4f4f5;
+}
+
+.shipping-box-summary p {
+    margin: 0 0 8px;
+}
+
+.shipping-box-summary p:last-child {
+    margin-bottom: 0;
+}
+
 .shipping-rates__group {
     display: flex;
     flex-direction: column;
@@ -198,6 +212,34 @@
     background: #f4f4f5;
     font-size: 14px;
     align-items: center;
+}
+
+.shipping-total__details {
+    color: #666;
+    font-size: 12px;
+}
+
+.shipping-disclaimer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.shipping-disclaimer p {
+    margin: 0;
+}
+
+.shipping-disclaimer__checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.shipping-disclaimer__checkbox input {
+    margin-top: 3px;
 }
 
 .shipping-error {

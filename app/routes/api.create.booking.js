@@ -1,6 +1,7 @@
 import process from "node:process";
 import { authenticate } from "../shopify.server";
 import TempBookingModel from "../MongoDB/models/TempBooking";
+import { getShippingCreditPerPair } from "../utils/returnShippingBuffer";
 
 const DRAFT_ORDER_CREATE_MUTATION = `
 mutation draftOrderCreate($input: DraftOrderInput!) {
@@ -30,6 +31,7 @@ const ADD_ONS = [
     { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
     { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
 ];
+const MAX_SNEAKER_PAIRS = 10;
 
 function getTierPrice(tierId) {
     return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
@@ -39,42 +41,35 @@ function getAddonPrice(addonId) {
     return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
 }
 
-function getShippingLineItems(shippingSelection = {}) {
+function getShippingLineItems(shippingSelection = {}, sneakerCount = 0, shippingCreditPerPair = 0) {
     const lineItems = [];
 
     const forwardRate = shippingSelection?.selectedForwardRate;
     const returnRate = shippingSelection?.selectedReturnRate;
+    const shippingCredit = sneakerCount * shippingCreditPerPair;
+    const customerFacingAmount = Math.max(
+        Number(forwardRate?.amount || 0) + Number(returnRate?.amount || 0) - shippingCredit,
+        0,
+    );
 
-    if (forwardRate) {
+    if (forwardRate && returnRate && customerFacingAmount > 0) {
         lineItems.push({
-            title: `Shipping to Store - ${forwardRate.carrier} ${forwardRate.service}`,
-            originalUnitPrice: Number(forwardRate.amount),
+            title: "Roundtrip Shipping",
+            originalUnitPrice: customerFacingAmount,
             quantity: 1,
             customAttributes: [
                 { key: "line_item_role", value: "booking_shipping" },
                 { key: "booking_shipping", value: "true" },
                 { key: "refund_exclude", value: "true" },
-                { key: "shipping_direction", value: "customer_to_store" },
-                { key: "booking_shipping_direction", value: "customer_to_store" },
-                { key: "shipping_carrier", value: forwardRate.carrier || "N/A" },
-                { key: "shipping_service", value: forwardRate.service || "N/A" }
-            ]
-        });
-    }
-
-    if (returnRate) {
-        lineItems.push({
-            title: `Return Shipping - ${returnRate.carrier} ${returnRate.service}`,
-            originalUnitPrice: Number(returnRate.amount),
-            quantity: 1,
-            customAttributes: [
-                { key: "line_item_role", value: "booking_shipping" },
-                { key: "booking_shipping", value: "true" },
-                { key: "refund_exclude", value: "true" },
-                { key: "shipping_direction", value: "store_to_customer" },
-                { key: "booking_shipping_direction", value: "store_to_customer" },
-                { key: "shipping_carrier", value: returnRate.carrier || "N/A" },
-                { key: "shipping_service", value: returnRate.service || "N/A" }
+                { key: "shipping_direction", value: "roundtrip" },
+                { key: "booking_shipping_direction", value: "customer_to_store,store_to_customer" },
+                { key: "forward_shipping_carrier", value: forwardRate.carrier || "N/A" },
+                { key: "forward_shipping_service", value: forwardRate.service || "N/A" },
+                { key: "return_shipping_carrier", value: returnRate.carrier || "N/A" },
+                { key: "return_shipping_service", value: returnRate.service || "N/A" },
+                { key: "forward_shipping_amount", value: String(Number(forwardRate.amount || 0)) },
+                { key: "return_shipping_amount", value: String(Number(returnRate.amount || 0)) },
+                { key: "shipping_credit_amount", value: String(shippingCredit) }
             ]
         });
     }
@@ -87,6 +82,7 @@ export const action = async ({ request }) => {
         const { admin } = await authenticate.public.appProxy(request);
         const requestBody = await request.json();
         const shouldUseTestShipping = !process.env.EASYPOST_API_KEY;
+        const shippingCreditPerPair = await getShippingCreditPerPair();
         const body = {
             ...requestBody,
             shippingSelection: requestBody?.handoffMethod === "shipping" && requestBody?.shippingSelection
@@ -96,6 +92,19 @@ export const action = async ({ request }) => {
                 }
                 : requestBody?.shippingSelection,
         };
+
+        if (Array.isArray(body.sneakers) && body.sneakers.length > MAX_SNEAKER_PAIRS) {
+            return new Response(
+                JSON.stringify({
+                    success: false,
+                    message: `A maximum of ${MAX_SNEAKER_PAIRS} sneaker pairs is allowed per booking.`,
+                }),
+                {
+                    status: 400,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }
 
         console.log("Saving temporary booking data for post-payment processing");
 
@@ -129,7 +138,7 @@ export const action = async ({ request }) => {
         }
 
         if (body.handoffMethod === "shipping") {
-            lineItems.push(...getShippingLineItems(body.shippingSelection));
+            lineItems.push(...getShippingLineItems(body.shippingSelection, body.sneakers?.length || 0, shippingCreditPerPair));
         }
 
         const draftOrderInput = {

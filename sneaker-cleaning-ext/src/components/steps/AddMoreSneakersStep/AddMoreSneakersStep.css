@@ -7,6 +7,10 @@
     border-radius: 8px;
 }
 
+.step-description--warning {
+    color: #c62828;
+}
+
 @media (max-width: 768px) {
     .empty-state {
         padding: 16px;

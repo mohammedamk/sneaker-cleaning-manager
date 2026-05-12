@@ -1,8 +1,11 @@
 import { authenticate } from "../shopify.server";
 import {
   getReturnShippingBufferPercentage,
+  getShippingCreditPerPair,
   normalizeReturnShippingBufferPercentage,
+  normalizeShippingCreditPerPair,
   saveReturnShippingBufferPercentage,
+  saveShippingCreditPerPair,
 } from "../utils/returnShippingBuffer";
 import Settings from "../component/settings/Settings";
 import settingsStyles from "../component/settings/settings.css?url";
@@ -16,6 +19,7 @@ export const loader = async ({ request }) => {
 
   return {
     returnShippingBufferPercentage: await getReturnShippingBufferPercentage(),
+    shippingCreditPerPair: await getShippingCreditPerPair(),
   };
 };
 
@@ -26,13 +30,18 @@ export const action = async ({ request }) => {
     const returnShippingBufferPercentage = normalizeReturnShippingBufferPercentage(
       formData.get("returnShippingBufferPercentage"),
     );
+    const shippingCreditPerPair = normalizeShippingCreditPerPair(
+      formData.get("shippingCreditPerPair"),
+    );
 
     const savedBufferPercentage = await saveReturnShippingBufferPercentage(returnShippingBufferPercentage);
+    const savedShippingCreditPerPair = await saveShippingCreditPerPair(shippingCreditPerPair);
 
     return {
       success: true,
       message: "Settings saved successfully.",
       returnShippingBufferPercentage: savedBufferPercentage,
+      shippingCreditPerPair: savedShippingCreditPerPair,
     };
   } catch (error) {
     return {

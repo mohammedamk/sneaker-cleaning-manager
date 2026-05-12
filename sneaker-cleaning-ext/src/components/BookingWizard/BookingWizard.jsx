@@ -16,6 +16,7 @@ import ShoeRackSelectionStep from '../steps/ShoeRackSelectionStep/ShoeRackSelect
 import ShoeRackManagement from '../ShoeRackManagement/ShoeRackManagement.jsx';
 import BookingsManagement from '../BookingsManagement/BookingsManagement.jsx';
 import GuestBookingLookup from '../BookingsManagement/GuestBookingLookup.jsx';
+import { toast } from '../../utils/toast.js';
 
 const EMPTY_HISTORY = {
   professionallyCleaned: '',
@@ -42,6 +43,7 @@ function getCustomerID() {
 }
 
 const TOTAL_STEPS = 9;
+const MAX_SNEAKER_PAIRS = 10;
 
 const DEFAULT_SHIPPING_SELECTION = {
   customerAddress: {
@@ -66,6 +68,7 @@ const DEFAULT_SHIPPING_SELECTION = {
   selectedForwardRate: null,
   selectedReturnRate: null,
   storeAddress: null,
+  disclaimerAccepted: false,
 };
 
 function BookingWizard() {
@@ -113,6 +116,10 @@ function BookingWizard() {
   const [handoffMethod, setHandoffMethod] = useState('');
   const [shippingSelection, setShippingSelection] = useState(DEFAULT_SHIPPING_SELECTION);
 
+  const showLimitToast = () => {
+    toast.warning(`A maximum of ${MAX_SNEAKER_PAIRS} sneaker pairs is allowed per booking.`);
+  };
+
   const loadSneakerReviewState = (sneaker) => {
     setCurrentSneakerHistory(normalizeHistory(sneaker?.history));
     setCurrentSneakerNotes(sneaker?.notes || '');
@@ -137,6 +144,11 @@ function BookingWizard() {
   };
 
   const handleSneakerSave = (sneakerData) => {
+    if (!editingSneaker && sneakers.length >= MAX_SNEAKER_PAIRS) {
+      showLimitToast();
+      return;
+    }
+
     const fallbackId = createLocalSneakerId();
     const nextSneaker = editingSneaker
       ? {
@@ -214,6 +226,11 @@ function BookingWizard() {
   };
 
   const handleAddAnotherSneaker = () => {
+    if (sneakers.length >= MAX_SNEAKER_PAIRS) {
+      showLimitToast();
+      return;
+    }
+
     setEditingSneaker(null);
     setIsAddingNew(false);
     setReturningToManage(false);
@@ -237,12 +254,26 @@ function BookingWizard() {
       return;
     }
 
+    if (sneakers.length >= MAX_SNEAKER_PAIRS) {
+      showLimitToast();
+      return;
+    }
+
     const nextSneaker = { ...sneaker, id: sneakerId };
     const nextSneakers = [...sneakers, nextSneaker];
 
     setSneakers(nextSneakers);
     setReturningToManage(false);
     startReviewFlow(nextSneakers, [sneakerId]);
+  };
+
+  const handleStartAddingNewSneaker = () => {
+    if (sneakers.length >= MAX_SNEAKER_PAIRS) {
+      showLimitToast();
+      return;
+    }
+
+    setIsAddingNew(true);
   };
 
   const handleRegistrationNext = (sneakerData) => handleSneakerSave(sneakerData);
@@ -301,11 +332,13 @@ function BookingWizard() {
 
             {step === 2 && (
               (customerID && !isAddingNew && !editingSneaker) ? (
-                <ShoeRackSelectionStep
+              <ShoeRackSelectionStep
                   customerID={customerID}
                   sneakers={sneakers}
+                  maxSneakers={MAX_SNEAKER_PAIRS}
                   onAddExisting={handleAddExistingSneaker}
-                  onAddNew={() => setIsAddingNew(true)}
+                  onAddNew={handleStartAddingNewSneaker}
+                  onLimitReached={showLimitToast}
                   onEditExisting={handleEditSneaker}
                   onNext={sneakers.length > 0 ? () => setStep(5) : null}
                   onPrev={goPrev}
@@ -354,7 +387,9 @@ function BookingWizard() {
             {step === 5 && (
               <AddMoreSneakersStep
                 sneakers={sneakers}
+                maxSneakers={MAX_SNEAKER_PAIRS}
                 onAddAnother={handleAddAnotherSneaker}
+                onLimitReached={showLimitToast}
                 onEdit={handleEditSneaker}
                 onRemove={handleRemoveSneaker}
                 onNext={sneakers.length > 0 ? goNext : null}
