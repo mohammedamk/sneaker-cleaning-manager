@@ -1,0 +1,62 @@
+.agreement-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.agreement-step__card {
+    display: grid;
+    gap: 18px;
+    padding: 18px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+}
+
+.agreement-step__text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #223042;
+}
+
+.agreement-step__policy-link {
+    color: #14532d;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.agreement-step__checkbox {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: start;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #223042;
+}
+
+.agreement-step__checkbox input {
+    margin-top: 3px;
+}
+
+@media (max-width: 768px) {
+    .agreement-step__card {
+        padding: 16px;
+    }
+
+    .agreement-step__text {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .agreement-step__card {
+        padding: 14px;
+    }
+
+    .agreement-step__text,
+    .agreement-step__checkbox {
+        font-size: 12px;
+    }
+}

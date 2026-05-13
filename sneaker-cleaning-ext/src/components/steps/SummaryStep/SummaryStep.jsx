@@ -1,7 +1,10 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import { SERVICE_TIERS, ADD_ONS } from '../../shared/SneakerCard/SneakerCard.jsx';
 import './SummaryStep.css';
+
+const HIGH_VALUE_DISCLOSURE_LABEL = 'Are any of the items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?';
+const HIGH_VALUE_ACKNOWLEDGMENT_LABEL = 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear. I understand that Save Our Soles does not guarantee preservation of market value, resale value, sentimental value, collectible value, authentication value, factory originality, or replacement value, and that additional shipping coverage or special handling must be requested before shipping.';
 
 function getTierPrice(tierId) {
   return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
@@ -75,7 +78,14 @@ function SneakerSummaryRow({ sneaker, service }) {
   );
 }
 
-function SummaryStep({ sneakers, services, onNext, onPrev }) {
+function SummaryStep({
+  sneakers,
+  services,
+  bookingAgreements,
+  onBookingAgreementsChange,
+  onNext,
+  onPrev,
+}) {
   const estimatedTotal = sneakers.reduce((total, sneaker) => {
     const service = services[sneaker.id];
     const tierPrice = getTierPrice(service?.tier);
@@ -83,12 +93,29 @@ function SummaryStep({ sneakers, services, onNext, onPrev }) {
     return total + tierPrice + addonsPrice;
   }, 0);
 
+  const handleNext = () => {
+    if (bookingAgreements?.hasHighValueItems && !bookingAgreements?.highValueAcknowledged) {
+      alert('Please acknowledge the high-value footwear notice before continuing.');
+      return;
+    }
+
+    onNext();
+  };
+
+  const handleHighValueToggle = (checked) => {
+    onBookingAgreementsChange((current) => ({
+      ...current,
+      hasHighValueItems: checked,
+      highValueAcknowledged: checked ? current.highValueAcknowledged : false,
+    }));
+  };
+
   return (
     <StepLayout
       title="Booking Summary"
-      onNext={onNext}
+      onNext={handleNext}
       onPrev={onPrev}
-      nextLabel="Choose Handoff Method"
+      nextLabel="Review Agreement"
     >
       <div className="summary">
         <div className="summary__sneakers">
@@ -110,6 +137,32 @@ function SummaryStep({ sneakers, services, onNext, onPrev }) {
           <strong>Note:</strong> The final price may change after our team inspects your
           sneakers. You will receive the confirmed price and a payment link by email before
           the service begins.
+        </div>
+
+        <div className="summary__agreements">
+          <label className="summary__checkbox">
+            <input
+              type="checkbox"
+              checked={Boolean(bookingAgreements?.hasHighValueItems)}
+              onChange={(event) => handleHighValueToggle(event.target.checked)}
+            />
+            <span>{HIGH_VALUE_DISCLOSURE_LABEL}</span>
+          </label>
+
+          {bookingAgreements?.hasHighValueItems && (
+            <label className="summary__checkbox summary__checkbox--nested">
+              <input
+                type="checkbox"
+                checked={Boolean(bookingAgreements?.highValueAcknowledged)}
+                onChange={(event) =>
+                  onBookingAgreementsChange((current) => ({
+                    ...current,
+                    highValueAcknowledged: event.target.checked,
+                  }))}
+              />
+              <span>{HIGH_VALUE_ACKNOWLEDGMENT_LABEL}</span>
+            </label>
+          )}
         </div>
       </div>
     </StepLayout>

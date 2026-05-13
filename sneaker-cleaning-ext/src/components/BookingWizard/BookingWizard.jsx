@@ -10,6 +10,7 @@ import AdditionalNotesStep from '../steps/AdditionalNotesStep/AdditionalNotesSte
 import AddMoreSneakersStep from '../steps/AddMoreSneakersStep/AddMoreSneakersStep.jsx';
 import ServiceSelectionStep from '../steps/ServiceSelectionStep/ServiceSelectionStep.jsx';
 import SummaryStep from '../steps/SummaryStep/SummaryStep.jsx';
+import AgreementStep from '../steps/AgreementStep/AgreementStep.jsx';
 import HandoffMethodStep from '../steps/HandoffMethodStep/HandoffMethodStep.jsx';
 import ConfirmationStep from '../steps/ConfirmationStep/ConfirmationStep.jsx';
 import ShoeRackSelectionStep from '../steps/ShoeRackSelectionStep/ShoeRackSelectionStep.jsx';
@@ -42,8 +43,14 @@ function getCustomerID() {
   }
 }
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 const MAX_SNEAKER_PAIRS = 10;
+
+const DEFAULT_BOOKING_AGREEMENTS = {
+  hasHighValueItems: false,
+  highValueAcknowledged: false,
+  policiesAccepted: false,
+};
 
 const DEFAULT_SHIPPING_SELECTION = {
   customerAddress: {
@@ -116,6 +123,7 @@ function BookingWizard() {
   const [returningToManage, setReturningToManage] = useState(false);
 
   const [services, setServices] = useState({});
+  const [bookingAgreements, setBookingAgreements] = useState(DEFAULT_BOOKING_AGREEMENTS);
 
   const [handoffMethod, setHandoffMethod] = useState('');
   const [shippingSelection, setShippingSelection] = useState(DEFAULT_SHIPPING_SELECTION);
@@ -421,12 +429,23 @@ function BookingWizard() {
               <SummaryStep
                 sneakers={sneakers}
                 services={services}
+                bookingAgreements={bookingAgreements}
+                onBookingAgreementsChange={setBookingAgreements}
                 onNext={goNext}
                 onPrev={goPrev}
               />
             )}
 
             {step === 8 && (
+              <AgreementStep
+                bookingAgreements={bookingAgreements}
+                onBookingAgreementsChange={setBookingAgreements}
+                onNext={goNext}
+                onPrev={goPrev}
+              />
+            )}
+
+            {step === 9 && (
               <HandoffMethodStep
                 handoffMethod={handoffMethod}
                 onHandoffChange={setHandoffMethod}
@@ -436,14 +455,15 @@ function BookingWizard() {
                   customerID,
                   guestInfo,
                   sneakers,
-                  services
+                  services,
+                  agreements: bookingAgreements,
                 }}
                 onNext={goNext}
                 onPrev={goPrev}
               />
             )}
 
-            {step === 9 && <ConfirmationStep handoffMethod={handoffMethod} />}
+            {step === 10 && <ConfirmationStep handoffMethod={handoffMethod} />}
           </>
         )}
       </div>
