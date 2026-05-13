@@ -1,7 +1,10 @@
 import process from "node:process";
 import { authenticate } from "../shopify.server";
 import TempBookingModel from "../MongoDB/models/TempBooking";
-import { getShippingCreditPerPair } from "../utils/returnShippingBuffer";
+import {
+    getReturnShippingBufferPercentage,
+    getShippingCreditPerPair,
+} from "../utils/returnShippingBuffer";
 
 const DRAFT_ORDER_CREATE_MUTATION = `
 mutation draftOrderCreate($input: DraftOrderInput!) {
@@ -41,16 +44,38 @@ function getAddonPrice(addonId) {
     return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
 }
 
-function getShippingLineItems(shippingSelection = {}, sneakerCount = 0, shippingCreditPerPair = 0) {
+function calculateCustomerFacingShippingAmount({
+    forwardAmount = 0,
+    returnAmount = 0,
+    sneakerCount = 0,
+    shippingCreditPerPair = 0,
+    bufferPercentage = 0,
+}) {
+    const subtotal = Number(forwardAmount || 0) + Number(returnAmount || 0);
+    const bufferedTotal = subtotal * (1 + (Number(bufferPercentage || 0) / 100));
+    const shippingCredit = sneakerCount * Number(shippingCreditPerPair || 0);
+
+    return Math.max(Number((bufferedTotal - shippingCredit).toFixed(2)), 0);
+}
+
+function getShippingLineItems(
+    shippingSelection = {},
+    sneakerCount = 0,
+    shippingCreditPerPair = 0,
+    returnShippingBufferPercentage = 0,
+) {
     const lineItems = [];
 
     const forwardRate = shippingSelection?.selectedForwardRate;
     const returnRate = shippingSelection?.selectedReturnRate;
     const shippingCredit = sneakerCount * shippingCreditPerPair;
-    const customerFacingAmount = Math.max(
-        Number(forwardRate?.amount || 0) + Number(returnRate?.amount || 0) - shippingCredit,
-        0,
-    );
+    const customerFacingAmount = calculateCustomerFacingShippingAmount({
+        forwardAmount: forwardRate?.amount,
+        returnAmount: returnRate?.amount,
+        sneakerCount,
+        shippingCreditPerPair,
+        bufferPercentage: returnShippingBufferPercentage,
+    });
 
     if (forwardRate && returnRate && customerFacingAmount > 0) {
         lineItems.push({
@@ -69,7 +94,9 @@ function getShippingLineItems(shippingSelection = {}, sneakerCount = 0, shipping
                 { key: "return_shipping_service", value: returnRate.service || "N/A" },
                 { key: "forward_shipping_amount", value: String(Number(forwardRate.amount || 0)) },
                 { key: "return_shipping_amount", value: String(Number(returnRate.amount || 0)) },
-                { key: "shipping_credit_amount", value: String(shippingCredit) }
+                { key: "shipping_credit_amount", value: String(shippingCredit) },
+                { key: "return_shipping_buffer_percentage", value: String(Number(returnShippingBufferPercentage || 0)) },
+                { key: "customer_facing_shipping_amount", value: String(customerFacingAmount) },
             ]
         });
     }
@@ -83,6 +110,7 @@ export const action = async ({ request }) => {
         const requestBody = await request.json();
         const shouldUseTestShipping = !process.env.EASYPOST_API_KEY;
         const shippingCreditPerPair = await getShippingCreditPerPair();
+        const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
         const body = {
             ...requestBody,
             shippingSelection: requestBody?.handoffMethod === "shipping" && requestBody?.shippingSelection
@@ -138,7 +166,14 @@ export const action = async ({ request }) => {
         }
 
         if (body.handoffMethod === "shipping") {
-            lineItems.push(...getShippingLineItems(body.shippingSelection, body.sneakers?.length || 0, shippingCreditPerPair));
+            lineItems.push(
+                ...getShippingLineItems(
+                    body.shippingSelection,
+                    body.sneakers?.length || 0,
+                    shippingCreditPerPair,
+                    returnShippingBufferPercentage,
+                ),
+            );
         }
 
         const draftOrderInput = {

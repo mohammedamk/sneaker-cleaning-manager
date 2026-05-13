@@ -2,14 +2,33 @@ import process from "node:process";
 import { authenticate } from "../shopify.server";
 import { getShippingQuotes } from "../utils/easyPostShipping";
 import {
-  applyReturnShippingBufferToQuotes,
   getReturnShippingBufferPercentage,
   getShippingCreditPerPair,
 } from "../utils/returnShippingBuffer";
 
+const MAX_SNEAKER_PAIRS = 10;
+const SNEAKER_WEIGHT_LB = 4;
+const OUNCES_PER_POUND = 16;
+const SHIPPING_BOX_LIBRARY = {
+  1: { length: 17, width: 11, height: 8, boxWeightLb: 1 },
+  2: { length: 15, width: 12, height: 10, boxWeightLb: 1.5 },
+  3: { length: 14, width: 14, height: 14, boxWeightLb: 1.5 },
+  4: { length: 14, width: 14, height: 14, boxWeightLb: 1.5 },
+  5: { length: 20, width: 20, height: 12, boxWeightLb: 3 },
+  6: { length: 20, width: 20, height: 12, boxWeightLb: 3 },
+  7: { length: 18, width: 18, height: 18, boxWeightLb: 3 },
+  8: { length: 18, width: 18, height: 18, boxWeightLb: 3 },
+  9: { length: 24, width: 18, height: 18, boxWeightLb: 3.5 },
+  10: { length: 24, width: 18, height: 18, boxWeightLb: 3.5 },
+};
+
 function toAmount(value, fallback) {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function roundCurrencyAmount(value) {
+  return Number(Number(value || 0).toFixed(2));
 }
 
 function buildTestRate(direction, referencePrefix, baseAmount, overrides = {}) {
@@ -73,30 +92,213 @@ function buildTestShippingQuotes({ parcel = {}, referencePrefix = "booking" }) {
   };
 }
 
+function getRecommendedParcelForQuantity(quantity) {
+  const box = SHIPPING_BOX_LIBRARY[quantity];
+
+  if (!box) {
+    return null;
+  }
+
+  const totalWeightLb = (quantity * SNEAKER_WEIGHT_LB) + box.boxWeightLb;
+
+  return {
+    length: String(box.length),
+    width: String(box.width),
+    height: String(box.height),
+    weight: String(totalWeightLb * OUNCES_PER_POUND),
+  };
+}
+
+function getUpsellQuantities(quantity) {
+  if (quantity >= MAX_SNEAKER_PAIRS) {
+    return [];
+  }
+
+  const upperBound = Math.min(quantity + 3, MAX_SNEAKER_PAIRS);
+  const quantities = [];
+
+  for (let nextQuantity = quantity + 1; nextQuantity <= upperBound; nextQuantity += 1) {
+    quantities.push(nextQuantity);
+  }
+
+  return quantities;
+}
+
+function isValidRate(rate) {
+  return Boolean(
+    rate
+    && rate.carrier
+    && rate.service
+    && Number.isFinite(Number(rate.amount))
+    && Number(rate.amount) > 0,
+  );
+}
+
+function selectLowestValidRate(rates = []) {
+  return rates
+    .filter(isValidRate)
+    .sort((left, right) => Number(left.amount) - Number(right.amount))[0] || null;
+}
+
+function formatEstimatedDelivery(rate) {
+  if (rate?.deliveryDate) {
+    return rate.deliveryDate;
+  }
+
+  if (rate?.deliveryDays) {
+    return `${rate.deliveryDays} business day${rate.deliveryDays > 1 ? "s" : ""}`;
+  }
+
+  return "Transit time unavailable";
+}
+
+function calculateCustomerFacingShipping({
+  forwardRate,
+  returnRate,
+  sneakerQuantity,
+  shippingCreditPerPair,
+  bufferPercentage,
+}) {
+  const forwardAmount = Number(forwardRate?.amount || 0);
+  const returnAmount = Number(returnRate?.amount || 0);
+  const subtotal = forwardAmount + returnAmount;
+  const bufferedTotal = subtotal * (1 + (Number(bufferPercentage || 0) / 100));
+  const shippingCredit = Number(sneakerQuantity || 0) * Number(shippingCreditPerPair || 0);
+  const finalTotal = Math.max(roundCurrencyAmount(bufferedTotal - shippingCredit), 0);
+
+  return {
+    forwardAmount: roundCurrencyAmount(forwardAmount),
+    returnAmount: roundCurrencyAmount(returnAmount),
+    subtotal: roundCurrencyAmount(subtotal),
+    bufferedTotal: roundCurrencyAmount(bufferedTotal),
+    shippingCredit: roundCurrencyAmount(shippingCredit),
+    customerFacingTotal: finalTotal,
+  };
+}
+
+async function fetchQuotes({ customerAddress, parcel, referencePrefix }) {
+  if (process.env.EASYPOST_API_KEY) {
+    return getShippingQuotes({
+      customerAddress,
+      parcel,
+      referencePrefix,
+    });
+  }
+
+  return buildTestShippingQuotes({
+    parcel,
+    referencePrefix,
+  });
+}
+
+async function buildQuoteSummary({
+  customerAddress,
+  parcel,
+  referencePrefix,
+  sneakerQuantity,
+  returnShippingBufferPercentage,
+  shippingCreditPerPair,
+}) {
+  const quotes = await fetchQuotes({ customerAddress, parcel, referencePrefix });
+  const selectedForwardRate = selectLowestValidRate(quotes?.customerToStore?.rates);
+  const selectedReturnRate = selectLowestValidRate(quotes?.storeToCustomer?.rates);
+
+  if (!selectedForwardRate || !selectedReturnRate) {
+    return {
+      quotes,
+      selectedForwardRate: null,
+      selectedReturnRate: null,
+      pricing: null,
+    };
+  }
+
+  return {
+    quotes,
+    selectedForwardRate,
+    selectedReturnRate,
+    pricing: {
+      ...calculateCustomerFacingShipping({
+        forwardRate: selectedForwardRate,
+        returnRate: selectedReturnRate,
+        sneakerQuantity,
+        shippingCreditPerPair,
+        bufferPercentage: returnShippingBufferPercentage,
+      }),
+      carrierServiceSummary: {
+        forward: `${selectedForwardRate.carrier} ${selectedForwardRate.service}`,
+        return: `${selectedReturnRate.carrier} ${selectedReturnRate.service}`,
+      },
+      estimatedDelivery: {
+        forward: formatEstimatedDelivery(selectedForwardRate),
+        return: formatEstimatedDelivery(selectedReturnRate),
+      },
+    },
+  };
+}
+
 export const action = async ({ request }) => {
   try {
     await authenticate.public.appProxy(request);
     const body = await request.json();
     const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
     const shippingCreditPerPair = await getShippingCreditPerPair();
+    const sneakerQuantity = Number(body.sneakerQuantity);
 
-    const rawQuotes = process.env.EASYPOST_API_KEY
-      ? await getShippingQuotes({
-        customerAddress: body.customerAddress,
-        parcel: body.parcel,
-        referencePrefix: body.referencePrefix || "booking",
-      })
-      : buildTestShippingQuotes({
-        parcel: body.parcel,
-        referencePrefix: body.referencePrefix || "booking",
-      });
+    const currentSummary = await buildQuoteSummary({
+      customerAddress: body.customerAddress,
+      parcel: body.parcel,
+      referencePrefix: body.referencePrefix || "booking",
+      sneakerQuantity,
+      returnShippingBufferPercentage,
+      shippingCreditPerPair,
+    });
 
-    const quotes = applyReturnShippingBufferToQuotes(rawQuotes, returnShippingBufferPercentage);
+    const upsellCandidates = await Promise.all(
+      getUpsellQuantities(sneakerQuantity).map(async (quantity) => {
+        const parcel = getRecommendedParcelForQuantity(quantity);
+
+        if (!parcel) {
+          return null;
+        }
+
+        const summary = await buildQuoteSummary({
+          customerAddress: body.customerAddress,
+          parcel,
+          referencePrefix: `${body.referencePrefix || "booking"}-${quantity}-pairs`,
+          sneakerQuantity: quantity,
+          returnShippingBufferPercentage,
+          shippingCreditPerPair,
+        });
+
+        if (!summary?.pricing) {
+          return null;
+        }
+
+        const savings = roundCurrencyAmount(
+          Number(currentSummary?.pricing?.customerFacingTotal || 0)
+          - Number(summary.pricing.customerFacingTotal || 0),
+        );
+
+        if (savings <= 0) {
+          return null;
+        }
+
+        return {
+          quantity,
+          savings,
+          customerFacingTotal: summary.pricing.customerFacingTotal,
+        };
+      }),
+    );
 
     return new Response(
       JSON.stringify({
         success: true,
-        quotes,
+        quotes: currentSummary.quotes,
+        selectedForwardRate: currentSummary.selectedForwardRate,
+        selectedReturnRate: currentSummary.selectedReturnRate,
+        pricing: currentSummary.pricing,
+        upsellOptions: upsellCandidates.filter(Boolean),
         returnShippingBufferPercentage,
         shippingCreditPerPair,
       }),

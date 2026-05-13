@@ -67,6 +67,10 @@ const DEFAULT_SHIPPING_SELECTION = {
   rates: null,
   selectedForwardRate: null,
   selectedReturnRate: null,
+  returnShippingBufferPercentage: 0,
+  shippingCreditPerPair: 10,
+  customerFacingShippingTotal: 0,
+  upsellOptions: [],
   storeAddress: null,
   disclaimerAccepted: false,
 };

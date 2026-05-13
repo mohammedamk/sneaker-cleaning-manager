@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import FormField from '../../shared/FormField/FormField.jsx';
 import './HandoffMethodStep.css';
@@ -23,22 +23,37 @@ const SHIPPING_BOX_LIBRARY = {
 };
 const OUNCES_PER_POUND = 16;
 
-function getShippingTotalAmounts(shippingSelection, sneakerCount) {
-  const forward = Number(shippingSelection?.selectedForwardRate?.amount || 0);
-  const ret = Number(shippingSelection?.selectedReturnRate?.amount || 0);
+function calculateShippingSummary(shippingSelection, sneakerCount) {
+  const forwardAmount = Number(shippingSelection?.selectedForwardRate?.amount || 0);
+  const returnAmount = Number(shippingSelection?.selectedReturnRate?.amount || 0);
   const shippingCreditPerPair = Number(
     shippingSelection?.shippingCreditPerPair ?? DEFAULT_SHIPPING_CREDIT_PER_PAIR,
   );
-  const credit = sneakerCount * shippingCreditPerPair;
-  const total = forward + ret;
+  const returnShippingBufferPercentage = Number(
+    shippingSelection?.returnShippingBufferPercentage || 0,
+  );
+  const subtotal = forwardAmount + returnAmount;
+  const bufferedTotal = subtotal * (1 + (returnShippingBufferPercentage / 100));
+  const shippingCredit = sneakerCount * shippingCreditPerPair;
 
   return {
-    forward,
-    returnAmount: ret,
-    credit,
-    total,
-    customerFacingTotal: Math.max(total - credit, 0),
+    forwardAmount,
+    returnAmount,
+    shippingCredit,
+    customerFacingTotal: Math.max(Number((bufferedTotal - shippingCredit).toFixed(2)), 0),
   };
+}
+
+function getEstimatedDelivery(rate) {
+  if (rate?.deliveryDate) {
+    return rate.deliveryDate;
+  }
+
+  if (rate?.deliveryDays) {
+    return `${rate.deliveryDays} business day${rate.deliveryDays > 1 ? 's' : ''}`;
+  }
+
+  return 'Transit time unavailable';
 }
 
 function HandoffMethodStep({
@@ -74,19 +89,22 @@ function HandoffMethodStep({
     };
   }, [selectedBoxConfig, sneakerCount]);
 
-  const selectedShippingTotal = useMemo(
-    () => getShippingTotalAmounts(shippingSelection, sneakerCount).customerFacingTotal.toFixed(2),
+  const shippingSummary = useMemo(
+    () => calculateShippingSummary(shippingSelection, sneakerCount),
     [shippingSelection, sneakerCount],
   );
-  const updateShippingSelection = (updater) => {
+
+  const updateShippingSelection = useCallback((updater) => {
     onShippingChange(typeof updater === 'function' ? updater(shippingSelection) : updater);
-  };
+  }, [onShippingChange, shippingSelection]);
 
   const clearRates = (nextSelection) => ({
     ...nextSelection,
     rates: null,
     selectedForwardRate: null,
     selectedReturnRate: null,
+    customerFacingShippingTotal: 0,
+    upsellOptions: [],
   });
 
   useEffect(() => {
@@ -113,7 +131,7 @@ function HandoffMethodStep({
         },
       }),
     );
-  }, [recommendedParcel, shippingSelection, onShippingChange]);
+  }, [recommendedParcel, shippingSelection, updateShippingSelection]);
 
   const requiresCustomerAddress = handoffMethod === 'shipping' || handoffMethod === PICKUP_AND_RETURN_METHOD;
 
@@ -128,14 +146,6 @@ function HandoffMethodStep({
         },
       }),
     );
-  };
-
-  const handleRateSelect = (direction, rate) => {
-    setShippingError('');
-    updateShippingSelection((current) => ({
-      ...current,
-      [direction === 'forward' ? 'selectedForwardRate' : 'selectedReturnRate']: rate,
-    }));
   };
 
   const validateShippingInputs = () => {
@@ -178,6 +188,7 @@ function HandoffMethodStep({
             email: shippingAddress.email || bookingData.guestInfo?.email || '',
           },
           parcel: recommendedParcel,
+          sneakerQuantity: sneakerCount,
           referencePrefix: bookingData.customerID || bookingData.guestInfo?.email || 'booking',
         }),
       });
@@ -188,13 +199,20 @@ function HandoffMethodStep({
         throw new Error(result.message || 'Unable to fetch shipping rates');
       }
 
+      if (!result.selectedForwardRate || !result.selectedReturnRate || !result.pricing) {
+        throw new Error('Unable to find a valid roundtrip shipping option for this booking.');
+      }
+
       updateShippingSelection((current) => ({
         ...current,
         rates: result.quotes,
         storeAddress: result.quotes.storeAddress,
         shippingCreditPerPair: result.shippingCreditPerPair,
-        selectedForwardRate: null,
-        selectedReturnRate: null,
+        returnShippingBufferPercentage: result.returnShippingBufferPercentage,
+        selectedForwardRate: result.selectedForwardRate,
+        selectedReturnRate: result.selectedReturnRate,
+        customerFacingShippingTotal: result.pricing.customerFacingTotal,
+        upsellOptions: result.upsellOptions || [],
       }));
     } catch (error) {
       console.error('Error fetching shipping rates:', error);
@@ -219,12 +237,12 @@ function HandoffMethodStep({
       }
 
       if (!shippingRates?.customerToStore?.rates?.length || !shippingRates?.storeToCustomer?.rates?.length) {
-        setShippingError('Fetch available USPS and UPS rates before continuing.');
+        setShippingError('Fetch shipping before continuing.');
         return;
       }
 
       if (!shippingSelection?.selectedForwardRate || !shippingSelection?.selectedReturnRate) {
-        setShippingError('Select one rate for both customer-to-store and store-to-customer shipping.');
+        setShippingError('No valid shipping option is currently available for this address and package.');
         return;
       }
 
@@ -246,7 +264,6 @@ function HandoffMethodStep({
     setIsSubmitting(true);
 
     try {
-      // converting all sneaker image files to base64
       const sneakersWithImageRefs = await Promise.all(
         bookingData.sneakers.map(async (sneaker) => {
           const images = await Promise.all(
@@ -322,57 +339,25 @@ function HandoffMethodStep({
     }
   };
 
-  const renderRateOptions = (title, direction, rates, selectedRate) => {
-    return (
-      <div className="shipping-rates__group">
-        <div className="shipping-rates__header">
-          <h4>{title}</h4>
-          <span>{rates?.length || 0} rates</span>
-        </div>
-
-        {rates?.length ? (
-          <div className="shipping-rate-list">
-            {rates.map((rate) => {
-              const isSelected = selectedRate?.carrier === rate.carrier
-                && selectedRate?.service === rate.service
-                && Number(selectedRate?.amount) === Number(rate.amount);
-              const inputId = `shipping-rate-${direction}-${rate.carrier}-${rate.service}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-
-              return (
-                <div key={`${direction}-${rate.carrier}-${rate.service}-${rate.amount}`} className={`shipping-rate-card ${isSelected ? 'shipping-rate-card--selected' : ''}`}>
-                  <input
-                    id={inputId}
-                    type="radio"
-                    name={`shipping-rate-${direction}`}
-                    checked={isSelected}
-                    onChange={() => handleRateSelect(direction, rate)}
-                  />
-                  <button
-                    type="button"
-                    className="shipping-rate-card__content shipping-rate-card__content-button"
-                    onClick={() => handleRateSelect(direction, rate)}
-                  >
-                    <span className="shipping-rate-card__topline">
-                      <strong>{rate.carrier}</strong>
-                      <span>${Number(rate.amount).toFixed(2)}</span>
-                    </span>
-                    <span className="shipping-rate-card__meta">
-                      <span>{rate.service}</span>
-                      <span>
-                        {rate.deliveryDays ? `${rate.deliveryDays} business day${rate.deliveryDays > 1 ? 's' : ''}` : 'Transit time unavailable'}
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="shipping-rates__empty">No USPS or UPS rates available for this direction yet.</p>
-        )}
+  const renderSelectedShippingSummary = (title, rate) => (
+    <div className="shipping-rates__group">
+      <div className="shipping-rates__header">
+        <h4>{title}</h4>
       </div>
-    );
-  };
+      <div className="shipping-rate-card shipping-rate-card--selected">
+        <div className="shipping-rate-card__content">
+          <span className="shipping-rate-card__topline">
+            <strong>{rate?.carrier || 'N/A'}</strong>
+            <span>{rate?.service || 'Service unavailable'}</span>
+          </span>
+          <span className="shipping-rate-card__meta">
+            <span>Estimated delivery</span>
+            <span>{getEstimatedDelivery(rate)}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <StepLayout
@@ -526,7 +511,7 @@ function HandoffMethodStep({
                 <p><strong>Sneaker pairs:</strong> {sneakerCount}</p>
                 {selectedBoxConfig ? (
                   <>
-                    <p><strong>Box size:</strong> {selectedBoxConfig.length}" x {selectedBoxConfig.width}" x {selectedBoxConfig.height}"</p>
+                    <p><strong>Box size:</strong> {selectedBoxConfig.length}&quot; x {selectedBoxConfig.width}&quot; x {selectedBoxConfig.height}&quot;</p>
                     <p><strong>Box weight:</strong> {selectedBoxConfig.boxWeightLb} lb</p>
                     <p><strong>Estimated sneaker weight:</strong> {sneakerCount * SNEAKER_WEIGHT_LB} lb</p>
                     <p><strong>Total estimated package weight:</strong> {recommendedParcel?.displayWeightLb} lb</p>
@@ -536,33 +521,38 @@ function HandoffMethodStep({
                 )}
               </div>
               <button type="button" className="btn btn--secondary shipping-rates__button" onClick={handleFetchRates} disabled={isFetchingRates}>
-                {isFetchingRates ? 'Fetching Rates...' : 'Fetch USPS & UPS Rates'}
+                {isFetchingRates ? 'Calculating Shipping...' : 'Calculate Shipping'}
               </button>
             </div>
           )}
 
           {shippingError && <p className="shipping-error">{shippingError}</p>}
 
-          {handoffMethod === 'shipping' && shippingRates && (
+          {handoffMethod === 'shipping' && shippingRates && shippingSelection?.selectedForwardRate && shippingSelection?.selectedReturnRate && (
             <div className="shipping-section shipping-rates">
-              {renderRateOptions(
-                'Customer -> Store',
-                'forward',
-                shippingRates.customerToStore?.rates,
-                shippingSelection?.selectedForwardRate,
-              )}
-
-              {renderRateOptions(
-                'Store -> Customer',
-                'return',
-                shippingRates.storeToCustomer?.rates,
-                shippingSelection?.selectedReturnRate,
-              )}
+              {renderSelectedShippingSummary('Customer -> Store', shippingSelection.selectedForwardRate)}
+              {renderSelectedShippingSummary('Store -> Customer', shippingSelection.selectedReturnRate)}
 
               <div className="shipping-total">
                 <span>Customer-Facing Shipping Total</span>
-                <strong>${selectedShippingTotal}</strong>
+                <strong>${shippingSummary.customerFacingTotal.toFixed(2)}</strong>
               </div>
+
+              {shippingSelection?.upsellOptions?.length > 0 && (
+                <div className="shipping-rates__group">
+                  <div className="shipping-rates__header">
+                    <h4>Save More With More Pairs</h4>
+                  </div>
+                  <div className="shipping-box-summary">
+                    {shippingSelection.upsellOptions.map((option) => (
+                      <p key={option.quantity}>
+                        <strong>{option.quantity} pairs:</strong> Save ${Number(option.savings || 0).toFixed(2)}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="shipping-disclaimer">
                 <h4 className="shipping-section__title">Shipping Instructions & Disclaimer</h4>
                 <p>To help keep shipping costs accurate and avoid delays, please package your footwear according to the box size recommended during checkout. You may use the recommended box size or a smaller box, as long as all footwear fits safely without forcing, bending, or damaging the shoes.</p>
