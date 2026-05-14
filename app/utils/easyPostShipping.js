@@ -220,28 +220,13 @@ function findMatchingRate(shipment, selectedRate = {}) {
   });
 }
 
-function amountsMatch(leftAmount, rightAmount) {
-  return Number(leftAmount).toFixed(2) === Number(rightAmount).toFixed(2);
-}
-
-function selectedRateSupportsCurrentAmount(selectedRate, currentRateAmount, direction) {
-  if (direction === "store_to_customer") {
-    const maxPurchaseAmount = Number(selectedRate?.maxPurchaseAmount);
-
-    if (Number.isFinite(maxPurchaseAmount) && maxPurchaseAmount > 0) {
-      return Number(currentRateAmount) <= maxPurchaseAmount;
-    }
-  }
-
-  return amountsMatch(currentRateAmount, selectedRate?.amount);
-}
-
 export async function verifyAndBuySelectedRate({
   customerAddress,
   parcel,
   selectedRate,
   direction,
   referencePrefix = "booking",
+  insuranceAmount = null,
 }) {
   if (!selectedRate) {
     throw new Error("A shipping rate is required");
@@ -279,7 +264,14 @@ export async function verifyAndBuySelectedRate({
   //   };
   // }
 
-  const purchasedShipment = await client.Shipment.buy(shipment.id, currentRate.id);
+  const normalizedInsuranceAmount = Number(insuranceAmount);
+  const purchasedShipment = await client.Shipment.buy(
+    shipment.id,
+    currentRate.id,
+    Number.isFinite(normalizedInsuranceAmount) && normalizedInsuranceAmount > 0
+      ? normalizedInsuranceAmount
+      : null,
+  );
 
   return {
     status: "purchased",
@@ -288,6 +280,14 @@ export async function verifyAndBuySelectedRate({
       trackingCode: purchasedShipment.tracking_code,
       selectedRate: mapRate(purchasedShipment.selected_rate || currentRate),
       postageLabel: purchasedShipment.postage_label,
+      insurance: purchasedShipment.insurance
+        ? {
+          id: purchasedShipment.insurance.id,
+          amount: Number(purchasedShipment.insurance.amount || 0),
+          provider: purchasedShipment.insurance.provider || null,
+          status: purchasedShipment.insurance.status || null,
+        }
+        : null,
     },
     storeAddress,
   };

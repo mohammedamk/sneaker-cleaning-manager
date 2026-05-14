@@ -3,7 +3,7 @@ import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import { SERVICE_TIERS, ADD_ONS } from '../../shared/SneakerCard/SneakerCard.jsx';
 import './SummaryStep.css';
 
-const HIGH_VALUE_DISCLOSURE_LABEL = 'Are any of the items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?';
+const HIGH_VALUE_DISCLOSURE_LABEL = 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?';
 const HIGH_VALUE_ACKNOWLEDGMENT_LABEL = 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear. I understand that Save Our Soles does not guarantee preservation of market value, resale value, sentimental value, collectible value, authentication value, factory originality, or replacement value, and that additional shipping coverage or special handling must be requested before shipping.';
 
 function getTierPrice(tierId) {

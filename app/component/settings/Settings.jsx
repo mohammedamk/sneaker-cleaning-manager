@@ -50,7 +50,11 @@ export default function Settings() {
 
         setBufferPercentage(String(nextValue ?? 0));
         setShippingCreditPerPair(String(nextShippingCreditValue ?? 10));
-    }, [actionData, loaderData.returnShippingBufferPercentage, loaderData.shippingCreditPerPair]);
+    }, [
+        actionData,
+        loaderData.returnShippingBufferPercentage,
+        loaderData.shippingCreditPerPair,
+    ]);
 
     const handleSaveSettings = () => {
         if (!isDirty || isLoading) {

@@ -80,6 +80,17 @@ const DEFAULT_SHIPPING_SELECTION = {
   upsellOptions: [],
   storeAddress: null,
   disclaimerAccepted: false,
+  insurance: {
+    selected: false,
+    recommended: false,
+    highValueItemsDeclared: false,
+    config: {
+      enabled: true,
+      price: 0,
+      coverageAmount: 0,
+      label: 'Shipping Insurance',
+    },
+  },
 };
 
 function BookingWizard() {
@@ -344,7 +355,7 @@ function BookingWizard() {
 
             {step === 2 && (
               (customerID && !isAddingNew && !editingSneaker) ? (
-              <ShoeRackSelectionStep
+                <ShoeRackSelectionStep
                   customerID={customerID}
                   sneakers={sneakers}
                   maxSneakers={MAX_SNEAKER_PAIRS}

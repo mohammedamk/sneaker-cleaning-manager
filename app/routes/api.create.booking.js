@@ -5,6 +5,9 @@ import {
     getReturnShippingBufferPercentage,
     getShippingCreditPerPair,
 } from "../utils/returnShippingBuffer";
+import {
+    getShippingInsuranceLineItem,
+} from "../utils/shippingInsurance";
 
 const DRAFT_ORDER_CREATE_MUTATION = `
 mutation draftOrderCreate($input: DraftOrderInput!) {
@@ -104,6 +107,14 @@ function getShippingLineItems(
     return lineItems;
 }
 
+function getInsuranceSelection(requestBody = {}) {
+    if (requestBody?.handoffMethod !== "shipping") {
+        return null;
+    }
+
+    return requestBody?.shippingSelection?.insurance || null;
+}
+
 export const action = async ({ request }) => {
     try {
         const { admin } = await authenticate.public.appProxy(request);
@@ -111,11 +122,19 @@ export const action = async ({ request }) => {
         const shouldUseTestShipping = !process.env.EASYPOST_API_KEY;
         const shippingCreditPerPair = await getShippingCreditPerPair();
         const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
+        const requestedInsuranceSelection = requestBody?.handoffMethod === "shipping" 
+            ? requestBody?.shippingSelection?.insurance 
+            : null;
         const body = {
             ...requestBody,
             shippingSelection: requestBody?.handoffMethod === "shipping" && requestBody?.shippingSelection
                 ? {
                     ...requestBody.shippingSelection,
+                    insurance: requestedInsuranceSelection ? {
+                        enabled: Boolean(requestedInsuranceSelection.enabled),
+                        coverageAmount: Number(requestedInsuranceSelection.coverageAmount || 0),
+                        cost: Number(requestedInsuranceSelection.cost || 0),
+                    } : null,
                     isTestData: shouldUseTestShipping || Boolean(requestBody.shippingSelection?.isTestData),
                 }
                 : requestBody?.shippingSelection,
@@ -174,6 +193,14 @@ export const action = async ({ request }) => {
                     returnShippingBufferPercentage,
                 ),
             );
+
+            const insuranceLineItem = getShippingInsuranceLineItem(
+                body.shippingSelection?.insurance,
+            );
+
+            if (insuranceLineItem) {
+                lineItems.push(insuranceLineItem);
+            }
         }
 
         const draftOrderInput = {
@@ -182,7 +209,10 @@ export const action = async ({ request }) => {
                 { key: "temp_booking_id", value: tempBooking._id.toString() },
                 { key: "is_sneaker_booking", value: "true" },
                 { key: "booking_handoff_method", value: body.handoffMethod || "dropoff" },
-                { key: "has_booking_shipping", value: body.handoffMethod === "shipping" ? "true" : "false" }
+                { key: "has_booking_shipping", value: body.handoffMethod === "shipping" ? "true" : "false" },
+                { key: "booking_shipping_insurance_enabled", value: body.shippingSelection?.insurance?.enabled ? "true" : "false" },
+                { key: "booking_shipping_insurance_coverage_amount", value: String(Number(body.shippingSelection?.insurance?.coverageAmount || 0)) },
+                { key: "booking_shipping_insurance_cost", value: String(Number(body.shippingSelection?.insurance?.cost || 0) * 2) },
             ],
             useCustomerDefaultAddress: true
         };

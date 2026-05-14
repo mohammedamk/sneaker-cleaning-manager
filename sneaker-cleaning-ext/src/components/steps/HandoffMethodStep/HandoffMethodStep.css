@@ -227,6 +227,52 @@
     border-top: 1px solid #e0e0e0;
 }
 
+.shipping-insurance {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #fff7e6;
+    border: 1px solid #f2c56c;
+    color: #6b4a00;
+}
+
+.shipping-insurance p {
+    margin: 0;
+}
+
+.shipping-insurance__eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px !important;
+}
+
+.shipping-insurance__option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    font-weight: 600;
+}
+
+.shipping-insurance__option--recommended {
+    border-color: #f2c56c;
+    background: #fffaf0;
+}
+
+.shipping-insurance__option input {
+    margin-top: 3px;
+}
+
+.shipping-insurance__note {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+}
+
 .shipping-disclaimer p {
     margin: 0;
 }

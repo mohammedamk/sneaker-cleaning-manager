@@ -260,16 +260,29 @@ export default function BookingsIndex() {
   };
 
   const handleBuyShipping = (bookingId) => {
-    // const booking = items.find((item) => getObjectIdString(item._id) === getObjectIdString(bookingId));
-    // const shippingSelection = getBookingShippingSelection(booking);
-    // const rateSummary = shippingSelection?.selectedReturnRate
-    //   ? `${shippingSelection.selectedReturnRate.service} - ${formatMoney(shippingSelection.selectedReturnRate.rate, shippingSelection.selectedReturnRate.currency)}`
-    //   : "Shipping rate not available";
+    const booking = items.find((item) => getObjectIdString(item._id) === getObjectIdString(bookingId));
+    const shippingSelection = getBookingShippingSelection(booking);
+    const rateSummary = shippingSelection?.selectedReturnRate
+      ? `${shippingSelection.selectedReturnRate.service} - ${formatMoney(shippingSelection.selectedReturnRate.amount, shippingSelection.selectedReturnRate.currency)}`
+      : "Shipping rate not available";
+
+    const isInsuranceEnabled = shippingSelection?.insurance?.enabled || shippingSelection?.insurance?.selected;
+    const insuranceCoverageValue = shippingSelection?.insurance?.coverageAmount 
+      || shippingSelection?.insurance?.config?.selectedCoverageAmount 
+      || shippingSelection?.insurance?.config?.coverageAmount;
+
+    const insuranceCoverageAmount = isInsuranceEnabled && Number(insuranceCoverageValue) > 0 
+      ? Number(insuranceCoverageValue) 
+      : 0;
+
+    let confirmMessage = `Are you sure you want to purchase the return shipping label for booking #${getObjectIdString(bookingId)}? Rate: ${rateSummary}.`;
+    if (insuranceCoverageAmount > 0) {
+      confirmMessage += ` This will also purchase EasyPost shipping insurance with a coverage amount of ${formatMoney(insuranceCoverageAmount, "USD")}.`;
+    }
 
     openConfirmModal({
       heading: "Confirm Shipping Purchase",
-      // message: `Are you sure you want to purchase the return shipping label for booking #${getObjectIdString(bookingId)}? Rate: ${rateSummary}`,
-      message: `Are you sure you want to purchase the return shipping label for booking #${getObjectIdString(bookingId)}?`,
+      message: confirmMessage,
       tone: "default",
       confirmLabel: "Buy Shipping",
     }, () => executeBuyShipping(bookingId));

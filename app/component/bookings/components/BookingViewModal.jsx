@@ -10,8 +10,6 @@ import {
   getObjectIdString,
   getSneakerUploadKey,
   getStatusTone,
-  hasCleanedImages,
-  hasPendingCleanedImages,
 } from "../bookings.helpers";
 
 function BookingSummaryCard({ label, children }) {
@@ -21,6 +19,18 @@ function BookingSummaryCard({ label, children }) {
       <div className="booking-view-card__content">{children}</div>
     </div>
   );
+}
+
+function getAgreementStatusLabel(value, labels = {}) {
+  if (typeof value !== "boolean") {
+    return labels.unknown || "Not provided";
+  }
+
+  if (value) {
+    return labels.trueLabel || "Yes";
+  }
+
+  return labels.falseLabel || "No";
 }
 
 function BookingImageCard({
@@ -295,7 +305,6 @@ export default function BookingViewModal({
   onDownloadImage,
   onSneakerApprovalNoteDraftChange,
   onRefundBooking,
-  onSendCleanedEmail,
   onUpdateSneakerStatus,
   onDeleteCleanedImage,
   onApproveSneaker,
@@ -304,11 +313,13 @@ export default function BookingViewModal({
   onCleanedImagesChange,
   onUploadCleanedImages,
 }) {
+  const bookingAgreements = viewingBooking?.fullPayload?.agreements || {};
   const customerShippingAddress = bookingShippingSelection?.customerAddress;
   const pickupReturnAddress = bookingShippingSelection?.customerAddress;
   const packageDetails = bookingShippingSelection?.parcel;
   const selectedForwardRate = bookingShippingSelection?.selectedForwardRate;
   const selectedReturnRate = bookingShippingSelection?.selectedReturnRate;
+  const selectedInsurance = bookingShippingSelection?.insurance;
   const sneakersWithCleanedImages = (viewingBooking?.sneakers || []).filter(
     (sneaker) => Array.isArray(sneaker.cleanedImages) && sneaker.cleanedImages.length > 0,
   );
@@ -419,6 +430,27 @@ export default function BookingViewModal({
                   </s-text>
                 )}
               </BookingSummaryCard>
+              <BookingSummaryCard label="HIGH-VALUE ITEMS">
+                <s-text>{getAgreementStatusLabel(bookingAgreements.hasHighValueItems)}</s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="HIGH-VALUE ACKNOWLEDGMENT">
+                <s-text>
+                  {typeof bookingAgreements.hasHighValueItems === "boolean" && !bookingAgreements.hasHighValueItems
+                    ? "Not required"
+                    : getAgreementStatusLabel(bookingAgreements.highValueAcknowledged, {
+                      trueLabel: "Acknowledged",
+                      falseLabel: "Not acknowledged",
+                    })}
+                </s-text>
+              </BookingSummaryCard>
+              <BookingSummaryCard label="POLICIES">
+                <s-text>
+                  {getAgreementStatusLabel(bookingAgreements.policiesAccepted, {
+                    trueLabel: "Accepted",
+                    falseLabel: "Not accepted",
+                  })}
+                </s-text>
+              </BookingSummaryCard>
               {displayApprovalStatus === "rejected" && viewingBooking.cleanedImagesApprovalNote && (
                 <BookingSummaryCard label="REJECTION NOTE">
                   <s-text>{viewingBooking.cleanedImagesApprovalNote}</s-text>
@@ -465,6 +497,30 @@ export default function BookingViewModal({
                     </BookingSummaryCard>
                     <BookingSummaryCard label="STORE TO CUSTOMER RATE">
                       <s-text>{formatRateSummary(selectedReturnRate)}</s-text>
+                    </BookingSummaryCard>
+                    <BookingSummaryCard label="SHIPPING INSURANCE">
+                      <s-text>
+                        {(selectedInsurance?.enabled || selectedInsurance?.selected)
+                          ? "Shipping Insurance selected"
+                          : "Not selected"}
+                      </s-text>
+                      {(selectedInsurance?.enabled || selectedInsurance?.selected) && (
+                        <>
+                          <s-text variant="bodySm" tone="subdued">
+                            Checkout charge (Forward & Return): {Number(selectedInsurance?.cost || selectedInsurance?.config?.price || 0) > 0
+                              ? formatMoney(selectedInsurance.cost ? selectedInsurance.cost * 2 : selectedInsurance.config.price, "USD")
+                              : "None"}
+                          </s-text>
+                          <s-text variant="bodySm" tone="subdued">
+                            EasyPost coverage (Per shipment): {Number(selectedInsurance?.coverageAmount || selectedInsurance?.config?.selectedCoverageAmount || selectedInsurance?.config?.coverageAmount || 0) > 0
+                              ? formatMoney(
+                                selectedInsurance?.coverageAmount || selectedInsurance?.config?.selectedCoverageAmount || selectedInsurance?.config?.coverageAmount,
+                                "USD",
+                              )
+                              : "Not configured"}
+                          </s-text>
+                        </>
+                      )}
                     </BookingSummaryCard>
                   </>
                 )}

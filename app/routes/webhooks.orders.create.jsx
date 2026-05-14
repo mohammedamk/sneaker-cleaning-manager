@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import process from "node:process";
+import { setTimeout as scheduleTask } from "node:timers";
 import { authenticate } from "../shopify.server";
 import BookingModel from "../MongoDB/models/Booking";
 import SneakerModel from "../MongoDB/models/Sneaker";
@@ -8,6 +9,7 @@ import mongoose from "mongoose";
 import sendEmail from "../utils/sendEmail";
 import { verifyAndBuySelectedRate } from "../utils/easyPostShipping";
 import { uploadImageToShopify } from "../utils/shopifyImages.server";
+import { getInsuranceCoverageAmount } from "../utils/shippingInsurance";
 
 // In-memory lock to prevent concurrent processing of the same order
 const processingLocks = new Map();
@@ -167,6 +169,9 @@ async function processBookingInBackground({
         ...bookingData.shippingSelection.customerAddress,
         email: bookingData.shippingSelection.customerAddress?.email || customerEmail || bookingData.guestInfo?.email || "",
       };
+      const selectedInsuranceCoverageAmount = getInsuranceCoverageAmount(
+        bookingData.shippingSelection.insurance,
+      );
 
       if (bookingData.shippingSelection.selectedForwardRate) {
         const verificationResult = process.env.EASYPOST_API_KEY
@@ -176,6 +181,7 @@ async function processBookingInBackground({
             selectedRate: bookingData.shippingSelection.selectedForwardRate,
             direction: "customer_to_store",
             referencePrefix: bookingDoc._id.toString(),
+            insuranceAmount: selectedInsuranceCoverageAmount,
           })
           : buildTestShippingPurchase({
             bookingId: bookingDoc._id.toString(),
@@ -301,7 +307,6 @@ const TEST_STORE_ADDRESS = {
   phone: "2125550100",
 };
 
-const ADMIN_NOTIFICATION_EMAIL = "test@gmail.com";
 const ORDER_UPDATE_MUTATION = `
 mutation orderUpdate($input: OrderInput!) {
   orderUpdate(input: $input) {
@@ -513,52 +518,6 @@ async function saveBookingAccessToOrder(admin, orderId, bookingDoc, existingAttr
   }
 }
 
-function buildRateChangedEmail({ bookingDoc, orderPayload, shippingSelection, verificationResult }) {
-  const bookingReference = bookingDoc?._id?.toString() || "Pending booking";
-  const orderReference = orderPayload?.name || orderPayload?.id || "Unknown order";
-  const customerEmail = bookingDoc?.email || bookingDoc?.guestInfo?.email || "N/A";
-
-  const rateRows = (verificationResult.changedRates || [])
-    .map((rateChange) => {
-      const quoted = rateChange.quotedRate
-        ? `${rateChange.quotedRate.carrier} ${rateChange.quotedRate.service} $${Number(rateChange.quotedRate.amount).toFixed(2)}`
-        : "No quoted rate";
-      const current = rateChange.currentRate
-        ? `${rateChange.currentRate.carrier} ${rateChange.currentRate.service} $${Number(rateChange.currentRate.amount).toFixed(2)}`
-        : "Rate no longer available";
-
-      return `
-        <tr>
-          <td style="padding:8px;border:1px solid #ddd;">${rateChange.direction}</td>
-          <td style="padding:8px;border:1px solid #ddd;">${quoted}</td>
-          <td style="padding:8px;border:1px solid #ddd;">${current}</td>
-        </tr>
-      `;
-    })
-    .join("");
-
-  return `
-    <div style="font-family:Arial,sans-serif;line-height:1.5;color:#222;">
-      <h2>Shipping Rate Changed</h2>
-      <p>The EasyPost shipping rate changed after Shopify created an order, so labels were not purchased automatically.</p>
-      <p><strong>Booking ID:</strong> ${bookingReference}</p>
-      <p><strong>Order:</strong> ${orderReference}</p>
-      <p><strong>Customer Email:</strong> ${customerEmail}</p>
-      <p><strong>Forward Quote:</strong> ${shippingSelection?.selectedForwardRate?.carrier || "N/A"} ${shippingSelection?.selectedForwardRate?.service || ""} ${shippingSelection?.selectedForwardRate ? `$${Number(shippingSelection.selectedForwardRate.amount).toFixed(2)}` : ""}</p>
-      <p><strong>Return Quote:</strong> ${shippingSelection?.selectedReturnRate?.carrier || "N/A"} ${shippingSelection?.selectedReturnRate?.service || ""} ${shippingSelection?.selectedReturnRate ? `$${Number(shippingSelection.selectedReturnRate.amount).toFixed(2)}` : ""}</p>
-      <table style="border-collapse:collapse;margin-top:16px;">
-        <thead>
-          <tr>
-            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Direction</th>
-            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Quoted</th>
-            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Current</th>
-          </tr>
-        </thead>
-        <tbody>${rateRows}</tbody>
-      </table>
-    </div>
-  `;
-}
 
 function buildTestLabel(direction, bookingId, selectedRate, customerAddress) {
   const fallbackCarrier = direction === "customerToStore" ? "USPS" : "UPS";
@@ -605,14 +564,26 @@ function buildTestLabel(direction, bookingId, selectedRate, customerAddress) {
 }
 
 function buildTestShippingPurchase({ bookingId, shippingSelection, shippingContact }) {
+  const insuranceAmount = Number(shippingSelection?.insurance?.config?.selectedCoverageAmount || 0);
+
   return {
     status: "purchased",
-    label: buildTestLabel(
-      "customerToStore",
-      bookingId,
-      shippingSelection?.selectedForwardRate,
-      shippingContact,
-    ),
+    label: {
+      ...buildTestLabel(
+        "customerToStore",
+        bookingId,
+        shippingSelection?.selectedForwardRate,
+        shippingContact,
+      ),
+      insurance: insuranceAmount > 0
+        ? {
+          id: `ins_test_${bookingId}`,
+          amount: insuranceAmount,
+          provider: "test",
+          status: "purchased",
+        }
+        : null,
+    },
     storeAddress: TEST_STORE_ADDRESS,
     isTestData: true,
   };
@@ -665,9 +636,8 @@ export const action = async ({ request }) => {
       },
     });
 
-    // Process booking in the background
-    // Use setImmediate to ensure the response is sent first
-    setImmediate(() => {
+    // Process booking in the background after the webhook response is queued.
+    scheduleTask(() => {
       processBookingInBackground({
         admin,
         payload,
@@ -680,7 +650,7 @@ export const action = async ({ request }) => {
         // Release lock on error
         releaseLock(shopifyOrderId);
       });
-    });
+    }, 0);
 
     return response;
 

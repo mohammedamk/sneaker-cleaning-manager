@@ -2,6 +2,7 @@ import { authenticate } from "../shopify.server";
 import process from "node:process";
 import BookingModel from "../MongoDB/models/Booking";
 import { verifyAndBuySelectedRate } from "../utils/easyPostShipping";
+import { getInsuranceCoverageAmount } from "../utils/shippingInsurance";
 
 const READY_FOR_SHIPMENT_STATUS = "Ready for Pickup / Shipment";
 const TEST_STORE_ADDRESS = {
@@ -55,9 +56,21 @@ function buildTestStoreToCustomerLabel(bookingId, selectedRate = {}, customerAdd
 }
 
 function buildTestStoreToCustomerPurchase({ bookingId, selectedRate, customerAddress }) {
+    const insuranceAmount = Number(selectedRate?.insuranceAmount || 0);
+
     return {
         status: "purchased",
-        label: buildTestStoreToCustomerLabel(bookingId, selectedRate, customerAddress),
+        label: {
+            ...buildTestStoreToCustomerLabel(bookingId, selectedRate, customerAddress),
+            insurance: insuranceAmount > 0
+                ? {
+                    id: `ins_test_${bookingId}_return`,
+                    amount: insuranceAmount,
+                    provider: "test",
+                    status: "purchased",
+                }
+                : null,
+        },
         storeAddress: TEST_STORE_ADDRESS,
         isTestData: true,
     };
@@ -110,6 +123,7 @@ export const action = async ({ request }) => {
             ...shippingSelection.customerAddress,
             email: shippingSelection.customerAddress?.email || booking.email || booking.guestInfo?.email || "",
         };
+        const selectedInsuranceCoverageAmount = getInsuranceCoverageAmount(shippingSelection.insurance);
 
         const purchaseResult = process.env.EASYPOST_API_KEY
             ? await verifyAndBuySelectedRate({
@@ -118,10 +132,14 @@ export const action = async ({ request }) => {
                 selectedRate: shippingSelection.selectedReturnRate,
                 direction: "store_to_customer",
                 referencePrefix: booking._id.toString(),
+                insuranceAmount: selectedInsuranceCoverageAmount,
             })
             : buildTestStoreToCustomerPurchase({
                 bookingId: booking._id.toString(),
-                selectedRate: shippingSelection.selectedReturnRate,
+                selectedRate: {
+                    ...shippingSelection.selectedReturnRate,
+                    insuranceAmount: selectedInsuranceCoverageAmount,
+                },
                 customerAddress: shippingContact,
             });
 

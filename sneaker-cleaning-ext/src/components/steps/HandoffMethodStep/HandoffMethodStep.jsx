@@ -32,6 +32,8 @@ function calculateShippingSummary(shippingSelection, sneakerCount) {
   const returnShippingBufferPercentage = Number(
     shippingSelection?.returnShippingBufferPercentage || 0,
   );
+  const insuranceCost = Number(shippingSelection?.insurance?.cost || 0);
+  const totalInsuranceCost = Number((insuranceCost * 2).toFixed(2));
   const subtotal = forwardAmount + returnAmount;
   const bufferedTotal = subtotal * (1 + (returnShippingBufferPercentage / 100));
   const shippingCredit = sneakerCount * shippingCreditPerPair;
@@ -39,8 +41,10 @@ function calculateShippingSummary(shippingSelection, sneakerCount) {
   return {
     forwardAmount,
     returnAmount,
+    insuranceCost,
+    totalInsuranceCost,
     shippingCredit,
-    customerFacingTotal: Math.max(Number((bufferedTotal - shippingCredit).toFixed(2)), 0),
+    customerFacingTotal: Math.max(Number((bufferedTotal - shippingCredit + totalInsuranceCost).toFixed(2)), 0),
   };
 }
 
@@ -54,6 +58,17 @@ function getEstimatedDelivery(rate) {
   }
 
   return 'Transit time unavailable';
+}
+
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(Number.isFinite(Number(amount)) ? Number(amount) : 0);
+}
+
+function getInsuranceConfig(shippingSelection) {
+  return shippingSelection?.insurance || {};
 }
 
 function HandoffMethodStep({
@@ -72,6 +87,7 @@ function HandoffMethodStep({
   const shippingAddress = shippingSelection?.customerAddress || {};
   const shippingRates = shippingSelection?.rates;
   const sneakerCount = bookingData?.sneakers?.length || 0;
+  const hasHighValueItems = Boolean(bookingData?.agreements?.hasHighValueItems);
   const selectedBoxConfig = SHIPPING_BOX_LIBRARY[sneakerCount] || null;
   const recommendedParcel = useMemo(() => {
     if (!selectedBoxConfig) {
@@ -93,6 +109,13 @@ function HandoffMethodStep({
     () => calculateShippingSummary(shippingSelection, sneakerCount),
     [shippingSelection, sneakerCount],
   );
+  const insuranceConfig = useMemo(
+    () => getInsuranceConfig(shippingSelection),
+    [shippingSelection],
+  );
+  const insuranceEnabled = Boolean(insuranceConfig.enabled);
+  const insuranceCoverageAmount = Number(insuranceConfig.coverageAmount || 0);
+  const insuranceCost = Number(insuranceConfig.cost || 0);
 
   const updateShippingSelection = useCallback((updater) => {
     onShippingChange(typeof updater === 'function' ? updater(shippingSelection) : updater);
@@ -523,6 +546,66 @@ function HandoffMethodStep({
               <button type="button" className="btn btn--secondary shipping-rates__button" onClick={handleFetchRates} disabled={isFetchingRates}>
                 {isFetchingRates ? 'Calculating Shipping...' : 'Calculate Shipping'}
               </button>
+            </div>
+          )}
+
+          {handoffMethod === 'shipping' && (
+            <div className="shipping-section">
+              <h4 className="shipping-section__title">Optional Shipping Insurance</h4>
+              <p className="shipping-insurance__note">
+                Add coverage for your shipment in case of damage or loss during transit.
+              </p>
+              <label className="shipping-insurance__option">
+                <input
+                  type="checkbox"
+                  checked={insuranceEnabled}
+                  onChange={(event) => {
+                    updateShippingSelection((current) => ({
+                      ...current,
+                      insurance: {
+                        enabled: event.target.checked,
+                        coverageAmount: event.target.checked ? current.insurance?.coverageAmount || 0 : 0,
+                        cost: event.target.checked ? current.insurance?.cost || 0 : 0,
+                      },
+                    }));
+                  }}
+                />
+                <span>Add Shipping Insurance to this shipping order</span>
+              </label>
+
+              {insuranceEnabled && (
+                <div className="shipping-insurance__coverage-input">
+                  <FormField label="Coverage Amount ($)" htmlFor="insurance-coverage">
+                    <input
+                      id="insurance-coverage"
+                      className="input"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Enter desired coverage amount"
+                      value={insuranceCoverageAmount > 0 ? insuranceCoverageAmount : ''}
+                      onChange={(event) => {
+                        const amount = Number(event.target.value) || 0;
+                        // Calculate insurance cost as ~1% of coverage
+                        const estimatedCost = amount > 0 ? Number((amount * 0.01).toFixed(2)) : 0;
+                        updateShippingSelection((current) => ({
+                          ...current,
+                          insurance: {
+                            enabled: true,
+                            coverageAmount: amount,
+                            cost: estimatedCost,
+                          },
+                        }));
+                      }}
+                    />
+                  </FormField>
+                  {insuranceCost > 0 && (
+                    <p className="shipping-insurance__cost">
+                      Estimated insurance cost: {formatCurrency(insuranceCost * 2)} (Forward & Return)
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
