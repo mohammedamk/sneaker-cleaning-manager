@@ -613,8 +613,8 @@ function HandoffMethodStep({
 
           {handoffMethod === 'shipping' && shippingRates && shippingSelection?.selectedForwardRate && shippingSelection?.selectedReturnRate && (
             <div className="shipping-section shipping-rates">
-              {renderSelectedShippingSummary('Customer -> Store', shippingSelection.selectedForwardRate)}
-              {renderSelectedShippingSummary('Store -> Customer', shippingSelection.selectedReturnRate)}
+              {renderSelectedShippingSummary('Inbound Shipping (Customer → Store)', shippingSelection.selectedForwardRate)}
+              {renderSelectedShippingSummary('Return Shipping (Store → Customer)', shippingSelection.selectedReturnRate)}
 
               <div className="shipping-total">
                 <span>Customer-Facing Shipping Total</span>

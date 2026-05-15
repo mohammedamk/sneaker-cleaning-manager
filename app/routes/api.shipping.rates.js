@@ -114,10 +114,13 @@ function getUpsellQuantities(quantity) {
     return [];
   }
 
-  const upperBound = Math.min(quantity + 3, MAX_SNEAKER_PAIRS);
   const quantities = [];
 
-  for (let nextQuantity = quantity + 1; nextQuantity <= upperBound; nextQuantity += 1) {
+  for (
+    let nextQuantity = quantity + 1;
+    nextQuantity <= MAX_SNEAKER_PAIRS;
+    nextQuantity += 1
+  ) {
     quantities.push(nextQuantity);
   }
 
@@ -273,11 +276,22 @@ export const action = async ({ request }) => {
         if (!summary?.pricing) {
           return null;
         }
-
+        console.log("currentSummary?.pricing?.customerFacingTotal", currentSummary?.pricing?.customerFacingTotal);
+        console.log("summary.pricing.customerFacingTotal", summary.pricing.customerFacingTotal);
         const savings = roundCurrencyAmount(
           Number(currentSummary?.pricing?.customerFacingTotal || 0)
           - Number(summary.pricing.customerFacingTotal || 0),
         );
+
+        console.log(`[Shipping Upsell] Quoted rates for ${quantity} pairs:`, {
+          forwardAmount: summary.pricing.forwardAmount,
+          returnAmount: summary.pricing.returnAmount,
+          subtotal: summary.pricing.subtotal,
+          bufferedTotal: summary.pricing.bufferedTotal,
+          shippingCredit: summary.pricing.shippingCredit,
+          customerFacingTotal: summary.pricing.customerFacingTotal,
+          savings,
+        });
 
         if (savings <= 0) {
           return null;
