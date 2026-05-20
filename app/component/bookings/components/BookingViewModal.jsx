@@ -305,6 +305,7 @@ export default function BookingViewModal({
   onDownloadImage,
   onSneakerApprovalNoteDraftChange,
   onRefundBooking,
+  onCreateCharge,
   onUpdateSneakerStatus,
   onDeleteCleanedImage,
   onApproveSneaker,
@@ -367,6 +368,15 @@ export default function BookingViewModal({
                   </s-button>
                 </div>
               )}
+            <div className="booking-view-topbar__actions">
+              <s-button
+                variant="primary"
+                onClick={onCreateCharge}
+                style={isMobile ? { width: '100%' } : {}}
+              >
+                Create Charge
+              </s-button>
+            </div>
             {/* {hasCleanedImages(viewingBooking) && (
               <div className="booking-view-topbar__actions">
                 <s-button

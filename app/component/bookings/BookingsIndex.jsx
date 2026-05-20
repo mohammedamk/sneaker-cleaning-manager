@@ -17,6 +17,7 @@ import BookingsTable from "./components/BookingsTable";
 import ConfirmActionModal from "./components/ConfirmActionModal";
 import EditBookingStatusModal from "./components/EditBookingStatusModal";
 import ImagePreviewModal from "./components/ImagePreviewModal";
+import CreateChargeModal from "./components/CreateChargeModal";
 
 export default function BookingsIndex({ adminStatuses = [] }) {
   const actionData = useActionData();
@@ -27,6 +28,7 @@ export default function BookingsIndex({ adminStatuses = [] }) {
   const viewModalRef = useRef(null);
   const confirmModalRef = useRef(null);
   const confirmActionRef = useRef(null);
+  const chargeModalRef = useRef(null);
 
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -42,6 +44,7 @@ export default function BookingsIndex({ adminStatuses = [] }) {
   const [cleanedImageDrafts, setCleanedImageDrafts] = useState({});
   const [approvalNoteDraftBySneaker, setApprovalNoteDraftBySneaker] = useState({});
   const [refundLoading, setRefundLoading] = useState(false);
+  const [chargeLoading, setChargeLoading] = useState(false);
   const [buyShippingBookingId, setBuyShippingBookingId] = useState("");
   const [confirmModal, setConfirmModal] = useState({
     heading: "",
@@ -267,12 +270,12 @@ export default function BookingsIndex({ adminStatuses = [] }) {
       : "Shipping rate not available";
 
     const isInsuranceEnabled = shippingSelection?.insurance?.enabled || shippingSelection?.insurance?.selected;
-    const insuranceCoverageValue = shippingSelection?.insurance?.coverageAmount 
-      || shippingSelection?.insurance?.config?.selectedCoverageAmount 
+    const insuranceCoverageValue = shippingSelection?.insurance?.coverageAmount
+      || shippingSelection?.insurance?.config?.selectedCoverageAmount
       || shippingSelection?.insurance?.config?.coverageAmount;
 
-    const insuranceCoverageAmount = isInsuranceEnabled && Number(insuranceCoverageValue) > 0 
-      ? Number(insuranceCoverageValue) 
+    const insuranceCoverageAmount = isInsuranceEnabled && Number(insuranceCoverageValue) > 0
+      ? Number(insuranceCoverageValue)
       : 0;
 
     let confirmMessage = `Are you sure you want to purchase the return shipping label for booking #${getObjectIdString(bookingId)}? Rate: ${rateSummary}.`;
@@ -438,6 +441,21 @@ export default function BookingsIndex({ adminStatuses = [] }) {
     }
   };
 
+  const handleCreateCharge = () => {
+    if (!viewingBooking) {
+      return;
+    }
+    if (chargeModalRef.current) {
+      chargeModalRef.current.showOverlay?.();
+    }
+  };
+
+  const handleChargeSuccess = (result) => {
+    shopify.toast.show(result.message || "Charge created and invoice sent successfully.");
+    // Optionally refresh the booking data or close the view modal
+    // You could fetch the updated booking here if needed
+  };
+
   const changePage = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
     fetchPage(newPage, search);
@@ -584,6 +602,7 @@ export default function BookingsIndex({ adminStatuses = [] }) {
             }));
           }}
           onRefundBooking={handleRefundBooking}
+          onCreateCharge={handleCreateCharge}
           onSendCleanedEmail={handleSendCleanedEmail}
           onUpdateSneakerStatus={handleUpdateSneakerStatus}
           onDeleteCleanedImage={handleDeleteCleanedImage}
@@ -602,6 +621,18 @@ export default function BookingsIndex({ adminStatuses = [] }) {
         />
 
         <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
+
+        <CreateChargeModal
+          modalRef={chargeModalRef}
+          bookingId={getObjectIdString(viewingBooking?._id)}
+          customerEmail={viewingBooking?.email || viewingBooking?.guestInfo?.email}
+          customerName={viewingBooking?.name || viewingBooking?.guestInfo?.name}
+          onSuccess={handleChargeSuccess}
+          onCancel={() => {
+            // Just close the modal, no additional action needed
+          }}
+          loading={chargeLoading}
+        />
 
         <ConfirmActionModal
           modalRef={confirmModalRef}

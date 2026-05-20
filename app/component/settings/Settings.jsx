@@ -4,17 +4,18 @@ import { useEffect, useState } from "react";
 function EditableItemList({ items, onSave, title, fields = ['label', 'price'] }) {
     const [localItems, setLocalItems] = useState(items || []);
     const [isEditing, setIsEditing] = useState(false);
-    const [newItem, setNewItem] = useState({ id: '', label: '', price: 0 });
+    const [newItem, setNewItem] = useState({ id: '', label: '', price: 0, shippingCredit: false });
 
     const handleAddItem = () => {
         if (!newItem.id || !newItem.label) return;
         const item = {
             id: newItem.id.toLowerCase().replace(/\s+/g, '_'),
             label: newItem.label,
-            ...(fields.includes('price') && { price: Number(newItem.price) })
+            ...(fields.includes('price') && { price: Number(newItem.price) }),
+            ...(fields.includes('shippingCredit') && { shippingCredit: Boolean(newItem.shippingCredit) })
         };
         setLocalItems([...localItems, item]);
-        setNewItem({ id: '', label: '', price: 0 });
+        setNewItem({ id: '', label: '', price: 0, shippingCredit: false });
     };
 
     const handleRemoveItem = (id) => {
@@ -23,7 +24,13 @@ function EditableItemList({ items, onSave, title, fields = ['label', 'price'] })
 
     const handleUpdateItem = (index, field, value) => {
         const updated = [...localItems];
-        updated[index] = { ...updated[index], [field]: field === 'price' ? Number(value) : value };
+        if (field === 'price') {
+            updated[index] = { ...updated[index], [field]: Number(value) };
+        } else if (field === 'shippingCredit') {
+            updated[index] = { ...updated[index], [field]: Boolean(value) };
+        } else {
+            updated[index] = { ...updated[index], [field]: value };
+        }
         setLocalItems(updated);
     };
 
@@ -44,10 +51,11 @@ function EditableItemList({ items, onSave, title, fields = ['label', 'price'] })
             {!isEditing && (
                 <div style={{ display: 'grid', gap: '10px' }}>
                     {localItems.map(item => (
-                        <div key={item.id} style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                                <div style={{ fontWeight: 'bold' }}>{item.label}</div>
-                                {fields.includes('price') && <div style={{ fontSize: '0.9em', color: '#666' }}>${item.price.toFixed(2)}</div>}
+                        <div key={item.id} style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                            <div style={{ fontWeight: 'bold' }}>{item.label}</div>
+                            <div style={{ fontSize: '0.9em', color: '#666', marginTop: '4px' }}>
+                                {fields.includes('price') && <div>Price: ${item.price.toFixed(2)}</div>}
+                                {fields.includes('shippingCredit') && <div>Shipping Credit Eligible: {item.shippingCredit ? 'Yes' : 'No'}</div>}
                             </div>
                         </div>
                     ))}
@@ -59,7 +67,7 @@ function EditableItemList({ items, onSave, title, fields = ['label', 'price'] })
                 <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
                     <div style={{ display: 'grid', gap: '10px', marginBottom: '15px' }}>
                         {localItems.map((item, index) => (
-                            <div key={item.id} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr) auto', gap: '10px', alignItems: 'end' }}>
+                            <div key={item.id} style={{ display: 'grid', gridTemplateColumns: fields.includes('shippingCredit') ? 'repeat(2, 1fr) auto auto' : 'repeat(2, 1fr) auto', gap: '10px', alignItems: 'end' }}>
                                 <s-text-field
                                     label="Label"
                                     value={item.label}
@@ -74,6 +82,19 @@ function EditableItemList({ items, onSave, title, fields = ['label', 'price'] })
                                         min="0"
                                         onInput={(e) => handleUpdateItem(index, 'price', e.currentTarget.value)}
                                     />
+                                )}
+                                {fields.includes('shippingCredit') && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px' }}>
+                                        <input
+                                            type="checkbox"
+                                            id={`shipping-credit-${item.id}`}
+                                            checked={item.shippingCredit || false}
+                                            onChange={(e) => handleUpdateItem(index, 'shippingCredit', e.target.checked)}
+                                        />
+                                        <label htmlFor={`shipping-credit-${item.id}`} style={{ margin: 0, cursor: 'pointer' }}>
+                                            Shipping Credit
+                                        </label>
+                                    </div>
                                 )}
                                 <s-button variant="destructive" size="small" onClick={() => handleRemoveItem(item.id)}>
                                     Remove
@@ -107,6 +128,19 @@ function EditableItemList({ items, onSave, title, fields = ['label', 'price'] })
                                     value={String(newItem.price)}
                                     onInput={(e) => setNewItem({ ...newItem, price: e.currentTarget.value })}
                                 />
+                            )}
+                            {fields.includes('shippingCredit') && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <input
+                                        type="checkbox"
+                                        id="shipping-credit-new"
+                                        checked={newItem.shippingCredit || false}
+                                        onChange={(e) => setNewItem({ ...newItem, shippingCredit: e.target.checked })}
+                                    />
+                                    <label htmlFor="shipping-credit-new" style={{ margin: 0, cursor: 'pointer' }}>
+                                        Shipping Credit Eligible
+                                    </label>
+                                </div>
                             )}
                             <s-button onClick={handleAddItem}>Add Item</s-button>
                         </div>
@@ -561,7 +595,7 @@ export default function Settings() {
                                         handleSaveCleaningTiers(tiers);
                                     }}
                                     title="Cleaning Tiers"
-                                    fields={['label', 'price']}
+                                    fields={['label', 'price', 'shippingCredit']}
                                 />
                             </div>
 

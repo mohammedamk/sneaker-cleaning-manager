@@ -4,9 +4,9 @@ const DEFAULT_SETTINGS_KEY = "default";
 
 // Default values for all settings
 const DEFAULT_CLEANING_TIERS = [
-  { id: 'standard', label: 'Standard Cleaning', price: 25 },
-  { id: 'deep', label: 'Deep Cleaning', price: 45 },
-  { id: 'extreme', label: 'Extreme Cleaning', price: 70 },
+  { id: 'standard', label: 'Standard Cleaning', price: 25, shippingCredit: false },
+  { id: 'deep', label: 'Deep Cleaning', price: 45, shippingCredit: true },
+  { id: 'extreme', label: 'Extreme Cleaning', price: 70, shippingCredit: true },
 ];
 
 const DEFAULT_ADD_ONS = [

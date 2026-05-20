@@ -25,9 +25,9 @@ export async function fetchAdminSettings() {
 function getDefaultSettings() {
   return {
     cleaningTiers: [
-      { id: 'standard', label: 'Standard Cleaning', price: 25 },
-      { id: 'deep', label: 'Deep Cleaning', price: 45 },
-      { id: 'extreme', label: 'Extreme Cleaning', price: 70 },
+      { id: 'standard', label: 'Standard Cleaning', price: 25, shippingCredit: false },
+      { id: 'deep', label: 'Deep Cleaning', price: 45, shippingCredit: true },
+      { id: 'extreme', label: 'Extreme Cleaning', price: 70, shippingCredit: true },
     ],
     addOns: [
       { id: 'deoxidation', label: 'Deoxidation', price: 15 },

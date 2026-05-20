@@ -12,7 +12,8 @@ const appSettingsSchema = mongoose.Schema({
     cleaningTiers: [{
         id: { type: String, required: true },
         label: { type: String, required: true },
-        price: { type: Number, required: true }
+        price: { type: Number, required: true },
+        shippingCredit: { type: Boolean, default: false }
     }],
 
     // Add-ons
