@@ -10,7 +10,7 @@ const REQUIRED_ADDRESS_FIELDS = ['name', 'street1', 'city', 'state', 'zip', 'pho
 const PICKUP_AND_RETURN_METHOD = 'pickup_delivery';
 const OUNCES_PER_POUND = 16;
 
-function calculateShippingSummary(shippingSelection, sneakerCount, defaultShippingCreditPerPair) {
+function calculateShippingSummary(shippingSelection, eligibleSneakerCount, defaultShippingCreditPerPair) {
   const forwardAmount = Number(shippingSelection?.selectedForwardRate?.amount || 0);
   const returnAmount = Number(shippingSelection?.selectedReturnRate?.amount || 0);
   const shippingCreditPerPair = Number(
@@ -23,7 +23,7 @@ function calculateShippingSummary(shippingSelection, sneakerCount, defaultShippi
   const totalInsuranceCost = Number((insuranceCost * 2).toFixed(2));
   const subtotal = forwardAmount + returnAmount;
   const bufferedTotal = subtotal * (1 + (returnShippingBufferPercentage / 100));
-  const shippingCredit = sneakerCount * shippingCreditPerPair;
+  const shippingCredit = eligibleSneakerCount * shippingCreditPerPair;
 
   return {
     forwardAmount,
@@ -115,6 +115,30 @@ By shipping your footwear, you acknowledge that you are responsible for followin
   const shippingAddress = shippingSelection?.customerAddress || {};
   const shippingRates = shippingSelection?.rates;
   const sneakerCount = bookingData?.sneakers?.length || 0;
+  
+  const eligibleSneakerCount = useMemo(() => {
+    if (!adminSettings?.cleaningTiers || !bookingData?.services) return 0;
+    
+    console.log('[Shipping Credit] Calculating eligible sneakers for shipping credit:');
+    return (bookingData.sneakers || []).reduce((count, sneaker, index) => {
+      const service = bookingData.services[sneaker.id || sneaker._id];
+      if (!service) {
+        console.log(`[Shipping Credit] Sneaker ${index + 1}: No service selected. Credit: false`);
+        return count;
+      }
+      
+      const tier = adminSettings.cleaningTiers.find(t => t.id === service.tier);
+      const isEligible = Boolean(tier?.shippingCredit);
+      
+      console.log(`[Shipping Credit] Sneaker ${index + 1}: Tier selected = '${tier?.label || service.tier}'. Credit Eligible = ${isEligible}`);
+      
+      if (isEligible) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+  }, [adminSettings, bookingData]);
+
   const hasHighValueItems = Boolean(bookingData?.agreements?.hasHighValueItems);
   const selectedBoxConfig = SHIPPING_BOX_LIBRARY.find(b => b.sneakerQuantity === sneakerCount) || null;
   const recommendedParcel = useMemo(() => {
@@ -134,8 +158,8 @@ By shipping your footwear, you acknowledge that you are responsible for followin
   }, [selectedBoxConfig, sneakerCount, SNEAKER_WEIGHT_LB]);
 
   const shippingSummary = useMemo(
-    () => calculateShippingSummary(shippingSelection, sneakerCount, DEFAULT_SHIPPING_CREDIT_PER_PAIR),
-    [shippingSelection, sneakerCount, DEFAULT_SHIPPING_CREDIT_PER_PAIR],
+    () => calculateShippingSummary(shippingSelection, eligibleSneakerCount, DEFAULT_SHIPPING_CREDIT_PER_PAIR),
+    [shippingSelection, eligibleSneakerCount, DEFAULT_SHIPPING_CREDIT_PER_PAIR],
   );
   const insuranceConfig = useMemo(
     () => getInsuranceConfig(shippingSelection),
@@ -240,6 +264,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
           },
           parcel: recommendedParcel,
           sneakerQuantity: sneakerCount,
+          eligibleSneakerQuantity: eligibleSneakerCount,
           referencePrefix: bookingData.customerID || bookingData.guestInfo?.email || 'booking',
         }),
       });

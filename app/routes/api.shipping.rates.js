@@ -147,7 +147,7 @@ function formatEstimatedDelivery(rate) {
 function calculateCustomerFacingShipping({
   forwardRate,
   returnRate,
-  sneakerQuantity,
+  eligibleSneakerQuantity,
   shippingCreditPerPair,
   bufferPercentage,
 }) {
@@ -155,8 +155,19 @@ function calculateCustomerFacingShipping({
   const returnAmount = Number(returnRate?.amount || 0);
   const subtotal = forwardAmount + returnAmount;
   const bufferedTotal = subtotal * (1 + (Number(bufferPercentage || 0) / 100));
-  const shippingCredit = Number(sneakerQuantity || 0) * Number(shippingCreditPerPair || 0);
+  const shippingCredit = Number(eligibleSneakerQuantity || 0) * Number(shippingCreditPerPair || 0);
   const finalTotal = Math.max(roundCurrencyAmount(bufferedTotal - shippingCredit), 0);
+
+  console.log('[Shipping Credit] Pricing breakdown:');
+  console.log(`  Forward shipping:        $${roundCurrencyAmount(forwardAmount)}`);
+  console.log(`  Return shipping:         $${roundCurrencyAmount(returnAmount)}`);
+  console.log(`  Subtotal:                $${roundCurrencyAmount(subtotal)}`);
+  console.log(`  Buffer % applied:        ${Number(bufferPercentage || 0)}%`);
+  console.log(`  Buffered total:          $${roundCurrencyAmount(bufferedTotal)}`);
+  console.log(`  Eligible sneakers:       ${eligibleSneakerQuantity}`);
+  console.log(`  Credit per pair:         $${shippingCreditPerPair}`);
+  console.log(`  Total shipping credit:   $${roundCurrencyAmount(shippingCredit)}`);
+  console.log(`  Customer-facing total:   $${finalTotal}`);
 
   return {
     forwardAmount: roundCurrencyAmount(forwardAmount),
@@ -187,7 +198,7 @@ async function buildQuoteSummary({
   customerAddress,
   parcel,
   referencePrefix,
-  sneakerQuantity,
+  eligibleSneakerQuantity,
   returnShippingBufferPercentage,
   shippingCreditPerPair,
 }) {
@@ -212,7 +223,7 @@ async function buildQuoteSummary({
       ...calculateCustomerFacingShipping({
         forwardRate: selectedForwardRate,
         returnRate: selectedReturnRate,
-        sneakerQuantity,
+        eligibleSneakerQuantity,
         shippingCreditPerPair,
         bufferPercentage: returnShippingBufferPercentage,
       }),
@@ -237,13 +248,21 @@ export const action = async ({ request }) => {
     const sneakerWeightLb = await getSneakerWeight();
     const shippingBoxLibrary = await getShippingBoxLibrary();
     const sneakerQuantity = Number(body.sneakerQuantity);
+    const eligibleSneakerQuantity = Number(body.eligibleSneakerQuantity || 0);
     const maxSneakerPairs = shippingBoxLibrary?.reduce((max, box) => Math.max(max, box.sneakerQuantity || 0), 0) || 10;
+
+    console.log('\n[Shipping Credit] === api.shipping.rates called ===');
+    console.log(`[Shipping Credit] Total sneakers in order:   ${sneakerQuantity}`);
+    console.log(`[Shipping Credit] Eligible for credit:       ${eligibleSneakerQuantity}`);
+    console.log(`[Shipping Credit] Credit per pair ($):       ${shippingCreditPerPair}`);
+    console.log(`[Shipping Credit] Buffer %:                  ${returnShippingBufferPercentage}%`);
+    console.log(`[Shipping Credit] Expected credit total ($): ${eligibleSneakerQuantity * shippingCreditPerPair}`);
 
     const currentSummary = await buildQuoteSummary({
       customerAddress: body.customerAddress,
       parcel: body.parcel,
       referencePrefix: body.referencePrefix || "booking",
-      sneakerQuantity,
+      eligibleSneakerQuantity,
       returnShippingBufferPercentage,
       shippingCreditPerPair,
     });
@@ -260,7 +279,7 @@ export const action = async ({ request }) => {
           customerAddress: body.customerAddress,
           parcel,
           referencePrefix: `${body.referencePrefix || "booking"}-${quantity}-pairs`,
-          sneakerQuantity: quantity,
+          eligibleSneakerQuantity: eligibleSneakerQuantity, // Upsell doesn't assume new pairs are eligible
           returnShippingBufferPercentage,
           shippingCreditPerPair,
         });

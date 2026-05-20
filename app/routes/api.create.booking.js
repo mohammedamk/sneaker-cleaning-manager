@@ -8,7 +8,7 @@ import {
 import {
     getShippingInsuranceLineItem,
 } from "../utils/shippingInsurance";
-import { getShippingBoxLibrary } from "../utils/adminSettings.server";
+import { getShippingBoxLibrary, getCleaningTiers, getAddOns } from "../utils/adminSettings.server";
 
 const DRAFT_ORDER_CREATE_MUTATION = `
 mutation draftOrderCreate($input: DraftOrderInput!) {
@@ -25,26 +25,12 @@ mutation draftOrderCreate($input: DraftOrderInput!) {
 }
 `;
 
-const SERVICE_TIERS = [
-    { id: 'standard', label: 'Standard Cleaning', price: 25, shippingCredit: false },
-    { id: 'deep', label: 'Deep Cleaning', price: 45, shippingCredit: true },
-    { id: 'extreme', label: 'Extreme Cleaning', price: 70, shippingCredit: true },
-];
-
-const ADD_ONS = [
-    { id: 'deoxidation', label: 'Deoxidation', price: 15 },
-    { id: 'deodorization', label: 'Deodorization', price: 10 },
-    { id: 'waterproofing', label: 'Waterproofing', price: 12 },
-    { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
-    { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
-];
-
-function getTierPrice(tierId) {
-    return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
+function getTierPrice(tierId, cleaningTiers) {
+    return cleaningTiers.find((t) => t.id === tierId)?.price || 0;
 }
 
-function getAddonPrice(addonId) {
-    return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
+function getAddonPrice(addonId, addOns) {
+    return addOns.find((a) => a.id === addonId)?.price || 0;
 }
 
 function calculateCustomerFacingShippingAmount({
@@ -63,7 +49,7 @@ function calculateCustomerFacingShippingAmount({
 
 function getShippingLineItems(
     shippingSelection = {},
-    sneakerCount = 0,
+    eligibleSneakerCount = 0,
     shippingCreditPerPair = 0,
     returnShippingBufferPercentage = 0,
 ) {
@@ -71,11 +57,11 @@ function getShippingLineItems(
 
     const forwardRate = shippingSelection?.selectedForwardRate;
     const returnRate = shippingSelection?.selectedReturnRate;
-    const shippingCredit = sneakerCount * shippingCreditPerPair;
+    const shippingCredit = eligibleSneakerCount * shippingCreditPerPair;
     const customerFacingAmount = calculateCustomerFacingShippingAmount({
         forwardAmount: forwardRate?.amount,
         returnAmount: returnRate?.amount,
-        sneakerCount,
+        sneakerCount: eligibleSneakerCount,
         shippingCreditPerPair,
         bufferPercentage: returnShippingBufferPercentage,
     });
@@ -141,6 +127,8 @@ export const action = async ({ request }) => {
         };
 
         const shippingBoxLibrary = await getShippingBoxLibrary();
+        const cleaningTiers = await getCleaningTiers();
+        const adminAddOns = await getAddOns();
         const maxSneakerPairs = shippingBoxLibrary?.reduce((max, box) => Math.max(max, box.sneakerQuantity || 0), 0) || 10;
 
         if (Array.isArray(body.sneakers) && body.sneakers.length > maxSneakerPairs) {
@@ -171,8 +159,8 @@ export const action = async ({ request }) => {
 
                 // calculating price for this sneaker
                 const service = body.services ? body.services[sneakerData.id || sneakerData._id] : null;
-                const tierPrice = getTierPrice(service?.tier);
-                const addonsPrice = (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id), 0);
+                const tierPrice = getTierPrice(service?.tier, cleaningTiers);
+                const addonsPrice = (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id, adminAddOns), 0);
                 const itemTotal = tierPrice + addonsPrice;
 
                 lineItems.push({
@@ -188,10 +176,25 @@ export const action = async ({ request }) => {
         }
 
         if (body.handoffMethod === "shipping") {
+            console.log('\n[Backend Shipping Credit] Evaluating eligible sneakers for shipping credit...');
+            const eligibleSneakerCount = (body.sneakers || []).reduce((count, sneaker, index) => {
+                const service = body.services ? body.services[sneaker.id || sneaker._id] : null;
+                const tier = cleaningTiers.find((t) => t.id === service?.tier);
+                const isEligible = Boolean(tier?.shippingCredit);
+                
+                console.log(`[Backend Shipping Credit] Sneaker ${index + 1} (${sneaker.nickname || 'Unnamed'}): Tier '${tier?.label || service?.tier || 'None'}'. Eligible: ${isEligible}`);
+                
+                if (isEligible) {
+                    return count + 1;
+                }
+                return count;
+            }, 0);
+            console.log(`[Backend Shipping Credit] Total Eligible Sneakers for Credit: ${eligibleSneakerCount}\n`);
+
             lineItems.push(
                 ...getShippingLineItems(
                     body.shippingSelection,
-                    body.sneakers?.length || 0,
+                    eligibleSneakerCount,
                     shippingCreditPerPair,
                     returnShippingBufferPercentage,
                 ),
