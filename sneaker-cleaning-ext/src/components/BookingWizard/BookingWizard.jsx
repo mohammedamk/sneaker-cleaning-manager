@@ -19,7 +19,6 @@ import ShoeRackManagement from '../ShoeRackManagement/ShoeRackManagement.jsx';
 import BookingsManagement from '../BookingsManagement/BookingsManagement.jsx';
 import GuestBookingLookup from '../BookingsManagement/GuestBookingLookup.jsx';
 import { toast } from '../../utils/toast.js';
-const MAX_SNEAKER_PAIRS = 10;
 const EMPTY_HISTORY = {
   professionallyCleaned: '',
   alterations: [],
@@ -157,7 +156,7 @@ function BookingWizard() {
     });
   }, []);
 
-  // Compute MAX_SNEAKER_PAIRS dynamically
+  // Compute maxSneakerPairs dynamically
   const maxSneakerPairs = adminSettings?.shippingBoxLibrary
     ? adminSettings.shippingBoxLibrary.reduce((max, box) => Math.max(max, box.sneakerQuantity), 0)
     : 10;
@@ -300,7 +299,7 @@ function BookingWizard() {
       return;
     }
 
-    if (sneakers.length >= MAX_SNEAKER_PAIRS) {
+    if (sneakers.length >= maxSneakerPairs) {
       showLimitToast();
       return;
     }

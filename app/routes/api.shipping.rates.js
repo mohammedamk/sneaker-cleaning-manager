@@ -9,8 +9,6 @@ import {
   getSneakerWeight,
   getShippingBoxLibrary,
 } from "../utils/adminSettings.server.js";
-
-const MAX_SNEAKER_PAIRS = 10;
 const OUNCES_PER_POUND = 16;
 
 function toAmount(value, fallback) {
@@ -100,8 +98,8 @@ function getRecommendedParcelForQuantity(quantity, shippingBoxLibrary, sneakerWe
   };
 }
 
-function getUpsellQuantities(quantity) {
-  if (quantity >= MAX_SNEAKER_PAIRS) {
+function getUpsellQuantities(quantity, maxSneakerPairs) {
+  if (quantity >= maxSneakerPairs) {
     return [];
   }
 
@@ -109,7 +107,7 @@ function getUpsellQuantities(quantity) {
 
   for (
     let nextQuantity = quantity + 1;
-    nextQuantity <= MAX_SNEAKER_PAIRS;
+    nextQuantity <= maxSneakerPairs;
     nextQuantity += 1
   ) {
     quantities.push(nextQuantity);
@@ -239,6 +237,7 @@ export const action = async ({ request }) => {
     const sneakerWeightLb = await getSneakerWeight();
     const shippingBoxLibrary = await getShippingBoxLibrary();
     const sneakerQuantity = Number(body.sneakerQuantity);
+    const maxSneakerPairs = shippingBoxLibrary?.reduce((max, box) => Math.max(max, box.sneakerQuantity || 0), 0) || 10;
 
     const currentSummary = await buildQuoteSummary({
       customerAddress: body.customerAddress,
@@ -250,7 +249,7 @@ export const action = async ({ request }) => {
     });
 
     const upsellCandidates = await Promise.all(
-      getUpsellQuantities(sneakerQuantity).map(async (quantity) => {
+      getUpsellQuantities(sneakerQuantity, maxSneakerPairs).map(async (quantity) => {
         const parcel = getRecommendedParcelForQuantity(quantity, shippingBoxLibrary, sneakerWeightLb);
 
         if (!parcel) {

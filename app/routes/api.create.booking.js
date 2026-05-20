@@ -8,6 +8,7 @@ import {
 import {
     getShippingInsuranceLineItem,
 } from "../utils/shippingInsurance";
+import { getShippingBoxLibrary } from "../utils/adminSettings.server";
 
 const DRAFT_ORDER_CREATE_MUTATION = `
 mutation draftOrderCreate($input: DraftOrderInput!) {
@@ -37,7 +38,6 @@ const ADD_ONS = [
     { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
     { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
 ];
-const MAX_SNEAKER_PAIRS = 10;
 
 function getTierPrice(tierId) {
     return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
@@ -140,11 +140,14 @@ export const action = async ({ request }) => {
                 : requestBody?.shippingSelection,
         };
 
-        if (Array.isArray(body.sneakers) && body.sneakers.length > MAX_SNEAKER_PAIRS) {
+        const shippingBoxLibrary = await getShippingBoxLibrary();
+        const maxSneakerPairs = shippingBoxLibrary?.reduce((max, box) => Math.max(max, box.sneakerQuantity || 0), 0) || 10;
+
+        if (Array.isArray(body.sneakers) && body.sneakers.length > maxSneakerPairs) {
             return new Response(
                 JSON.stringify({
                     success: false,
-                    message: `A maximum of ${MAX_SNEAKER_PAIRS} sneaker pairs is allowed per booking.`,
+                    message: `A maximum of ${maxSneakerPairs} sneaker pairs is allowed per booking.`,
                 }),
                 {
                     status: 400,
