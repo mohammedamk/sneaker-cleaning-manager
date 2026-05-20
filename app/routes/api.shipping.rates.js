@@ -4,23 +4,14 @@ import { getShippingQuotes } from "../utils/easyPostShipping";
 import {
   getReturnShippingBufferPercentage,
   getShippingCreditPerPair,
-} from "../utils/returnShippingBuffer";
+} from "../utils/returnShippingBuffer.server";
+import {
+  getSneakerWeight,
+  getShippingBoxLibrary,
+} from "../utils/adminSettings.server.js";
 
 const MAX_SNEAKER_PAIRS = 10;
-const SNEAKER_WEIGHT_LB = 4;
 const OUNCES_PER_POUND = 16;
-const SHIPPING_BOX_LIBRARY = {
-  1: { length: 17, width: 11, height: 8, boxWeightLb: 1 },
-  2: { length: 15, width: 12, height: 10, boxWeightLb: 1.5 },
-  3: { length: 14, width: 14, height: 14, boxWeightLb: 1.5 },
-  4: { length: 14, width: 14, height: 14, boxWeightLb: 1.5 },
-  5: { length: 20, width: 20, height: 12, boxWeightLb: 3 },
-  6: { length: 20, width: 20, height: 12, boxWeightLb: 3 },
-  7: { length: 18, width: 18, height: 18, boxWeightLb: 3 },
-  8: { length: 18, width: 18, height: 18, boxWeightLb: 3 },
-  9: { length: 24, width: 18, height: 18, boxWeightLb: 3.5 },
-  10: { length: 24, width: 18, height: 18, boxWeightLb: 3.5 },
-};
 
 function toAmount(value, fallback) {
   const parsed = Number(value);
@@ -92,14 +83,14 @@ function buildTestShippingQuotes({ parcel = {}, referencePrefix = "booking" }) {
   };
 }
 
-function getRecommendedParcelForQuantity(quantity) {
-  const box = SHIPPING_BOX_LIBRARY[quantity];
+function getRecommendedParcelForQuantity(quantity, shippingBoxLibrary, sneakerWeightLb) {
+  const box = shippingBoxLibrary.find(b => b.sneakerQuantity === quantity);
 
   if (!box) {
     return null;
   }
 
-  const totalWeightLb = (quantity * SNEAKER_WEIGHT_LB) + box.boxWeightLb;
+  const totalWeightLb = (quantity * sneakerWeightLb) + box.boxWeightLb;
 
   return {
     length: String(box.length),
@@ -245,6 +236,8 @@ export const action = async ({ request }) => {
     const body = await request.json();
     const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
     const shippingCreditPerPair = await getShippingCreditPerPair();
+    const sneakerWeightLb = await getSneakerWeight();
+    const shippingBoxLibrary = await getShippingBoxLibrary();
     const sneakerQuantity = Number(body.sneakerQuantity);
 
     const currentSummary = await buildQuoteSummary({
@@ -258,7 +251,7 @@ export const action = async ({ request }) => {
 
     const upsellCandidates = await Promise.all(
       getUpsellQuantities(sneakerQuantity).map(async (quantity) => {
-        const parcel = getRecommendedParcelForQuantity(quantity);
+        const parcel = getRecommendedParcelForQuantity(quantity, shippingBoxLibrary, sneakerWeightLb);
 
         if (!parcel) {
           return null;

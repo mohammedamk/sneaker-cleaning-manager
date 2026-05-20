@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import FormField from '../../shared/FormField/FormField.jsx';
 import './SneakerHistoryStep.css';
-
-const ALTERATION_OPTIONS = [
-  { id: 'repainting', label: 'Repainting' },
-  { id: 'resoling', label: 'Resoling' },
-  { id: 'deoxidation', label: 'Deoxidation' },
-  { id: 'modifications', label: 'Other Modifications' },
-];
+import { fetchAdminSettings } from '../../../utils/adminSettings.js';
 
 function SneakerHistoryStep({ history, onHistoryChange, onNext, onPrev }) {
+  const [alterationOptions, setAlterationOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAdminSettings()
+      .then(settings => {
+        setAlterationOptions(settings.alterationOptions || []);
+      })
+      .catch(error => {
+        console.error('Error loading admin settings:', error);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
   const handleAlterationToggle = (alterationId) => {
     const current = history.alterations || [];
     const updated = current.includes(alterationId)
@@ -18,6 +26,10 @@ function SneakerHistoryStep({ history, onHistoryChange, onNext, onPrev }) {
       : [...current, alterationId];
     onHistoryChange({ ...history, alterations: updated });
   };
+
+  if (isLoading) {
+    return <StepLayout title="Sneaker History" onNext={onNext} onPrev={onPrev}><div>Loading...</div></StepLayout>;
+  }
 
   return (
     <StepLayout title="Sneaker History" onNext={onNext} onPrev={onPrev}>
@@ -52,7 +64,7 @@ function SneakerHistoryStep({ history, onHistoryChange, onNext, onPrev }) {
 
       <FormField label="Has this sneaker undergone any alterations?">
         <div className="checkbox-group">
-          {ALTERATION_OPTIONS.map((option) => (
+          {alterationOptions.map((option) => (
             <label key={option.id} className="checkbox-option">
               <input
                 type="checkbox"

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchAdminSettings } from '../../utils/adminSettings.js';
 import StepIndicator from '../shared/StepIndicator/StepIndicator.jsx';
 import './BookingWizard.css';
 
@@ -18,7 +19,7 @@ import ShoeRackManagement from '../ShoeRackManagement/ShoeRackManagement.jsx';
 import BookingsManagement from '../BookingsManagement/BookingsManagement.jsx';
 import GuestBookingLookup from '../BookingsManagement/GuestBookingLookup.jsx';
 import { toast } from '../../utils/toast.js';
-
+const MAX_SNEAKER_PAIRS = 10;
 const EMPTY_HISTORY = {
   professionallyCleaned: '',
   alterations: [],
@@ -44,7 +45,6 @@ function getCustomerID() {
 }
 
 const TOTAL_STEPS = 10;
-const MAX_SNEAKER_PAIRS = 10;
 
 const DEFAULT_BOOKING_AGREEMENTS = {
   hasHighValueItems: false,
@@ -139,8 +139,31 @@ function BookingWizard() {
   const [handoffMethod, setHandoffMethod] = useState('');
   const [shippingSelection, setShippingSelection] = useState(DEFAULT_SHIPPING_SELECTION);
 
+  const [adminSettings, setAdminSettings] = useState(null);
+  const [isSettingsLoading, setIsSettingsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAdminSettings().then((settings) => {
+      setAdminSettings(settings);
+
+      // Update shipping selection with values from settings
+      setShippingSelection(prev => ({
+        ...prev,
+        returnShippingBufferPercentage: settings.returnShippingBufferPercentage,
+        shippingCreditPerPair: settings.shippingCreditPerPair,
+      }));
+
+      setIsSettingsLoading(false);
+    });
+  }, []);
+
+  // Compute MAX_SNEAKER_PAIRS dynamically
+  const maxSneakerPairs = adminSettings?.shippingBoxLibrary
+    ? adminSettings.shippingBoxLibrary.reduce((max, box) => Math.max(max, box.sneakerQuantity), 0)
+    : 10;
+
   const showLimitToast = () => {
-    toast.warning(`A maximum of ${MAX_SNEAKER_PAIRS} sneaker pairs is allowed per booking.`);
+    toast.warning(`A maximum of ${maxSneakerPairs} sneaker pairs is allowed per booking.`);
   };
 
   const loadSneakerReviewState = (sneaker) => {
@@ -167,7 +190,7 @@ function BookingWizard() {
   };
 
   const handleSneakerSave = (sneakerData) => {
-    if (!editingSneaker && sneakers.length >= MAX_SNEAKER_PAIRS) {
+    if (!editingSneaker && sneakers.length >= maxSneakerPairs) {
       showLimitToast();
       return;
     }
@@ -249,7 +272,7 @@ function BookingWizard() {
   };
 
   const handleAddAnotherSneaker = () => {
-    if (sneakers.length >= MAX_SNEAKER_PAIRS) {
+    if (sneakers.length >= maxSneakerPairs) {
       showLimitToast();
       return;
     }
@@ -291,7 +314,7 @@ function BookingWizard() {
   };
 
   const handleStartAddingNewSneaker = () => {
-    if (sneakers.length >= MAX_SNEAKER_PAIRS) {
+    if (sneakers.length >= maxSneakerPairs) {
       showLimitToast();
       return;
     }
@@ -301,7 +324,19 @@ function BookingWizard() {
 
   const handleRegistrationNext = (sneakerData) => handleSneakerSave(sneakerData);
 
-  const showIndicator = currentView === 'wizard'
+  const showIndicator = currentView === 'wizard';
+
+  if (isSettingsLoading) {
+    return (
+      <div className="booking-wizard">
+        <div className="booking-wizard__loading-container">
+          <div className="booking-wizard__spinner"></div>
+          <h3 className="booking-wizard__loading-title">Loading Booking Wizard</h3>
+          <p className="booking-wizard__loading-text">Preparing your sneaker cleaning experience...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-wizard">
@@ -358,7 +393,7 @@ function BookingWizard() {
                 <ShoeRackSelectionStep
                   customerID={customerID}
                   sneakers={sneakers}
-                  maxSneakers={MAX_SNEAKER_PAIRS}
+                  maxSneakers={maxSneakerPairs}
                   onAddExisting={handleAddExistingSneaker}
                   onAddNew={handleStartAddingNewSneaker}
                   onLimitReached={showLimitToast}
@@ -410,7 +445,7 @@ function BookingWizard() {
             {step === 5 && (
               <AddMoreSneakersStep
                 sneakers={sneakers}
-                maxSneakers={MAX_SNEAKER_PAIRS}
+                maxSneakers={maxSneakerPairs}
                 onAddAnother={handleAddAnotherSneaker}
                 onLimitReached={showLimitToast}
                 onEdit={handleEditSneaker}

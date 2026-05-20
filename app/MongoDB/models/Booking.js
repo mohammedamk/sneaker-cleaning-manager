@@ -13,18 +13,10 @@ const bookingSchema = mongoose.Schema({
     handoffMethod: String,
     status: {
         type: String,
-        enum: [
-            'Pending',
-            'Received',
-            'Under Inspection',
-            'In Cleaning',
-            'Awaiting Customer Approval',
-            'Cleaning Complete',
-            'Ready for Pickup / Shipment',
-            'Completed',
-            'Canceled'
-        ],
         default: 'Pending'
+        // Note: Status values are now configured in admin settings.
+        // Application-level validation ensures only valid statuses are used.
+        // See app/utils/adminSettings.js for booking status configuration.
     },
     sneakers: [mongoose.Schema.Types.Mixed],
     shipping: mongoose.Schema.Types.Mixed,

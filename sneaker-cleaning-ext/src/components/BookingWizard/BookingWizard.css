@@ -36,3 +36,92 @@
         border-radius: 6px;
     }
 }
+
+/* ── Loading State ───────────────────────────────── */
+.booking-wizard__loading-container {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 60px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.booking-wizard__spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid transparent;
+    border-top-color: #1a1a1a;
+    border-bottom-color: #1a1a1a;
+    border-radius: 50%;
+    animation: booking-wizard-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.booking-wizard__spinner::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    border: 3px solid transparent;
+    border-left-color: rgba(26, 26, 26, 0.2);
+    border-right-color: rgba(26, 26, 26, 0.2);
+    border-radius: 50%;
+    animation: booking-wizard-spin-reverse 1.2s linear infinite;
+}
+
+.booking-wizard__loading-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.2px;
+}
+
+.booking-wizard__loading-text {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+    animation: booking-wizard-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes booking-wizard-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes booking-wizard-spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes booking-wizard-pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .booking-wizard__loading-container {
+        padding: 50px 20px;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .booking-wizard__loading-container {
+        padding: 40px 16px;
+        border-radius: 6px;
+    }
+}
+

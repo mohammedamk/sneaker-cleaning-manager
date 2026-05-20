@@ -4,30 +4,17 @@ import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import FormField from '../../shared/FormField/FormField.jsx';
 import './HandoffMethodStep.css';
 import { PROXY_SUB_PATH } from '../../../utils/global.js';
+import { fetchAdminSettings } from '../../../utils/adminSettings.js';
 
 const REQUIRED_ADDRESS_FIELDS = ['name', 'street1', 'city', 'state', 'zip', 'phone'];
 const PICKUP_AND_RETURN_METHOD = 'pickup_delivery';
-const DEFAULT_SHIPPING_CREDIT_PER_PAIR = 10;
-const SNEAKER_WEIGHT_LB = 4;
-const SHIPPING_BOX_LIBRARY = {
-  1: { length: 17, width: 11, height: 8, boxWeightLb: 1 },
-  2: { length: 15, width: 12, height: 10, boxWeightLb: 1.5 },
-  3: { length: 14, width: 14, height: 14, boxWeightLb: 1.5 },
-  4: { length: 14, width: 14, height: 14, boxWeightLb: 1.5 },
-  5: { length: 20, width: 20, height: 12, boxWeightLb: 3 },
-  6: { length: 20, width: 20, height: 12, boxWeightLb: 3 },
-  7: { length: 18, width: 18, height: 18, boxWeightLb: 3 },
-  8: { length: 18, width: 18, height: 18, boxWeightLb: 3 },
-  9: { length: 24, width: 18, height: 18, boxWeightLb: 3.5 },
-  10: { length: 24, width: 18, height: 18, boxWeightLb: 3.5 },
-};
 const OUNCES_PER_POUND = 16;
 
-function calculateShippingSummary(shippingSelection, sneakerCount) {
+function calculateShippingSummary(shippingSelection, sneakerCount, defaultShippingCreditPerPair) {
   const forwardAmount = Number(shippingSelection?.selectedForwardRate?.amount || 0);
   const returnAmount = Number(shippingSelection?.selectedReturnRate?.amount || 0);
   const shippingCreditPerPair = Number(
-    shippingSelection?.shippingCreditPerPair ?? DEFAULT_SHIPPING_CREDIT_PER_PAIR,
+    shippingSelection?.shippingCreditPerPair ?? defaultShippingCreditPerPair ?? 10,
   );
   const returnShippingBufferPercentage = Number(
     shippingSelection?.returnShippingBufferPercentage || 0,
@@ -83,12 +70,53 @@ function HandoffMethodStep({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingRates, setIsFetchingRates] = useState(false);
   const [shippingError, setShippingError] = useState('');
+  const [adminSettings, setAdminSettings] = useState(null);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+
+  useEffect(() => {
+    fetchAdminSettings()
+      .then(setAdminSettings)
+      .catch(error => {
+        console.error('Error loading admin settings:', error);
+      })
+      .finally(() => setIsLoadingSettings(false));
+  }, []);
+
+  const SHIPPING_BOX_LIBRARY = adminSettings?.shippingBoxLibrary || [];
+  const SNEAKER_WEIGHT_LB = adminSettings?.sneakerWeightLb || 4;
+  console.log("SNEAKER_WEIGHT_LB", SNEAKER_WEIGHT_LB)
+  const DEFAULT_SHIPPING_CREDIT_PER_PAIR = adminSettings?.shippingCreditPerPair || 10;
+  const shippingInstructionsDisclaimer = adminSettings?.shippingInstructionsDisclaimer || `To help keep shipping costs accurate and avoid delays, please package your footwear according to the box size recommended during checkout. You may use the recommended box size or a smaller box, as long as all footwear fits safely without forcing, bending, or damaging the shoes.
+
+If you do not have an appropriately sized box, we recommend asking your shipping carrier for assistance with selecting the correct box size before sending your items. Oversized packages may result in carrier price adjustments, shipping delays, or additional charges. Carrier measurements, weights, and rate adjustments may differ from the website estimate. Any additional charges caused by carrier remeasurement, oversized packaging, or incorrect packaging may be the customer’s responsibility.
+
+Please place each pair in a separate plastic bag before placing them in the shipping box. Do not include original shoeboxes unless specifically instructed, as this may increase package size and shipping cost. If original shoeboxes or additional packaging are included without instruction, Save Our Soles is not responsible for damage to, storage of, or return of those materials.
+
+Do not include cash, jewelry, accessories, personal items, or any items unrelated to your order. Save Our Soles is not responsible for storage, loss, or return of unauthorized items included in the shipment.
+
+Only ship the footwear included in your order. Additional, unauthorized, missing, or incorrect footwear may delay processing, pose additional charges, or require review before service can begin. Save Our Soles may pause service until shipment contents are reviewed and matched to the order.
+
+Customers are responsible for providing accurate shipping information. Save Our Soles is not responsible for delays, failed deliveries, returned packages, or additional charges caused by incorrect or incomplete addresses.
+
+Customers are responsible for packaging footwear securely and sealing the package properly before shipment. We recommend taking photos of the footwear and packaged box before drop-off and keeping your carrier drop-off receipt for your records.
+
+Save Our Soles is not responsible for damage caused by insufficient packaging before the shipment arrives at our facility. Save Our Soles is also not responsible for loss, damage, delays, or carrier issues that occur while items are in transit to or from our facility. Shipping carrier policies, timelines, scans, measurements, and delivery decisions are outside of our control.
+
+Shipping labels must be used within the stated timeframe. Expired, unused, or incorrectly used labels may require a new label at the customer’s expense.
+
+Service turnaround time begins only after footwear has been received, checked in, and matched to the order.
+
+Once return shipment is marked delivered by the carrier, Save Our Soles is not responsible for theft, loss, or damage occurring after delivery.
+
+Refunds do not include shipping costs. Shipping charges are nonrefundable once a shipping label has been generated, purchased, or used.
+
+By shipping your footwear, you acknowledge that you are responsible for following the packaging instructions and providing accurate shipment contents.`;
 
   const shippingAddress = shippingSelection?.customerAddress || {};
   const shippingRates = shippingSelection?.rates;
   const sneakerCount = bookingData?.sneakers?.length || 0;
   const hasHighValueItems = Boolean(bookingData?.agreements?.hasHighValueItems);
-  const selectedBoxConfig = SHIPPING_BOX_LIBRARY[sneakerCount] || null;
+  const selectedBoxConfig = SHIPPING_BOX_LIBRARY.find(b => b.sneakerQuantity === sneakerCount) || null;
   const recommendedParcel = useMemo(() => {
     if (!selectedBoxConfig) {
       return null;
@@ -103,11 +131,11 @@ function HandoffMethodStep({
       weight: String(totalWeightLb * OUNCES_PER_POUND),
       displayWeightLb: totalWeightLb,
     };
-  }, [selectedBoxConfig, sneakerCount]);
+  }, [selectedBoxConfig, sneakerCount, SNEAKER_WEIGHT_LB]);
 
   const shippingSummary = useMemo(
-    () => calculateShippingSummary(shippingSelection, sneakerCount),
-    [shippingSelection, sneakerCount],
+    () => calculateShippingSummary(shippingSelection, sneakerCount, DEFAULT_SHIPPING_CREDIT_PER_PAIR),
+    [shippingSelection, sneakerCount, DEFAULT_SHIPPING_CREDIT_PER_PAIR],
   );
   const insuranceConfig = useMemo(
     () => getInsuranceConfig(shippingSelection),
@@ -638,19 +666,13 @@ function HandoffMethodStep({
 
               <div className="shipping-disclaimer">
                 <h4 className="shipping-section__title">Shipping Instructions & Disclaimer</h4>
-                <p>To help keep shipping costs accurate and avoid delays, please package your footwear according to the box size recommended during checkout. You may use the recommended box size or a smaller box, as long as all footwear fits safely without forcing, bending, or damaging the shoes.</p>
-                <p>If you do not have an appropriately sized box, we recommend asking your shipping carrier for assistance with selecting the correct box size before sending your items. Oversized packages may result in carrier price adjustments, shipping delays, or additional charges. Carrier measurements, weights, and rate adjustments may differ from the website estimate. Any additional charges caused by carrier remeasurement, oversized packaging, or incorrect packaging may be the customer’s responsibility.</p>
-                <p>Please place each pair in a separate plastic bag before placing them in the shipping box. Do not include original shoeboxes unless specifically instructed, as this may increase package size and shipping cost. If original shoeboxes or additional packaging are included without instruction, Save Our Soles is not responsible for damage to, storage of, or return of those materials.</p>
-                <p>Do not include cash, jewelry, accessories, personal items, or any items unrelated to your order. Save Our Soles is not responsible for storage, loss, or return of unauthorized items included in the shipment.</p>
-                <p>Only ship the footwear included in your order. Additional, unauthorized, missing, or incorrect footwear may delay processing, pose additional charges, or require review before service can begin. Save Our Soles may pause service until shipment contents are reviewed and matched to the order.</p>
-                <p>Customers are responsible for providing accurate shipping information. Save Our Soles is not responsible for delays, failed deliveries, returned packages, or additional charges caused by incorrect or incomplete addresses.</p>
-                <p>Customers are responsible for packaging footwear securely and sealing the package properly before shipment. We recommend taking photos of the footwear and packaged box before drop-off and keeping your carrier drop-off receipt for your records.</p>
-                <p>Save Our Soles is not responsible for damage caused by insufficient packaging before the shipment arrives at our facility. Save Our Soles is also not responsible for loss, damage, delays, or carrier issues that occur while items are in transit to or from our facility. Shipping carrier policies, timelines, scans, measurements, and delivery decisions are outside of our control.</p>
-                <p>Shipping labels must be used within the stated timeframe. Expired, unused, or incorrectly used labels may require a new label at the customer’s expense.</p>
-                <p>Service turnaround time begins only after footwear has been received, checked in, and matched to the order.</p>
-                <p>Once return shipment is marked delivered by the carrier, Save Our Soles is not responsible for theft, loss, or damage occurring after delivery.</p>
-                <p>Refunds do not include shipping costs. Shipping charges are nonrefundable once a shipping label has been generated, purchased, or used.</p>
-                <p>By shipping your footwear, you acknowledge that you are responsible for following the packaging instructions and providing accurate shipment contents.</p>
+                {shippingInstructionsDisclaimer ? (
+                  shippingInstructionsDisclaimer.split('\n').map((paragraph, idx) => (
+                    paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
+                  ))
+                ) : (
+                  <p>No shipping instructions provided.</p>
+                )}
                 <label className="shipping-disclaimer__checkbox">
                   <input
                     type="checkbox"

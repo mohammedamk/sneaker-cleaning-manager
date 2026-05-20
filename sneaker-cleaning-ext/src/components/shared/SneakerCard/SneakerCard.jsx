@@ -1,26 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './SneakerCard.css';
+import { fetchAdminSettings } from '../../../utils/adminSettings.js';
 
-const SERVICE_TIERS = [
-  { id: 'standard', label: 'Standard Cleaning', price: 25 },
-  { id: 'deep', label: 'Deep Cleaning', price: 45 },
-  { id: 'extreme', label: 'Extreme Cleaning', price: 70 },
-];
-
-const ADD_ONS = [
-  { id: 'deoxidation', label: 'Deoxidation', price: 15 },
-  { id: 'deodorization', label: 'Deodorization', price: 10 },
-  { id: 'waterproofing', label: 'Waterproofing', price: 12 },
-  { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
-  { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
-];
-
-const getImageSrc = (image) => {
-  if (typeof image === 'string') return image;
-  return image?.preview || image?.url || '';
-};
+export let SERVICE_TIERS = [];
+export let ADD_ONS = [];
 
 function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServiceChange }) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAdminSettings()
+      .then(settings => {
+        SERVICE_TIERS = settings.cleaningTiers || [];
+        ADD_ONS = settings.addOns || [];
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading admin settings:', error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const getImageSrc = (image) => {
+    if (typeof image === 'string') return image;
+    return image?.preview || image?.url || '';
+  };
+
   const handleTierChange = (tierId) => {
     onServiceChange(sneaker.id, { ...serviceSelection, tier: tierId });
   };
@@ -132,5 +137,4 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
   );
 }
 
-export { SERVICE_TIERS, ADD_ONS };
 export default SneakerCard;

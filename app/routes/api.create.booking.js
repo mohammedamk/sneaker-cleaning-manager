@@ -4,7 +4,7 @@ import TempBookingModel from "../MongoDB/models/TempBooking";
 import {
     getReturnShippingBufferPercentage,
     getShippingCreditPerPair,
-} from "../utils/returnShippingBuffer";
+} from "../utils/returnShippingBuffer.server";
 import {
     getShippingInsuranceLineItem,
 } from "../utils/shippingInsurance";

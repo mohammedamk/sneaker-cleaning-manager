@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { STATUS_OPTIONS } from "../bookings.helpers";
 
 export default function EditBookingStatusModal({
   modalRef,
@@ -7,6 +6,7 @@ export default function EditBookingStatusModal({
   isSubmitting,
   activeActionType,
   onStatusUpdate,
+  adminStatuses = [],
 }) {
   // detecting mobile for responsive layout
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
@@ -31,7 +31,7 @@ export default function EditBookingStatusModal({
             <>
               <s-text type="strong">Select New Status</s-text>
               <div className="status-grid">
-                {STATUS_OPTIONS.map((status) => (
+                {(adminStatuses.length > 0 ? adminStatuses : ["Pending", "Completed"]).map((status) => (
                   <s-button
                     key={status}
                     pressed={editingBooking.status === status}

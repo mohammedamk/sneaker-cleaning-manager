@@ -1,97 +1,113 @@
 /* eslint-disable react/prop-types */
+import { useState, useEffect } from 'react';
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
-import { SERVICE_TIERS, ADD_ONS } from '../../shared/SneakerCard/SneakerCard.jsx';
+import { fetchAdminSettings } from '../../../utils/adminSettings.js';
 import './SummaryStep.css';
 
-const HIGH_VALUE_DISCLOSURE_LABEL = 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?';
-const HIGH_VALUE_ACKNOWLEDGMENT_LABEL = 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear. I understand that Save Our Soles does not guarantee preservation of market value, resale value, sentimental value, collectible value, authentication value, factory originality, or replacement value, and that additional shipping coverage or special handling must be requested before shipping.';
+function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreementsChange, onNext, onPrev }) {
+  const [settings, setSettings] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-function getTierPrice(tierId) {
-  return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
-}
+  useEffect(() => {
+    fetchAdminSettings()
+      .then(setSettings)
+      .catch(error => {
+        console.error('Error loading admin settings:', error);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
 
-function getAddonPrice(addonId) {
-  return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
-}
+  const SERVICE_TIERS = settings?.cleaningTiers || [];
+  const ADD_ONS = settings?.addOns || [];
+  const HIGH_VALUE_DISCLOSURE_LABEL = settings?.highValueDisclosureLabel || 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?';
+  const HIGH_VALUE_ACKNOWLEDGMENT_LABEL = settings?.highValueAcknowledgmentLabel || 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear.';
 
-function getSneakerImageSrc(image) {
-  if (!image) return '';
-  if (typeof image === 'string') return image;
-  return image.preview || image.url || '';
-}
+  const getTierPrice = (tierId) => {
+    return SERVICE_TIERS.find((t) => t.id === tierId)?.price || 0;
+  };
 
-function SneakerSummaryRow({ sneaker, service }) {
-  const tier = SERVICE_TIERS.find((t) => t.id === service?.tier);
-  const selectedAddons = ADD_ONS.filter((a) => (service?.addOns || []).includes(a.id));
-  const sneakerImages = (sneaker.images || [])
-    .map(getSneakerImageSrc)
-    .filter(Boolean);
-  const subtotal =
-    getTierPrice(service?.tier) +
-    (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id), 0);
+  const getAddonPrice = (addonId) => {
+    return ADD_ONS.find((a) => a.id === addonId)?.price || 0;
+  };
 
-  return (
-    <div className="summary-row">
-      <div className="summary-row__sneaker">
-        {sneakerImages.length > 0 && (
-          <div className="summary-row__images">
-            {sneakerImages.map((imageSrc, index) => (
-              <img
-                key={`${sneaker.id || sneaker.nickname || 'sneaker'}-${index}`}
-                src={imageSrc}
-                alt={`${sneaker.nickname || 'Sneaker'} ${index + 1}`}
-                className="summary-row__image"
-              />
-            ))}
-          </div>
-        )}
-        <strong>{sneaker.nickname}</strong>
-        {sneaker.brand && (
-          <span className="summary-row__details">
-            {sneaker.brand} {sneaker.model}
-          </span>
-        )}
-      </div>
-      <div className="summary-row__services">
-        <div className="summary-row__tier">
-          {tier ? tier.label : <span className="summary-row__missing">No tier selected</span>}
-          {tier && <span className="summary-row__price"> ${tier.price}</span>}
+  const getSneakerImageSrc = (image) => {
+    if (!image) return '';
+    if (typeof image === 'string') return image;
+    return image.preview || image.url || '';
+  };
+
+  const SneakerSummaryRow = ({ sneaker, service }) => {
+    const tier = SERVICE_TIERS.find((t) => t.id === service?.tier);
+    const selectedAddons = ADD_ONS.filter((a) => (service?.addOns || []).includes(a.id));
+    const sneakerImages = (sneaker.images || [])
+      .map(getSneakerImageSrc)
+      .filter(Boolean);
+    const subtotal =
+      getTierPrice(service?.tier) +
+      (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id), 0);
+
+    return (
+      <div className="summary-row">
+        <div className="summary-row__sneaker">
+          {sneakerImages.length > 0 && (
+            <div className="summary-row__images">
+              {sneakerImages.map((imageSrc, index) => (
+                <img
+                  key={`${sneaker.id || sneaker.nickname || 'sneaker'}-${index}`}
+                  src={imageSrc}
+                  alt={`${sneaker.nickname || 'Sneaker'} ${index + 1}`}
+                  className="summary-row__image"
+                />
+              ))}
+            </div>
+          )}
+          <strong>{sneaker.nickname}</strong>
+          {sneaker.brand && (
+            <span className="summary-row__details">
+              {sneaker.brand} {sneaker.model}
+            </span>
+          )}
         </div>
-        {selectedAddons.length > 0 && (
-          <ul className="summary-row__addons">
-            {selectedAddons.map((addon) => (
-              <li key={addon.id}>
-                {addon.label} <span className="summary-row__price">+${addon.price}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        {sneaker.notes && (
-          <div className="summary-row__notes">
-            <strong>Special Instructions:</strong>
-            <p>{sneaker.notes}</p>
+        <div className="summary-row__services">
+          <div className="summary-row__tier">
+            {tier ? tier.label : <span className="summary-row__missing">No tier selected</span>}
+            {tier && <span className="summary-row__price"> ${tier.price}</span>}
           </div>
-        )}
-        <div className="summary-row__subtotal">Subtotal: ${subtotal}</div>
+          {selectedAddons.length > 0 && (
+            <ul className="summary-row__addons">
+              {selectedAddons.map((addon) => (
+                <li key={addon.id}>
+                  {addon.label} <span className="summary-row__price">+${addon.price}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {sneaker.notes && (
+            <div className="summary-row__notes">
+              <strong>Special Instructions:</strong>
+              <p>{sneaker.notes}</p>
+            </div>
+          )}
+          <div className="summary-row__subtotal">Subtotal: ${subtotal}</div>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  };
 
-function SummaryStep({
-  sneakers,
-  services,
-  bookingAgreements,
-  onBookingAgreementsChange,
-  onNext,
-  onPrev,
-}) {
-  const estimatedTotal = sneakers.reduce((total, sneaker) => {
-    const service = services[sneaker.id];
+  if (isLoading) {
+    return (
+      <StepLayout title="Booking Summary" onNext={onNext} onPrev={onPrev}>
+        <div>Loading...</div>
+      </StepLayout>
+    );
+  }
+
+  const estimatedTotal = sneakers?.reduce((total, sneaker) => {
+    const service = services?.[sneaker.id];
     const tierPrice = getTierPrice(service?.tier);
     const addonsPrice = (service?.addOns || []).reduce((sum, id) => sum + getAddonPrice(id), 0);
     return total + tierPrice + addonsPrice;
-  }, 0);
+  }, 0) || 0;
 
   const handleNext = () => {
     if (bookingAgreements?.hasHighValueItems && !bookingAgreements?.highValueAcknowledged) {
@@ -119,11 +135,11 @@ function SummaryStep({
     >
       <div className="summary">
         <div className="summary__sneakers">
-          {sneakers.map((sneaker) => (
+          {sneakers?.map((sneaker) => (
             <SneakerSummaryRow
               key={sneaker.id}
               sneaker={sneaker}
-              service={services[sneaker.id]}
+              service={services?.[sneaker.id]}
             />
           ))}
         </div>

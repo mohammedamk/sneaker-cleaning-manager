@@ -63,10 +63,15 @@ function ShoeRackSelectionStep({ customerID, sneakers, maxSneakers, onAddExistin
                             <button
                                 className={`btn ${sneakers.some(s => s._id === snk._id) ? 'btn--danger' : 'btn--primary'}`}
                                 onClick={() => {
+                                    console.log("sneaker already selected", sneakers.some(s => s._id === snk._id))
+                                    console.log("hi....")
+                                    console.log("hasReachedLimit", hasReachedLimit)
+                                    console.log("!sneakers.some(s => s._id === snk._id) && hasReachedLimit", !sneakers.some(s => s._id === snk._id) && hasReachedLimit)
                                     if (!sneakers.some(s => s._id === snk._id) && hasReachedLimit) {
                                         onLimitReached();
                                         return;
                                     }
+                                    console.log("adding sneaker", snk);
 
                                     onAddExisting(snk);
                                 }}

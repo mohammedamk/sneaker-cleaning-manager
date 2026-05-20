@@ -18,7 +18,7 @@ import ConfirmActionModal from "./components/ConfirmActionModal";
 import EditBookingStatusModal from "./components/EditBookingStatusModal";
 import ImagePreviewModal from "./components/ImagePreviewModal";
 
-export default function BookingsIndex() {
+export default function BookingsIndex({ adminStatuses = [] }) {
   const actionData = useActionData();
   const navigation = useNavigation();
   const submit = useSubmit();
@@ -562,6 +562,7 @@ export default function BookingsIndex() {
           isSubmitting={isSubmitting}
           activeActionType={activeActionType}
           onStatusUpdate={handleStatusUpdate}
+          adminStatuses={adminStatuses}
         />
 
         <BookingViewModal
