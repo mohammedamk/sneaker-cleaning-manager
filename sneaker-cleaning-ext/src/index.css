@@ -220,6 +220,31 @@
   opacity: 1;
 }
 
+#sneaker-cleaning-ext-parent textarea::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+/* Catch-all for inputs without type attribute (address fields, etc) */
+#sneaker-cleaning-ext-parent input:not([type]),
+#sneaker-cleaning-ext-parent input[type=""]
+{
+  padding: 9px 12px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #fff;
+  font-family: inherit;
+  appearance: none;
+}
+
+#sneaker-cleaning-ext-parent input:not([type])::placeholder,
+#sneaker-cleaning-ext-parent input[type=""]::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
 /* Checkbox & Radio styling */
 #sneaker-cleaning-ext-parent input[type="checkbox"],
 #sneaker-cleaning-ext-parent input[type="radio"] {
@@ -265,7 +290,7 @@
 
 #sneaker-cleaning-ext-parent textarea {
   padding: 9px 12px;
-  border: 1.5px solid #ccc;
+  border: 1.5px solid #ccc !important;
   border-radius: 6px;
   font-size: 14px;
   color: #1a1a1a;
@@ -308,6 +333,8 @@
   #sneaker-cleaning-ext-parent input[type="date"],
   #sneaker-cleaning-ext-parent input[type="time"],
   #sneaker-cleaning-ext-parent input[type="password"],
+  #sneaker-cleaning-ext-parent input:not([type]),
+  #sneaker-cleaning-ext-parent input[type=""],
   #sneaker-cleaning-ext-parent textarea,
   #sneaker-cleaning-ext-parent select {
     padding: 8px 11px;
@@ -337,6 +364,8 @@
   #sneaker-cleaning-ext-parent input[type="date"],
   #sneaker-cleaning-ext-parent input[type="time"],
   #sneaker-cleaning-ext-parent input[type="password"],
+  #sneaker-cleaning-ext-parent input:not([type]),
+  #sneaker-cleaning-ext-parent input[type=""],
   #sneaker-cleaning-ext-parent textarea,
   #sneaker-cleaning-ext-parent select {
     padding: 7px 10px;
@@ -364,6 +393,8 @@
 #sneaker-cleaning-ext-parent input[type="date"]:focus,
 #sneaker-cleaning-ext-parent input[type="time"]:focus,
 #sneaker-cleaning-ext-parent input[type="password"]:focus,
+#sneaker-cleaning-ext-parent input:not([type]):focus,
+#sneaker-cleaning-ext-parent input[type=""]:focus,
 #sneaker-cleaning-ext-parent textarea:focus,
 #sneaker-cleaning-ext-parent select:focus {
   outline: none;
