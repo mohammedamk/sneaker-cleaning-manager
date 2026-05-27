@@ -4,7 +4,7 @@ import FormField from '../../shared/FormField/FormField.jsx';
 import ImageUploader from '../../shared/ImageUploader/ImageUploader.jsx';
 import './SneakerRegistrationStep.css';
 
-const SIZE_UNITS = ['US', 'UK', 'EU'];
+const SIZE_UNITS = ['US', 'US M', 'US W', 'UK', 'EU'];
 
 const EMPTY_SNEAKER = {
   id: null,

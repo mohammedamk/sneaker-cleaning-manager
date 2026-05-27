@@ -50,7 +50,7 @@ export default function HomeIndex({ stats, selectedRange, rangeLabel, handleRang
             <div className="dashboard-main-grid">
                 <s-section title="Getting Started" sectioned>
                     <s-text>
-                        Welcome to specifically built <b>Sneaker Cleaning Manager</b>.
+                        Welcome to specifically built <b>Footwear Cleaning Manager</b>.
                         From here you can track all incoming requests, manage the cleaning lifecycle, and communicate with your customers.
                     </s-text>
                     <div className="getting-started-actions">

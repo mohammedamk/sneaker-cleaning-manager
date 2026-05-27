@@ -517,7 +517,7 @@ export default function Settings() {
                     <s-section heading="Shipping & Pricing Configuration">
                         <div className="settings-content">
                             <s-text tone="subdued">
-                                Configure shipping rates, pricing credits, and sneaker weight for calculations.
+                                Configure shipping rates, pricing credits, and footwear weight for calculations.
                             </s-text>
 
                             <div className="input-wrapper" style={{ marginTop: '20px' }}>
@@ -539,7 +539,7 @@ export default function Settings() {
                                 <s-text-field
                                     type="number"
                                     label="Shipping Credit Per Pair ($)"
-                                    details="Fixed credit amount applied per sneaker pair in shipping calculations."
+                                    details="Fixed credit amount applied per footwear pair in shipping calculations."
                                     min="0"
                                     step="0.01"
                                     value={shippingCreditPerPair}
@@ -553,8 +553,8 @@ export default function Settings() {
                             <div className="input-wrapper">
                                 <s-text-field
                                     type="number"
-                                    label="Sneaker Weight (lbs)"
-                                    details="Default weight per sneaker pair used for shipping calculations."
+                                    label="Footwear Weight (lbs)"
+                                    details="Default weight per footwear pair used for shipping calculations."
                                     min="0"
                                     step="0.1"
                                     value={sneakerWeightLb}
@@ -621,7 +621,7 @@ export default function Settings() {
                     <s-section heading="Shipping Box Library">
                         <div className="settings-content">
                             <s-text tone="subdued">
-                                Define box dimensions and weight for each sneaker quantity. Used for shipping rate calculations.
+                                Define box dimensions and weight for each footwear quantity. Used for shipping rate calculations.
                             </s-text>
 
                             <div style={{ marginTop: '20px' }}>
