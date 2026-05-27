@@ -17,7 +17,7 @@ function SneakerImageCard({
         <div className="sneaker-item__image-card">
             <img
                 src={imageUrl}
-                alt={`${sneakerName || 'Sneaker'} ${imageType} ${imageIndex + 1}`}
+                alt={`${sneakerName || 'Footwear'} ${imageType} ${imageIndex + 1}`}
                 className="sneaker-item__img sneaker-item__img--interactive"
                 onClick={() => onPreview(imageUrl)}
             />
@@ -73,7 +73,7 @@ export default function BookingSneakerCard({
                                     sneakerName={sneaker.nickname}
                                     imageType="before cleaning"
                                     onPreview={onPreviewImage}
-                                    onDownload={() => onDownloadImage(imageUrl, `${sneaker.nickname || 'sneaker'}-before`, imageIndex)}
+                                    onDownload={() => onDownloadImage(imageUrl, `${sneaker.nickname || 'footwear'}-before`, imageIndex)}
                                 />
                             ))
                         ) : (
@@ -105,7 +105,7 @@ export default function BookingSneakerCard({
                                     sneakerName={sneaker.nickname}
                                     imageType="after cleaning"
                                     onPreview={onPreviewImage}
-                                    onDownload={() => onDownloadImage(imageUrl, `${sneaker.nickname || 'sneaker'}-after`, imageIndex)}
+                                    onDownload={() => onDownloadImage(imageUrl, `${sneaker.nickname || 'footwear'}-after`, imageIndex)}
                                 />
                             ))
                         ) : (

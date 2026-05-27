@@ -10,7 +10,7 @@ function ServiceSelectionStep({ sneakers, services, onServiceChange, onNext, onP
 
   const handleNext = () => {
     if (!allHaveTier) {
-      alert('Please select a cleaning tier for each sneaker before continuing.');
+      alert('Please select a cleaning tier for each footwear before continuing.');
       return;
     }
     onNext();
@@ -24,7 +24,7 @@ function ServiceSelectionStep({ sneakers, services, onServiceChange, onNext, onP
       nextLabel="Review Summary"
     >
       <p className="step-description">
-        Choose a cleaning tier for each sneaker and add any optional services you need.
+        Choose a cleaning tier for each footwear and add any optional services you need.
       </p>
       <div className="sneaker-list">
         {sneakers.map((sneaker) => (

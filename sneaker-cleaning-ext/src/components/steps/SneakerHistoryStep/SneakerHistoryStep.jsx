@@ -28,16 +28,16 @@ function SneakerHistoryStep({ history, onHistoryChange, onNext, onPrev }) {
   };
 
   if (isLoading) {
-    return <StepLayout title="Sneaker History" onNext={onNext} onPrev={onPrev}><div>Loading...</div></StepLayout>;
+    return <StepLayout title="Footwear History" onNext={onNext} onPrev={onPrev}><div>Loading...</div></StepLayout>;
   }
 
   return (
-    <StepLayout title="Sneaker History" onNext={onNext} onPrev={onPrev}>
+    <StepLayout title="Footwear History" onNext={onNext} onPrev={onPrev}>
       <p className="step-description">
-        This helps our team prepare the most effective cleaning method for your sneakers.
+        This helps our team prepare the most effective cleaning method for your footwear.
       </p>
 
-      <FormField label="Has this sneaker been professionally cleaned before?">
+      <FormField label="Has this footwear been professionally cleaned before?">
         <div className="radio-group">
           <label className="radio-option">
             <input
@@ -62,7 +62,7 @@ function SneakerHistoryStep({ history, onHistoryChange, onNext, onPrev }) {
         </div>
       </FormField>
 
-      <FormField label="Has this sneaker undergone any alterations?">
+      <FormField label="Has this footwear undergone any alterations?">
         <div className="checkbox-group">
           {alterationOptions.map((option) => (
             <label key={option.id} className="checkbox-option">

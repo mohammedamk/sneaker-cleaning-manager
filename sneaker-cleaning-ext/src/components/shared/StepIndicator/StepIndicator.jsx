@@ -2,7 +2,7 @@ import React from 'react';
 import './StepIndicator.css';
 
 const STEP_LABELS = [
-  'Account', 'Sneakers', 'History', 'Notes', 'Review',
+  'Account', 'Footwears', 'History', 'Notes', 'Review',
   'Services', 'Summary', 'Handoff', 'Done',
 ];
 

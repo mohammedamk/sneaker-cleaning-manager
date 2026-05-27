@@ -473,13 +473,13 @@ export default function BookingsIndex({ adminStatuses = [] }) {
       const blob = await response.blob();
       const objectUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
-      const sanitizedName = (sneakerName || "sneaker")
+      const sanitizedName = (sneakerName || "footwear")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
 
       link.href = objectUrl;
-      link.download = `${sanitizedName || "sneaker"}-${imageIndex + 1}.jpg`;
+      link.download = `${sanitizedName || "footwear"}-${imageIndex + 1}.jpg`;
       document.body.appendChild(link);
       link.click();
       link.remove();

@@ -162,7 +162,7 @@ function BookingWizard() {
     : 10;
 
   const showLimitToast = () => {
-    toast.warning(`A maximum of ${maxSneakerPairs} sneaker pairs is allowed per booking.`);
+    toast.warning(`A maximum of ${maxSneakerPairs} footwear pairs is allowed per booking.`);
   };
 
   const loadSneakerReviewState = (sneaker) => {
@@ -331,7 +331,7 @@ function BookingWizard() {
         <div className="booking-wizard__loading-container">
           <div className="booking-wizard__spinner"></div>
           <h3 className="booking-wizard__loading-title">Loading Booking Wizard</h3>
-          <p className="booking-wizard__loading-text">Preparing your sneaker cleaning experience...</p>
+          <p className="booking-wizard__loading-text">Preparing your footwear cleaning experience...</p>
         </div>
       </div>
     );

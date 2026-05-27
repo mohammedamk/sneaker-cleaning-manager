@@ -8,7 +8,7 @@ function AdditionalNotesStep({ notes, onNotesChange, onNext, onPrev }) {
     <StepLayout title="Additional Notes" onNext={onNext} onPrev={onPrev}>
       <p className="step-description">
         Let us know about any specific problem areas, stains, odours, or special instructions
-        for your sneakers.
+        for your footwear.
       </p>
       <FormField label="Special Instructions">
         <textarea

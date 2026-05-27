@@ -148,7 +148,7 @@ function BookingDetails({
                         <div className="detail-item">
                             <span className="detail-item__label">Cleaning Photos</span>
                             <span className="detail-item__value">
-                                Check each sneaker below for individual cleaning photo status
+                                Check each footwear below for individual cleaning photo status
                             </span>
                         </div>
                         <div className="detail-item">
@@ -179,7 +179,7 @@ function BookingDetails({
                     </div>
                 </BookingInfoSection>
 
-                <BookingInfoSection title={`Registered Sneakers (${currentBooking.sneakers?.length || 0})`}>
+                <BookingInfoSection title={`Registered Footwears (${currentBooking.sneakers?.length || 0})`}>
                     <div className="booking-details__sneaker-list">
                         {currentBooking.sneakers?.map((sneaker, sneakerIndex) => (
                             <BookingSneakerCard

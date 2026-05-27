@@ -65,7 +65,7 @@ async function processBookingInBackground({
 }) {
   try {
     console.log(`Starting background processing for order: ${shopifyOrderId}`);
-    
+
     const bookingData = tempBooking.payload;
     let customerName = null;
     let customerEmail = null;
@@ -144,7 +144,7 @@ async function processBookingInBackground({
 
     const accessToken = randomBytes(32).toString("hex");
     bookingDoc.accessTokenHash = createHash("sha256").update(accessToken).digest("hex");
-    
+
     try {
       await bookingDoc.save();
     } catch (saveError) {
@@ -202,7 +202,7 @@ async function processBookingInBackground({
             purchasedAt: new Date(),
           };
         } else {
-          console.log(`shipping rate changed for sneaker booking of shipping selection:`, {
+          console.log(`shipping rate changed for footwear booking of shipping selection:`, {
             bookingDoc,
             orderPayload: payload,
             shippingSelection: bookingData.shippingSelection,
@@ -219,7 +219,7 @@ async function processBookingInBackground({
 
           // await sendEmail(
           //   ADMIN_NOTIFICATION_EMAIL,
-          //   "EasyPost shipping rate changed for sneaker booking",
+          //   "EasyPost shipping rate changed for footwear booking",
           //   buildRateChangedEmail({
           //     bookingDoc,
           //     orderPayload: payload,
@@ -296,8 +296,8 @@ async function processBookingInBackground({
 }
 
 const TEST_STORE_ADDRESS = {
-  name: "Sneaker Cleaning Manager Test Store",
-  company: "Sneaker Cleaning Manager",
+  name: "Footwear Cleaning Manager Test Store",
+  company: "Footwear Cleaning Manager",
   street1: "123 Test Shipping Lane",
   street2: "Suite 4",
   city: "New York",
@@ -340,7 +340,7 @@ function buildQrCodeImageUrl(accessUrl) {
 
 function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCodeImageUrl }) {
   const customerName = bookingDoc?.name || bookingDoc?.guestInfo?.name || "there";
-  
+
   const shippingLabelsSection = bookingDoc?.shipping?.labels
     ? `
       <div style="margin-top:24px;">
@@ -394,7 +394,7 @@ function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCode
     : "";
   const sneakerRows = (bookingDoc?.sneakers || [])
     .map((sneaker) => {
-      const sneakerName = sneaker.nickname || "Unnamed sneaker";
+      const sneakerName = sneaker.nickname || "Unnamed footwear";
       const sneakerDetails = [sneaker.brand, sneaker.model, sneaker.colorway]
         .filter(Boolean)
         .join(" - ");
@@ -414,7 +414,7 @@ function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCode
 
   return `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;max-width:680px;margin:0 auto;">
-      <h2 style="margin-bottom:8px;">Your Sneaker Cleaning Booking Is Confirmed</h2>
+      <h2 style="margin-bottom:8px;">Your Footwear Cleaning Booking Is Confirmed</h2>
       <p>Hello ${customerName},</p>
       <p>Your booking has been created successfully. You can scan the QR code below or use the secure button to open your booking details page directly.</p>
 
@@ -433,7 +433,7 @@ function buildCustomerBookingEmail({ bookingDoc, orderPayload, accessUrl, qrCode
       <table style="width:100%;border-collapse:collapse;margin-top:20px;">
         <thead>
           <tr>
-            <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Sneaker</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Footwear</th>
             <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Details</th>
             <th style="padding:8px;border:1px solid #ddd;text-align:left;background:#f3f4f6;">Service</th>
           </tr>

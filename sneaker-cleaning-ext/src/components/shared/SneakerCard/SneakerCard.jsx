@@ -42,7 +42,7 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
     <div className="sneaker-card">
       <div className="sneaker-card__header">
         <div className="sneaker-card__info">
-          <strong className="sneaker-card__nickname">{sneaker.nickname || 'Unnamed Sneaker'}</strong>
+          <strong className="sneaker-card__nickname">{sneaker.nickname || 'Unnamed Footwear'}</strong>
           {sneaker.brand && (
             <span className="sneaker-card__brand">
               {sneaker.brand} {sneaker.model}

@@ -48,7 +48,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.nickname.trim()) newErrors.nickname = 'Sneaker nickname is required.';
+    if (!form.nickname.trim()) newErrors.nickname = 'Footwear nickname is required.';
     if (form.images.length === 0) newErrors.images = 'Please upload at least one image.';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -69,12 +69,12 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
     <div className="shoe-rack-sneaker-form">
       <div className="shoe-rack-sneaker-form__header">
         <h2 className="shoe-rack-sneaker-form__title">
-          {editingSneaker ? 'Edit Sneaker Details' : 'Add New Sneaker to Rack'}
+          {editingSneaker ? 'Edit Footwear Details' : 'Add New Footwear to Rack'}
         </h2>
       </div>
 
       <div className="shoe-rack-sneaker-form__body">
-        <FormField label="Sneaker Nickname" required error={errors.nickname}>
+        <FormField label="Footwear Nickname" required error={errors.nickname}>
           <input
             className="input"
             type="text"
@@ -140,7 +140,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
           </div>
         </FormField>
 
-        <FormField label="Sneaker Photos" required error={errors.images}>
+        <FormField label="Footwear Photos" required error={errors.images}>
           <ImageUploader
             images={form.images}
             onImagesChange={(imgs) => setField('images', imgs)}

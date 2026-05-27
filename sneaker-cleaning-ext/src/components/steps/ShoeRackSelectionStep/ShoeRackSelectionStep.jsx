@@ -42,14 +42,14 @@ function ShoeRackSelectionStep({ customerID, sneakers, maxSneakers, onAddExistin
             nextLabel="Continue to Services"
         >
             <p className="step-description">
-                Select sneakers from your Shoe Rack or add a new pair for this order.
+                Select footwear from your Shoe Rack or add a new pair for this order.
             </p>
             {hasReachedLimit && (
-                <p className="step-description step-description--warning">A maximum of {maxSneakers} sneaker pairs is allowed per booking.</p>
+                <p className="step-description step-description--warning">A maximum of {maxSneakers} footwear pairs is allowed per booking.</p>
             )}
 
             {isLoading ? (
-                <p>Loading your sneakers...</p>
+                <p>Loading your footwear...</p>
             ) : (
                 <div className="shoe-rack-grid">
                     {savedSneakers.map(snk => (
@@ -81,14 +81,14 @@ function ShoeRackSelectionStep({ customerID, sneakers, maxSneakers, onAddExistin
                         </div>
                     ))}
                     <button className="btn btn--secondary btn--add-new" onClick={hasReachedLimit ? onLimitReached : handleAddNewClick}>
-                        + Add New Sneaker
+                        + Add New Footwear
                     </button>
                 </div>
             )}
 
             {sneakers.length > 0 && (
                 <div className="selected-count">
-                    <strong>{sneakers.length}</strong> sneaker(s) selected for this order.
+                    <strong>{sneakers.length}</strong> footwear(s) selected for this order.
                 </div>
             )}
         </StepLayout>

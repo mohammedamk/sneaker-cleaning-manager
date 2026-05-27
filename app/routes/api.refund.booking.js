@@ -336,7 +336,7 @@ function buildRefundConfirmationEmail({ booking, refundAmount, currencyCode, ord
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;max-width:680px;margin:0 auto;">
       <h2 style="margin-bottom:8px;">Your Refund Has Been Processed</h2>
       <p>Hello ${customerName},</p>
-      <p>We have processed your refund for the canceled sneaker cleaning order.</p>
+      <p>We have processed your refund for the canceled footwear cleaning order.</p>
       <p><strong>Booking ID:</strong> ${bookingId}</p>
       <p><strong>Order:</strong> ${orderName || booking?.shopifyOrderID || "N/A"}</p>
       <p><strong>Refund Amount:</strong> ${amountText}</p>

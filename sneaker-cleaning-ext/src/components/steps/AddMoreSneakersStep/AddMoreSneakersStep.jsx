@@ -8,21 +8,21 @@ function AddMoreSneakersStep({ sneakers, maxSneakers, onAddAnother, onLimitReach
 
   return (
     <StepLayout
-      title="Your Sneakers"
+      title="Your Footwears"
       onNext={onNext}
       onPrev={onPrev}
       nextLabel="Continue to Service Selection"
     >
       <p className="step-description">
-        Review your registered sneakers. You can add more, edit, or remove any pair before
+        Review your registered footwear. You can add more, edit, or remove any pair before
         proceeding.
       </p>
       {hasReachedLimit && (
-        <p className="step-description step-description--warning">A maximum of {maxSneakers} sneaker pairs is allowed per booking.</p>
+        <p className="step-description step-description--warning">A maximum of {maxSneakers} footwear pairs is allowed per booking.</p>
       )}
 
       {sneakers.length === 0 ? (
-        <p className="empty-state">No sneakers registered yet.</p>
+        <p className="empty-state">No footwear registered yet.</p>
       ) : (
         <div className="sneaker-list">
           {sneakers.map((sneaker) => (
@@ -41,7 +41,7 @@ function AddMoreSneakersStep({ sneakers, maxSneakers, onAddAnother, onLimitReach
         className="btn btn--secondary btn--add-sneaker"
         onClick={hasReachedLimit ? onLimitReached : onAddAnother}
       >
-        + Add Another Sneaker
+        + Add Another Footwear
       </button>
     </StepLayout>
   );

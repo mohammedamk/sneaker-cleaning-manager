@@ -119,18 +119,18 @@ By shipping your footwear, you acknowledge that you are responsible for followin
   const eligibleSneakerCount = useMemo(() => {
     if (!adminSettings?.cleaningTiers || !bookingData?.services) return 0;
 
-    console.log('[Shipping Credit] Calculating eligible sneakers for shipping credit:');
+    console.log('[Shipping Credit] Calculating eligible footwear for shipping credit:');
     return (bookingData.sneakers || []).reduce((count, sneaker, index) => {
       const service = bookingData.services[sneaker.id || sneaker._id];
       if (!service) {
-        console.log(`[Shipping Credit] Sneaker ${index + 1}: No service selected. Credit: false`);
+        console.log(`[Shipping Credit] Footwear ${index + 1}: No service selected. Credit: false`);
         return count;
       }
 
       const tier = adminSettings.cleaningTiers.find(t => t.id === service.tier);
       const isEligible = Boolean(tier?.shippingCredit);
 
-      console.log(`[Shipping Credit] Sneaker ${index + 1}: Tier selected = '${tier?.label || service.tier}'. Credit Eligible = ${isEligible}`);
+      console.log(`[Shipping Credit] Footwear ${index + 1}: Tier selected = '${tier?.label || service.tier}'. Credit Eligible = ${isEligible}`);
 
       if (isEligible) {
         return count + 1;
@@ -232,7 +232,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         messages.push(`address: ${missingAddressFields.join(', ')}`);
       }
       if (!recommendedParcel) {
-        messages.push('package: valid sneaker quantity required');
+        messages.push('package: valid footwear quantity required');
       }
       throw new Error(`Please complete the required shipping details (${messages.join(' | ')})`);
     }
@@ -437,7 +437,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
 
   return (
     <StepLayout
-      title="How Will You Send Your Sneakers?"
+      title="How Will You Send Your Footwear?"
       onNext={handleNext}
       onPrev={onPrev}
       nextLabel="Confirm Booking"
@@ -462,17 +462,17 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         >
           <div className="handoff-card__icon">📍</div>
           <h3 className="handoff-card__title">Drop-Off</h3>
-          <p className="handoff-card__desc">Bring your sneakers directly to our location.</p>
+          <p className="handoff-card__desc">Bring your footwear directly to our location.</p>
           {handoffMethod === 'dropoff' && (
             <div className="handoff-card__instructions">
               <p><strong>Drop-off Location:</strong></p>
-              <p>123 Sneaker Lane, Suite 4<br />New York, NY 10001</p>
+              <p>123 Footwear Lane, Suite 4<br />New York, NY 10001</p>
               <p><strong>Hours:</strong> Mon-Sat, 9 AM - 6 PM</p>
               <div className="handoff-policy-info">
-                <p><strong>Time Window:</strong> Please drop off your sneakers within 48 hours of booking. <b>Orders not completed within this window will be automatically canceled.</b></p>
-                <p><strong>Pickup Policy:</strong> Once cleaned, sneakers must be picked up by the customer from our location. <b>Items will be held for up to 6 months before being disposed of.</b></p>
+                <p><strong>Time Window:</strong> Please drop off your footwear within 48 hours of booking. <b>Orders not completed within this window will be automatically canceled.</b></p>
+                <p><strong>Pickup Policy:</strong> Once cleaned, footwear must be picked up by the customer from our location. <b>Items will be held for up to 6 months before being disposed of.</b></p>
               </div>
-              <p><strong>Next Steps:</strong> Bring your sneakers in any bag and mention your booking reference at the counter. <b>No scheduling is required;</b> just drop by during our opening hours.</p>
+              <p><strong>Next Steps:</strong> Bring your footwear in any bag and mention your booking reference at the counter. <b>No scheduling is required;</b> just drop by during our opening hours.</p>
             </div>
           )}
         </div>
@@ -495,7 +495,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         >
           <div className="handoff-card__icon">📦</div>
           <h3 className="handoff-card__title">Shipping</h3>
-          <p className="handoff-card__desc">Ship your sneakers with EasyPost-backed USPS and UPS options.</p>
+          <p className="handoff-card__desc">Ship your footwear with EasyPost-backed USPS and UPS options.</p>
           {handoffMethod === 'shipping' && (
             <div className="handoff-card__instructions">
               <p><strong>Shipping Instructions:</strong></p>
@@ -503,7 +503,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 <li>Label each pair with your booking ID (sent to your email).</li>
                 <li>Place each pair in a separate plastic bag.</li>
                 <li>Pack all pairs into one shipping box.</li>
-                <li>Ship to: <strong>123 Sneaker Lane, Suite 4, New York, NY 10001</strong></li>
+                <li>Ship to: <strong>123 Footwear Lane, Suite 4, New York, NY 10001</strong></li>
               </ol>
               <p><em>We recommend using a tracked shipping service. We are not responsible for items lost during shipping.</em></p>
             </div>
@@ -528,14 +528,14 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         >
           <div className="handoff-card__icon">🚚</div>
           <h3 className="handoff-card__title">Pickup & Return</h3>
-          <p className="handoff-card__desc">A store employee will collect your sneakers and deliver them back after cleaning.</p>
+          <p className="handoff-card__desc">A store employee will collect your footwear and deliver them back after cleaning.</p>
           {handoffMethod === PICKUP_AND_RETURN_METHOD && (
             <div className="handoff-card__instructions">
               <p><strong>How it works:</strong></p>
               <ol className="handoff-instructions-list">
-                <li>Enter the address where our team should pick up your sneakers.</li>
+                <li>Enter the address where our team should pick up your footwear.</li>
                 <li>Keep all pairs together and ready for collection.</li>
-                <li>After cleaning, we will return the sneakers to the same address unless arranged otherwise.</li>
+                <li>After cleaning, we will return the footwear to the same address unless arranged otherwise.</li>
               </ol>
               <p><em>We will use your submitted address and phone number to coordinate pickup and return.</em></p>
             </div>
@@ -584,16 +584,16 @@ By shipping your footwear, you acknowledge that you are responsible for followin
             <div className="shipping-section">
               <h4 className="shipping-section__title">Recommended Package Details</h4>
               <div className="shipping-box-summary">
-                <p><strong>Sneaker pairs:</strong> {sneakerCount}</p>
+                <p><strong>Footwear pairs:</strong> {sneakerCount}</p>
                 {selectedBoxConfig ? (
                   <>
                     <p><strong>Box size:</strong> {selectedBoxConfig.length}&quot; x {selectedBoxConfig.width}&quot; x {selectedBoxConfig.height}&quot;</p>
                     {/* <p><strong>Box weight:</strong> {selectedBoxConfig.boxWeightLb} lb</p>
-                    <p><strong>Estimated sneaker weight:</strong> {sneakerCount * SNEAKER_WEIGHT_LB} lb</p>
+                    <p><strong>Estimated footwear weight:</strong> {sneakerCount * SNEAKER_WEIGHT_LB} lb</p>
                     <p><strong>Total estimated package weight:</strong> {recommendedParcel?.displayWeightLb} lb</p> */}
                   </>
                 ) : (
-                  <p>Please keep sneaker quantity between 1 and 10 to calculate shipping.</p>
+                  <p>Please keep footwear quantity between 1 and 10 to calculate shipping.</p>
                 )}
               </div>
               <button type="button" className="btn btn--secondary shipping-rates__button" onClick={handleFetchRates} disabled={isFetchingRates}>

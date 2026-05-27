@@ -27,7 +27,7 @@ function ImageUploader({ images, onImagesChange }) {
           <div key={index} className="image-uploader__preview-item">
             <img
               src={img.preview || img.url || img}
-              alt={`Sneaker ${index + 1}`}
+              alt={`Footwear ${index + 1}`}
               className="image-uploader__preview-img"
             />
             <button

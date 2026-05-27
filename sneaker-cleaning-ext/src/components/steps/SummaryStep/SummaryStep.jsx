@@ -53,9 +53,9 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
             <div className="summary-row__images">
               {sneakerImages.map((imageSrc, index) => (
                 <img
-                  key={`${sneaker.id || sneaker.nickname || 'sneaker'}-${index}`}
+                  key={`${sneaker.id || sneaker.nickname || 'footwear'}-${index}`}
                   src={imageSrc}
-                  alt={`${sneaker.nickname || 'Sneaker'} ${index + 1}`}
+                  alt={`${sneaker.nickname || 'Footwear'} ${index + 1}`}
                   className="summary-row__image"
                 />
               ))}
@@ -151,7 +151,7 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
 
         <div className="summary__disclaimer">
           <strong>Note:</strong> The final price may change after our team inspects your
-          sneakers. You will receive the confirmed price and a payment link by email before
+          footwear. You will receive the confirmed price and a payment link by email before
           the service begins.
         </div>
 

@@ -2,10 +2,10 @@ import sendEmail from "../../utils/sendEmail";
 
 const BOOKING_STATUS_EMAIL_CONFIG = {
   Received: {
-    subject: (booking) => `We received your sneakers: booking ${booking._id.toString()}`,
-    heading: "Your sneakers have been received",
+    subject: (booking) => `We received your footwear: booking ${booking._id.toString()}`,
+    heading: "Your footwear has been received",
     message: [
-      "We have received your sneakers at the store.",
+      "We have received your footwear at the store.",
       "Our team will inspect them next, and the cleaning process will begin shortly.",
     ],
   },
@@ -13,7 +13,7 @@ const BOOKING_STATUS_EMAIL_CONFIG = {
     subject: (booking) => `Cleaning complete for booking ${booking._id.toString()}`,
     heading: "Cleaning is complete",
     message: [
-      "Your sneaker cleaning service has been completed.",
+      "Your footwear cleaning service has been completed.",
       "We will notify you again as soon as your order is ready for pickup or shipment.",
     ],
   },
@@ -89,7 +89,7 @@ export function buildCleanedSneakersEmail(booking, sneakerIndexToInclude = null)
 
   const sneakerList = cleanedSneakers
     .map((sneaker) => {
-      const sneakerName = sneaker.nickname || "Unnamed sneaker";
+      const sneakerName = sneaker.nickname || "Unnamed footwear";
       const details = [sneaker.brand, sneaker.model, sneaker.colorway]
         .filter(Boolean)
         .join(" - ");
@@ -104,20 +104,20 @@ export function buildCleanedSneakersEmail(booking, sneakerIndexToInclude = null)
 
   return `
     ${buildBookingEmailContent({
-      booking,
-      heading: "Your sneakers are cleaned",
-      message: [
-        "Your cleaned sneaker photos are now ready to view.",
-        "Please review the after-cleaning images from your order details page and approve them once you are satisfied.",
-      ],
-      buttonLabel: "Review Cleaned Sneaker Images",
-      footerMessage: booking?.secureAccessUrl
-        ? "If the button does not open, use the secure link above to open your booking details page."
-        : "Please open your booking details page and use your booking ID to review the cleaned images.",
-    })}
+    booking,
+    heading: "Your footwear is cleaned",
+    message: [
+      "Your cleaned footwear photos are now ready to view.",
+      "Please review the after-cleaning images from your order details page and approve them once you are satisfied.",
+    ],
+    buttonLabel: "Review Cleaned Footwear Images",
+    footerMessage: booking?.secureAccessUrl
+      ? "If the button does not open, use the secure link above to open your booking details page."
+      : "Please open your booking details page and use your booking ID to review the cleaned images.",
+  })}
     ${cleanedSneakers.length ? `
       <div style="margin:20px 0 0;padding:18px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa;">
-        <p style="margin:0 0 10px;"><strong>Updated sneakers</strong></p>
+        <p style="margin:0 0 10px;"><strong>Updated footwear</strong></p>
         <ul style="padding-left:20px;margin:0;">
           ${sneakerList}
         </ul>
@@ -163,7 +163,7 @@ export async function sendCleanedSneakersEmail(booking, sneakerIndexToInclude = 
 
   await sendEmail(
     recipientEmail,
-    `Your sneakers are cleaned: booking ${booking._id.toString()}`,
+    `Your footwear is cleaned: booking ${booking._id.toString()}`,
     buildCleanedSneakersEmail(booking, sneakerIndexToInclude),
   );
 

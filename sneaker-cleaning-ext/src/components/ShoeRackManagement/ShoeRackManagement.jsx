@@ -169,7 +169,7 @@ function ShoeRackManagement({ customerID, onBack }) {
                             <span>Back to Booking</span>
                         </span>
                     </button>
-                    <button className="btn btn--primary" onClick={handleAddClick}>+ Add New Sneaker</button>
+                    <button className="btn btn--primary" onClick={handleAddClick}>+ Add New Footwear</button>
                 </div>
             </div>
 
@@ -180,7 +180,7 @@ function ShoeRackManagement({ customerID, onBack }) {
                     <table className="shoe-rack-table">
                         <thead>
                             <tr>
-                                <th>Sneaker</th>
+                                <th>Footwear</th>
                                 <th>Nickname</th>
                                 <th>Brand / Model</th>
                                 <th>Colorway</th>
@@ -198,7 +198,7 @@ function ShoeRackManagement({ customerID, onBack }) {
                                     <tr key={snk._id}>
                                         <td>
                                             {snk.imageProcessing ? (
-                                                <div className="table-img table-img--placeholder" aria-label="Sneaker image is processing">
+                                                <div className="table-img table-img--placeholder" aria-label="Footwear image is processing">
                                                     <span className="table-img__spinner" />
                                                     <span className="table-img__label">Processing</span>
                                                 </div>
