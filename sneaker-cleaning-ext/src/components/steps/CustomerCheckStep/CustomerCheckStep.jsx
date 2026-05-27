@@ -3,20 +3,47 @@ import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import FormField from '../../shared/FormField/FormField.jsx';
 import './CustomerCheckStep.css';
 
-const SHOPIFY_LOGIN_URL = '/account/login?return_url=/pages/sneaker-cleaning';
-const SHOPIFY_REGISTER_URL = '/account/register?return_url=/pages/sneaker-cleaning';
+const RETURN_URL = '/pages/book-sneaker-pick-up';
 
-function CustomerCheckStep({ customerID, guestInfo, onGuestInfoChange, onNext, onPrev }) {
+// login/register urls
+const SHOPIFY_LOGIN_URL =
+  `/customer_authentication/login?return_to=${encodeURIComponent(
+    RETURN_URL
+  )}`;
+
+
+const SHOPIFY_REGISTER_URL =
+  `/customer_authentication/login?return_to=${encodeURIComponent(
+    RETURN_URL
+  )}`;
+
+function CustomerCheckStep({
+  customerID,
+  guestInfo,
+  onGuestInfoChange,
+  onNext,
+  onPrev,
+}) {
   const [mode, setMode] = useState(customerID ? 'logged-in' : null);
   const [errors, setErrors] = useState({});
 
   const validate = () => {
     const newErrors = {};
-    if (!guestInfo.name.trim()) newErrors.name = 'Full name is required.';
-    if (!guestInfo.email.trim()) newErrors.email = 'Email is required.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email))
+
+    if (!guestInfo.name.trim()) {
+      newErrors.name = 'Full name is required.';
+    }
+
+    if (!guestInfo.email.trim()) {
+      newErrors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) {
       newErrors.email = 'Enter a valid email address.';
-    if (!guestInfo.phone.trim()) newErrors.phone = 'Phone number is required.';
+    }
+
+    if (!guestInfo.phone.trim()) {
+      newErrors.phone = 'Phone number is required.';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -29,11 +56,30 @@ function CustomerCheckStep({ customerID, guestInfo, onGuestInfoChange, onNext, o
   };
 
   const handleFieldChange = (field, value) => {
-    onGuestInfoChange({ ...guestInfo, [field]: value });
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+    onGuestInfoChange({
+      ...guestInfo,
+      [field]: value,
+    });
+
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: '',
+      }));
+    }
   };
 
-  // already logged in on shopify store
+  // HANDLE LOGIN CLICK
+  const handleLoginClick = () => {
+    window.location.href = SHOPIFY_LOGIN_URL;
+  };
+
+  // HANDLE REGISTER CLICK
+  const handleRegisterClick = () => {
+    window.location.href = SHOPIFY_REGISTER_URL;
+  };
+
+  // already logged in
   if (customerID) {
     return (
       <StepLayout
@@ -49,21 +95,37 @@ function CustomerCheckStep({ customerID, guestInfo, onGuestInfoChange, onNext, o
     );
   }
 
-  // not logged in so showing options
+  // login/register options
   if (!mode) {
     return (
       <StepLayout title="Account" onPrev={onPrev} isFirstStep={false}>
         <p className="customer-check__message">
-          Sign in to save your sneakers and keep track of your orders, or continue as a guest.
+          Sign in to save your sneakers and keep track of your orders,
+          or continue as a guest.
         </p>
+
         <div className="customer-check__options">
-          <a href={SHOPIFY_LOGIN_URL} className="btn btn--primary">
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={handleLoginClick}
+          >
             Sign In
-          </a>
-          <a href={SHOPIFY_REGISTER_URL} className="btn btn--secondary">
+          </button>
+
+          <button
+            type="button"
+            className="btn btn--secondary"
+            onClick={handleRegisterClick}
+          >
             Create Account
-          </a>
-          <button className="btn btn--ghost" onClick={() => setMode('guest')}>
+          </button>
+
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={() => setMode('guest')}
+          >
             Continue as Guest
           </button>
         </div>
@@ -73,7 +135,11 @@ function CustomerCheckStep({ customerID, guestInfo, onGuestInfoChange, onNext, o
 
   // guest form
   return (
-    <StepLayout title="Your Details" onNext={handleNext} onPrev={() => setMode(null)}>
+    <StepLayout
+      title="Your Details"
+      onNext={handleNext}
+      onPrev={() => setMode(null)}
+    >
       <FormField label="Full Name" required error={errors.name}>
         <input
           className="input"

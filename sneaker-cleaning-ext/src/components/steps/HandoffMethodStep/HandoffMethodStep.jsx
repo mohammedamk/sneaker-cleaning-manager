@@ -115,10 +115,10 @@ By shipping your footwear, you acknowledge that you are responsible for followin
   const shippingAddress = shippingSelection?.customerAddress || {};
   const shippingRates = shippingSelection?.rates;
   const sneakerCount = bookingData?.sneakers?.length || 0;
-  
+
   const eligibleSneakerCount = useMemo(() => {
     if (!adminSettings?.cleaningTiers || !bookingData?.services) return 0;
-    
+
     console.log('[Shipping Credit] Calculating eligible sneakers for shipping credit:');
     return (bookingData.sneakers || []).reduce((count, sneaker, index) => {
       const service = bookingData.services[sneaker.id || sneaker._id];
@@ -126,12 +126,12 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         console.log(`[Shipping Credit] Sneaker ${index + 1}: No service selected. Credit: false`);
         return count;
       }
-      
+
       const tier = adminSettings.cleaningTiers.find(t => t.id === service.tier);
       const isEligible = Boolean(tier?.shippingCredit);
-      
+
       console.log(`[Shipping Credit] Sneaker ${index + 1}: Tier selected = '${tier?.label || service.tier}'. Credit Eligible = ${isEligible}`);
-      
+
       if (isEligible) {
         return count + 1;
       }
@@ -588,9 +588,9 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 {selectedBoxConfig ? (
                   <>
                     <p><strong>Box size:</strong> {selectedBoxConfig.length}&quot; x {selectedBoxConfig.width}&quot; x {selectedBoxConfig.height}&quot;</p>
-                    <p><strong>Box weight:</strong> {selectedBoxConfig.boxWeightLb} lb</p>
+                    {/* <p><strong>Box weight:</strong> {selectedBoxConfig.boxWeightLb} lb</p>
                     <p><strong>Estimated sneaker weight:</strong> {sneakerCount * SNEAKER_WEIGHT_LB} lb</p>
-                    <p><strong>Total estimated package weight:</strong> {recommendedParcel?.displayWeightLb} lb</p>
+                    <p><strong>Total estimated package weight:</strong> {recommendedParcel?.displayWeightLb} lb</p> */}
                   </>
                 ) : (
                   <p>Please keep sneaker quantity between 1 and 10 to calculate shipping.</p>
