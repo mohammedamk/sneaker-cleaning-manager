@@ -38,6 +38,8 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
     onServiceChange(sneaker.id, { ...serviceSelection, addOns: updated });
   };
 
+  const isTierSelected = Boolean(serviceSelection?.tier);
+
   return (
     <div className="sneaker-card">
       <div className="sneaker-card__header">
@@ -114,18 +116,37 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
           </div>
 
           <div className="sneaker-card__addons">
-            <p className="sneaker-card__section-label">Optional Add-ons</p>
-            <div className="addon-options">
+            <p className="sneaker-card__section-label">
+              Optional Add-ons
+              {!isTierSelected && (
+                <span className="sneaker-card__disabled-note">
+                  Select a cleaning tier first
+                </span>
+              )}
+            </p>
+
+            <div
+              className={`addon-options ${!isTierSelected ? 'addon-options--disabled' : ''
+                }`}
+            >
               {ADD_ONS.map((addon) => (
-                <label key={addon.id} className="addon-option">
+                <label
+                  key={addon.id}
+                  className={`addon-option ${!isTierSelected ? 'addon-option--disabled' : ''
+                    }`}
+                >
                   <input
                     type="checkbox"
+                    disabled={!isTierSelected}
                     checked={(serviceSelection?.addOns || []).includes(addon.id)}
                     onChange={() => handleAddOnToggle(addon.id)}
                   />
+
                   <span className="addon-option__label">
                     {addon.label}
-                    <span className="addon-option__price"> (+${addon.price})</span>
+                    <span className="addon-option__price">
+                      (+${addon.price})
+                    </span>
                   </span>
                 </label>
               ))}

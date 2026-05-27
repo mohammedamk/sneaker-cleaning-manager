@@ -227,8 +227,7 @@
 
 /* Catch-all for inputs without type attribute (address fields, etc) */
 #sneaker-cleaning-ext-parent input:not([type]),
-#sneaker-cleaning-ext-parent input[type=""]
-{
+#sneaker-cleaning-ext-parent input[type=""] {
   padding: 9px 12px;
   border: 1.5px solid #ccc;
   border-radius: 6px;
@@ -252,9 +251,10 @@
   height: 16px;
   flex-shrink: 0;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  box-shadow: none !important;
   border: 1.5px solid #ccc;
   border-radius: 3px;
   background: #fff;
@@ -263,8 +263,35 @@
   position: relative;
 }
 
+/* Radio specific */
 #sneaker-cleaning-ext-parent input[type="radio"] {
   border-radius: 50%;
+  accent-color: unset !important;
+}
+
+/* Inner dot */
+#sneaker-cleaning-ext-parent input[type="radio"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.15s ease;
+}
+
+/* Checked state */
+#sneaker-cleaning-ext-parent input[type="radio"]:checked {
+  border-color: #1a1a1a;
+  background: #fff;
+}
+
+/* Show center dot */
+#sneaker-cleaning-ext-parent input[type="radio"]:checked::after {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /* Checked state with simple checkmark for checkbox */
@@ -277,11 +304,7 @@
   background-size: 14px;
 }
 
-/* Checked state for radio */
-#sneaker-cleaning-ext-parent input[type="radio"]:checked {
-  background: radial-gradient(circle, #1a1a1a 40%, transparent 40%);
-  border-color: #1a1a1a;
-}
+
 
 #sneaker-cleaning-ext-parent input[type="checkbox"]:hover,
 #sneaker-cleaning-ext-parent input[type="radio"]:hover {
@@ -317,6 +340,7 @@
 }
 
 @media (max-width: 768px) {
+
   .input,
   .select,
   .textarea {
@@ -324,7 +348,7 @@
     font-size: 13px;
     border-radius: 5px;
   }
-  
+
   #sneaker-cleaning-ext-parent input[type="text"],
   #sneaker-cleaning-ext-parent input[type="email"],
   #sneaker-cleaning-ext-parent input[type="phone"],
@@ -341,13 +365,14 @@
     font-size: 13px;
     border-radius: 5px;
   }
-  
+
   #sneaker-cleaning-ext-parent select {
     background-position: right 8px center;
   }
 }
 
 @media (max-width: 480px) {
+
   .input,
   .select,
   .textarea {
@@ -355,7 +380,7 @@
     font-size: 12px;
     border-radius: 4px;
   }
-  
+
   #sneaker-cleaning-ext-parent input[type="text"],
   #sneaker-cleaning-ext-parent input[type="email"],
   #sneaker-cleaning-ext-parent input[type="phone"],
@@ -372,7 +397,7 @@
     font-size: 12px;
     border-radius: 4px;
   }
-  
+
   #sneaker-cleaning-ext-parent select {
     background-position: right 8px center;
   }
