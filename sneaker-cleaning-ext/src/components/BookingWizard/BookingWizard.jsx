@@ -142,6 +142,7 @@ function BookingWizard() {
   const [isSettingsLoading, setIsSettingsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("may-27-6:17")
     fetchAdminSettings().then((settings) => {
       setAdminSettings(settings);
 
@@ -195,18 +196,34 @@ function BookingWizard() {
     }
 
     const fallbackId = createLocalSneakerId();
+
+    const existingImages = editingSneaker?.existingImages || [];
+    const newImages = sneakerData.images || [];
+
+    const combinedImages = existingImages.length > 0
+      ? [...existingImages, ...newImages]
+      : newImages;
+
+    let mergedData = { ...sneakerData, images: combinedImages };
+
     const nextSneaker = editingSneaker
       ? {
         ...editingSneaker,
-        ...sneakerData,
-        id: getSneakerKey({ ...editingSneaker, ...sneakerData }) || fallbackId,
+        ...mergedData,
+        id: getSneakerKey({ ...editingSneaker, ...mergedData }) || fallbackId,
       }
       : {
-        ...sneakerData,
-        id: getSneakerKey(sneakerData) || fallbackId,
+        ...mergedData,
+        id: getSneakerKey(mergedData) || fallbackId,
       };
 
-    const nextSneakers = editingSneaker
+    if (nextSneaker.existingImages !== undefined) {
+      delete nextSneaker.existingImages;
+    }
+
+    const isAlreadyInOrder = editingSneaker && sneakers.some(s => getSneakerKey(s) === getSneakerKey(editingSneaker));
+
+    const nextSneakers = isAlreadyInOrder
       ? sneakers.map((s) =>
         getSneakerKey(s) === getSneakerKey(editingSneaker) ? nextSneaker : s
       )
@@ -304,12 +321,15 @@ function BookingWizard() {
       return;
     }
 
-    const nextSneaker = { ...sneaker, id: sneakerId };
-    const nextSneakers = [...sneakers, nextSneaker];
+    const sneakerForOrder = {
+      ...sneaker,
+      id: sneakerId,
+      existingImages: sneaker.images || [],
+      images: []
+    };
 
-    setSneakers(nextSneakers);
+    setEditingSneaker(sneakerForOrder);
     setReturningToManage(false);
-    startReviewFlow(nextSneakers, [sneakerId]);
   };
 
   const handleStartAddingNewSneaker = () => {
@@ -408,9 +428,14 @@ function BookingWizard() {
                   }}
                   onPrev={() => {
                     if (customerID && editingSneaker) {
+                      const isAlreadyInOrder = sneakers.some(s => getSneakerKey(s) === getSneakerKey(editingSneaker));
                       setEditingSneaker(null);
                       setReturningToManage(false);
-                      setStep(5);
+                      if (isAlreadyInOrder) {
+                        setStep(5);
+                      } else {
+                        setIsAddingNew(false);
+                      }
                       return;
                     }
                     if (customerID && isAddingNew) {
