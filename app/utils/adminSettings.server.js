@@ -4,9 +4,27 @@ const DEFAULT_SETTINGS_KEY = "default";
 
 // Default values for all settings
 const DEFAULT_CLEANING_TIERS = [
-  { id: 'standard', label: 'Standard Cleaning', price: 25, shippingCredit: false },
-  { id: 'deep', label: 'Deep Cleaning', price: 45, shippingCredit: true },
-  { id: 'extreme', label: 'Extreme Cleaning', price: 70, shippingCredit: true },
+  {
+    id: 'standard',
+    label: 'Gold Standard',
+    price: 25,
+    shippingCredit: false,
+    description: 'Their premium is our standard. This is for those looking to remove everyday stains. This includes a detailed cleaning of the upper and midsole, along with a standard outsole cleaning to remove everyday dirt and buildup. A strong option for routine maintenance and keeping your footwear looking sharp.'
+  },
+  {
+    id: 'deep',
+    label: 'Platinum Deep Clean',
+    price: 45,
+    shippingCredit: true,
+    description: 'A more detailed cleaning for shoes that need extra attention. This includes everything in the Gold Standard service, plus a deeper outsole cleaning, interior cleaning, and careful detail work around seams, edges, grooves, and hard-to-reach areas. Best for footwear with heavier wear, deeper buildup, or areas that need a more focused touch.'
+  },
+  {
+    id: 'extreme',
+    label: 'Diamond Restoration',
+    price: 70,
+    shippingCredit: true,
+    description: 'Our most complete cleaning package for footwear that needs the highest level of care. This includes a full deep clean, interior and exterior detailing, sanitization, deodorization, and sole whitening. Best for shoes that need a full reset, especially pairs with odor, yellowing, heavier wear, or visible aging.'
+  },
 ];
 
 const DEFAULT_ADD_ONS = [

@@ -7,6 +7,7 @@ export let ADD_ONS = [];
 
 function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServiceChange }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [hoveredTierId, setHoveredTierId] = useState(null);
 
   useEffect(() => {
     fetchAdminSettings()
@@ -98,19 +99,52 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
             <p className="sneaker-card__section-label">Cleaning Tier</p>
             <div className="tier-options">
               {SERVICE_TIERS.map((tier) => (
-                <label key={tier.id} className="tier-option">
-                  <input
-                    type="radio"
-                    name={`tier-${sneaker.id}`}
-                    value={tier.id}
-                    checked={serviceSelection?.tier === tier.id}
-                    onChange={() => handleTierChange(tier.id)}
-                  />
-                  <span className="tier-option__label">
-                    {tier.label}
-                    <span className="tier-option__price"> (from ${tier.price})</span>
-                  </span>
-                </label>
+                <div key={tier.id} className="tier-option-wrapper">
+                  <label className="tier-option">
+                    <input
+                      type="radio"
+                      name={`tier-${sneaker.id}`}
+                      value={tier.id}
+                      checked={serviceSelection?.tier === tier.id}
+                      onChange={() => handleTierChange(tier.id)}
+                    />
+                    <span className="tier-option__label">
+                      {tier.label}
+                      <span className="tier-option__price"> (from ${tier.price})</span>
+                    </span>
+                  </label>
+                  {tier.description && (
+                    <div
+                      className="tier-info-icon"
+                      onMouseEnter={() => setHoveredTierId(tier.id)}
+                      onMouseLeave={() => setHoveredTierId(null)}
+                      onClick={() => setHoveredTierId(hoveredTierId === tier.id ? null : tier.id)}
+                      role="button"
+                      tabIndex="0"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#000000"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                      </svg>
+                      {hoveredTierId === tier.id && (
+                        <div className="tier-tooltip">
+                          {tier.description}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

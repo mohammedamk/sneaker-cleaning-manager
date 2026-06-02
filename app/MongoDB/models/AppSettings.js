@@ -13,7 +13,8 @@ const appSettingsSchema = mongoose.Schema({
         id: { type: String, required: true },
         label: { type: String, required: true },
         price: { type: Number, required: true },
-        shippingCredit: { type: Boolean, default: false }
+        shippingCredit: { type: Boolean, default: false },
+        description: { type: String, default: '' }
     }],
 
     // Add-ons

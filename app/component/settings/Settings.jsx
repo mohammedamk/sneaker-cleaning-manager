@@ -1,5 +1,194 @@
 import { useEffect, useState } from "react";
 
+// Component for editing cleaning tiers with descriptions
+function EditableCleaningTiersComponent({ items, onSave }) {
+    const [localItems, setLocalItems] = useState(items || []);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newItem, setNewItem] = useState({ id: '', label: '', price: 0, shippingCredit: false, description: '' });
+
+    const handleAddItem = () => {
+        if (!newItem.id || !newItem.label) return;
+        const item = {
+            id: newItem.id.toLowerCase().replace(/\s+/g, '_'),
+            label: newItem.label,
+            price: Number(newItem.price),
+            shippingCredit: Boolean(newItem.shippingCredit),
+            description: newItem.description || ''
+        };
+        setLocalItems([...localItems, item]);
+        setNewItem({ id: '', label: '', price: 0, shippingCredit: false, description: '' });
+    };
+
+    const handleRemoveItem = (id) => {
+        setLocalItems(localItems.filter(item => item.id !== id));
+    };
+
+    const handleUpdateItem = (index, field, value) => {
+        const updated = [...localItems];
+        if (field === 'price') {
+            updated[index] = { ...updated[index], [field]: Number(value) };
+        } else if (field === 'shippingCredit') {
+            updated[index] = { ...updated[index], [field]: Boolean(value) };
+        } else {
+            updated[index] = { ...updated[index], [field]: value };
+        }
+        setLocalItems(updated);
+    };
+
+    const handleSave = () => {
+        onSave(localItems);
+        setIsEditing(false);
+    };
+
+    return (
+        <div style={{ marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h4>Cleaning Tiers</h4>
+                <s-button size="small" onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? 'Cancel' : 'Edit'}
+                </s-button>
+            </div>
+
+            {!isEditing && (
+                <div style={{ display: 'grid', gap: '10px' }}>
+                    {localItems.map(item => (
+                        <div key={item.id} style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                            <div style={{ fontWeight: 'bold' }}>{item.label}</div>
+                            <div style={{ fontSize: '0.9em', color: '#666', marginTop: '4px' }}>
+                                <div>Price: ${item.price.toFixed(2)}</div>
+                                <div>Shipping Credit Eligible: {item.shippingCredit ? 'Yes' : 'No'}</div>
+                                {item.description && (
+                                    <div style={{ marginTop: '8px', fontStyle: 'italic', borderLeft: '3px solid #ddd', paddingLeft: '8px' }}>
+                                        {item.description}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                    {localItems.length === 0 && <s-text tone="subdued">No items configured</s-text>}
+                </div>
+            )}
+
+            {isEditing && (
+                <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                    <div style={{ display: 'grid', gap: '10px', marginBottom: '15px' }}>
+                        {localItems.map((item, index) => (
+                            <div key={item.id} style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr) auto auto', gap: '10px', marginBottom: '10px', alignItems: 'end' }}>
+                                    <s-text-field
+                                        label="Label"
+                                        value={item.label}
+                                        onInput={(e) => handleUpdateItem(index, 'label', e.currentTarget.value)}
+                                    />
+                                    <s-text-field
+                                        type="number"
+                                        label="Price"
+                                        value={String(item.price)}
+                                        step="0.01"
+                                        min="0"
+                                        onInput={(e) => handleUpdateItem(index, 'price', e.currentTarget.value)}
+                                    />
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px' }}>
+                                        <input
+                                            type="checkbox"
+                                            id={`shipping-credit-${item.id}`}
+                                            checked={item.shippingCredit || false}
+                                            onChange={(e) => handleUpdateItem(index, 'shippingCredit', e.target.checked)}
+                                        />
+                                        <label htmlFor={`shipping-credit-${item.id}`} style={{ margin: 0, cursor: 'pointer' }}>
+                                            Shipping Credit
+                                        </label>
+                                    </div>
+                                    <s-button variant="destructive" size="small" onClick={() => handleRemoveItem(item.id)}>
+                                        Remove
+                                    </s-button>
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9em' }}>Description</label>
+                                    <textarea
+                                        value={item.description || ''}
+                                        onChange={(e) => handleUpdateItem(index, 'description', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            minHeight: '80px',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ccc',
+                                            fontFamily: 'inherit',
+                                            fontSize: '0.9em'
+                                        }}
+                                        placeholder="Enter description for this cleaning tier..."
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ padding: '15px', backgroundColor: '#fff', borderRadius: '4px', marginBottom: '15px', border: '1px solid #ddd' }}>
+                        <h5 style={{ marginTop: 0 }}>Add New Tier</h5>
+                        <div style={{ display: 'grid', gap: '10px' }}>
+                            <s-text-field
+                                label="ID"
+                                placeholder="e.g., standard"
+                                value={newItem.id}
+                                onInput={(e) => setNewItem({ ...newItem, id: e.currentTarget.value })}
+                            />
+                            <s-text-field
+                                label="Label"
+                                placeholder="e.g., Gold Standard"
+                                value={newItem.label}
+                                onInput={(e) => setNewItem({ ...newItem, label: e.currentTarget.value })}
+                            />
+                            <s-text-field
+                                type="number"
+                                label="Price"
+                                placeholder="0.00"
+                                step="0.01"
+                                min="0"
+                                value={String(newItem.price)}
+                                onInput={(e) => setNewItem({ ...newItem, price: e.currentTarget.value })}
+                            />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <input
+                                    type="checkbox"
+                                    id="shipping-credit-new"
+                                    checked={newItem.shippingCredit || false}
+                                    onChange={(e) => setNewItem({ ...newItem, shippingCredit: e.target.checked })}
+                                />
+                                <label htmlFor="shipping-credit-new" style={{ margin: 0, cursor: 'pointer' }}>
+                                    Shipping Credit Eligible
+                                </label>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Description</label>
+                                <textarea
+                                    value={newItem.description}
+                                    onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '80px',
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #ccc',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    placeholder="Enter description for this cleaning tier..."
+                                />
+                            </div>
+                            <s-button onClick={handleAddItem}>Add Tier</s-button>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                        <s-button onClick={() => setIsEditing(false)}>Cancel</s-button>
+                        <s-button variant="primary" onClick={handleSave}>Save Changes</s-button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 // Component for editing a list of items with id, label, and price
 function EditableItemList({ items, onSave, title, fields = ['label', 'price'] }) {
     const [localItems, setLocalItems] = useState(items || []);
@@ -588,14 +777,12 @@ export default function Settings() {
                             </s-text>
 
                             <div style={{ marginTop: '20px' }}>
-                                <EditableItemList
+                                <EditableCleaningTiersComponent
                                     items={cleaningTiers}
                                     onSave={(tiers) => {
                                         setCleaningTiers(tiers);
                                         handleSaveCleaningTiers(tiers);
                                     }}
-                                    title="Cleaning Tiers"
-                                    fields={['label', 'price', 'shippingCredit']}
                                 />
                             </div>
 
