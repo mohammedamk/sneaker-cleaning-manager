@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import { fetchAdminSettings } from '../../../utils/adminSettings.js';
+import { SNEAKER_PLACEHOLDER_SRC } from '../../../utils/assets.js';
 import './SummaryStep.css';
 
 function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreementsChange, onNext, onPrev }) {
@@ -49,18 +50,24 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
     return (
       <div className="summary-row">
         <div className="summary-row__sneaker">
-          {sneakerImages.length > 0 && (
-            <div className="summary-row__images">
-              {sneakerImages.map((imageSrc, index) => (
+          <div className="summary-row__images">
+            {sneakerImages.length > 0 ? (
+              sneakerImages.map((imageSrc, index) => (
                 <img
                   key={`${sneaker.id || sneaker.nickname || 'footwear'}-${index}`}
                   src={imageSrc}
                   alt={`${sneaker.nickname || 'Footwear'} ${index + 1}`}
                   className="summary-row__image"
                 />
-              ))}
-            </div>
-          )}
+              ))
+            ) : (
+              <img
+                src={SNEAKER_PLACEHOLDER_SRC}
+                alt=""
+                className="summary-row__image summary-row__image--placeholder"
+              />
+            )}
+          </div>
           <strong>{sneaker.nickname}</strong>
           {sneaker.brand && (
             <span className="summary-row__details">

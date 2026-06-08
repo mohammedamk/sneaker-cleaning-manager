@@ -1,31 +1,50 @@
 import React from 'react';
 import './StepIndicator.css';
 
-const STEP_LABELS = [
-  'Account', 'Footwears', 'History', 'Notes', 'Review',
-  'Services', 'Summary', 'Handoff', 'Done',
+// Maps each visual step to the internal wizard step range it covers
+const VISUAL_STEPS = [
+  { label: 'Account',  internalRange: [1, 1],   targetStep: 1 },
+  { label: 'Footwear', internalRange: [2, 4],   targetStep: 2 },
+  { label: 'Review',   internalRange: [5, 5],   targetStep: 5 },
+  { label: 'Services', internalRange: [6, 6],   targetStep: 6 },
+  { label: 'Summary',  internalRange: [7, 10],  targetStep: 7 },
 ];
 
-function StepIndicator({ currentStep, totalSteps = 10 }) {
-  const steps = STEP_LABELS.slice(0, totalSteps);
-
+function StepIndicator({ currentStep, highestReachedStep = 1, onStepClick }) {
   return (
     <nav className="stepper-container">
       <ol className="stepper">
-        {steps.map((label, index) => {
-          const stepNumber = index + 1;
-          const isCompleted = stepNumber < currentStep;
-          const isActive = stepNumber === currentStep;
+        {VISUAL_STEPS.map((vs, index) => {
+          const [rangeStart, rangeEnd] = vs.internalRange;
+          const isActive    = currentStep >= rangeStart && currentStep <= rangeEnd;
+          const isCompleted = currentStep > rangeEnd;
+          const isClickable = Boolean(onStepClick) && highestReachedStep >= vs.targetStep;
 
           return (
             <li
-              key={stepNumber}
-              className={`stepper__item ${isCompleted || currentStep === 9 ? 'is-completed' : ''} ${isActive ? 'is-active' : ''}`}
+              key={vs.label}
+              className={[
+                'stepper__item',
+                isCompleted ? 'is-completed' : '',
+                isActive    ? 'is-active'    : '',
+                isClickable ? 'is-clickable' : '',
+              ].filter(Boolean).join(' ')}
+              onClick={isClickable ? () => onStepClick(vs.targetStep) : undefined}
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
+              onKeyDown={isClickable ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onStepClick(vs.targetStep);
+                }
+              } : undefined}
             >
               <div className="stepper__icon">
-                {isCompleted || currentStep === 9 ? <span className="stepper__check">✓</span> : stepNumber}
+                {isCompleted
+                  ? <span className="stepper__check">✓</span>
+                  : (index + 1)}
               </div>
-              <span className="stepper__label">{label}</span>
+              <span className="stepper__label">{vs.label}</span>
             </li>
           );
         })}

@@ -30,13 +30,12 @@ function LandingStep({ onStart, customerID, onViewShoeRack, onViewBookings, onVi
       <div className="landing-step__content">
         <h1 className="landing-step__title">Professional Footwear Cleaning</h1>
         <p className="landing-step__description">
-          Give your footwear the care they deserve. Our expert cleaning service handles everything
-          from everyday grime to deep restoration — tailored specifically to your footwear.
+          Give your footwear the care they deserve. Our expert cleaning professionals handle everything from everyday grime to deep restoration - tailored specifically to your footwear.
         </p>
         <ul className="landing-step__features">
           <li>Multiple cleaning tiers available</li>
           <li>Optional add-on services</li>
-          <li>Drop-off or shipping options</li>
+          <li>Multiple hand-off options</li>
           <li>Final price confirmed after inspection</li>
         </ul>
         <div className="landing-step__actions">

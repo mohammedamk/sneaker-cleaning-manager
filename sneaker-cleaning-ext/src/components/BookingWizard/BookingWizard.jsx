@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchAdminSettings } from '../../utils/adminSettings.js';
 import StepIndicator from '../shared/StepIndicator/StepIndicator.jsx';
+import React from 'react';
 import './BookingWizard.css';
 
 import LandingStep from '../steps/LandingStep/LandingStep.jsx';
@@ -92,6 +93,12 @@ const DEFAULT_SHIPPING_SELECTION = {
   },
 };
 
+const FOOTWEAR_SUB_STEPS = [
+  { label: 'Details', internalStep: 2 },
+  { label: 'History', internalStep: 3 },
+  { label: 'Notes',   internalStep: 4 },
+];
+
 function BookingWizard() {
   const [customerID] = useState(() => getCustomerID());
   const [hasSecureBookingParams] = useState(() => {
@@ -109,7 +116,14 @@ function BookingWizard() {
 
   // navigation within the wizard
   const [step, setStep] = useState(1);
+  const [highestReachedStep, setHighestReachedStep] = useState(1);
   const [isAddingNew, setIsAddingNew] = useState(false);
+
+  // Track the furthest step the user has reached so we know which tabs are clickable
+  useEffect(() => {
+    setHighestReachedStep(prev => Math.max(prev, step));
+  }, [step]);
+
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const goPrev = () => {
     if (step === 1) {
@@ -162,6 +176,28 @@ function BookingWizard() {
     ? adminSettings.shippingBoxLibrary.reduce((max, box) => Math.max(max, box.sneakerQuantity), 0)
     : 10;
 
+  const handleStepClick = (targetInternalStep) => {
+    if (targetInternalStep > highestReachedStep) return;
+
+    let actualTarget = targetInternalStep;
+
+    // "Footwear" tab (target=2): once the user has moved past the sub-steps,
+    // jump to the review list (step 5) rather than the blank registration form.
+    if (targetInternalStep === 2 && highestReachedStep >= 5) {
+      actualTarget = 5;
+    }
+
+    // When landing on the review list, clear any in-progress sub-step state.
+    if (actualTarget === 5) {
+      setEditingSneaker(null);
+      setIsAddingNew(false);
+      setReviewQueue([]);
+      setCurrentReviewSneakerId(null);
+    }
+
+    setStep(actualTarget);
+  };
+
   const showLimitToast = () => {
     toast.warning(`A maximum of ${maxSneakerPairs} footwear pairs is allowed per booking.`);
   };
@@ -197,12 +233,10 @@ function BookingWizard() {
 
     const fallbackId = createLocalSneakerId();
 
-    const existingImages = editingSneaker?.existingImages || [];
     const newImages = sneakerData.images || [];
 
-    const combinedImages = existingImages.length > 0
-      ? [...existingImages, ...newImages]
-      : newImages;
+    // Only use images uploaded in this booking session — never pull in previously saved images.
+    const combinedImages = newImages;
 
     let mergedData = { ...sneakerData, images: combinedImages };
 
@@ -360,7 +394,33 @@ function BookingWizard() {
   return (
     <div className="booking-wizard">
       {showIndicator && (
-        <StepIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
+        <StepIndicator
+          currentStep={step}
+          highestReachedStep={highestReachedStep}
+          onStepClick={handleStepClick}
+        />
+      )}
+
+      {/* Sub-step progress bar visible while moving through the Footwear stage */}
+      {currentView === 'wizard' && step >= 2 && step <= 4 && (
+        <div className="booking-wizard__footwear-substeps">
+          <span className="booking-wizard__footwear-stage-label">Footwear:</span>
+          {FOOTWEAR_SUB_STEPS.map((ss, i) => (
+            <React.Fragment key={ss.label}>
+              {i > 0 && <span className="booking-wizard__substep-sep" aria-hidden="true">›</span>}
+              <span
+                className={[
+                  'booking-wizard__substep',
+                  step === ss.internalStep ? 'booking-wizard__substep--active' : '',
+                  step > ss.internalStep  ? 'booking-wizard__substep--done'   : '',
+                ].filter(Boolean).join(' ')}
+              >
+                {step > ss.internalStep && <span aria-hidden="true">✓ </span>}
+                {ss.label}
+              </span>
+            </React.Fragment>
+          ))}
+        </div>
       )}
 
       <div className="booking-wizard__body">

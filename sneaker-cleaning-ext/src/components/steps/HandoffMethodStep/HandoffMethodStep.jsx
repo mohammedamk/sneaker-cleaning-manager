@@ -343,18 +343,24 @@ By shipping your footwear, you acknowledge that you are responsible for followin
       const sneakersWithImageRefs = await Promise.all(
         bookingData.sneakers.map(async (sneaker) => {
           const images = await Promise.all(
-            (sneaker.images || []).map((img) => {
-              if (typeof img === 'string') return Promise.resolve(img);
-              if (img?.id) return Promise.resolve(img.id);
-              if (!img?.file) return Promise.resolve('');
+            (sneaker.images || [])
+              // Strip the UI-only placeholder — it must never reach the API
+              .filter((img) => {
+                const src = typeof img === 'string' ? img : (img?.preview || img?.url || '');
+                return !src.includes('images/sneaker-placeholder.png');
+              })
+              .map((img) => {
+                if (typeof img === 'string') return Promise.resolve(img);
+                if (img?.id) return Promise.resolve(img.id);
+                if (!img?.file) return Promise.resolve('');
 
-              return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(img.file);
-              });
-            }),
+                return new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => resolve(reader.result);
+                  reader.onerror = reject;
+                  reader.readAsDataURL(img.file);
+                });
+              }),
           );
 
           return {

@@ -12,7 +12,7 @@ const EMPTY_SNEAKER = {
   model: '',
   colorway: '',
   size: '',
-  sizeUnit: 'US',
+  sizeUnit: '',
   images: [],
 };
 
@@ -34,7 +34,6 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
   const [form, setForm] = useState(initial);
   const [isSaving, setIsSaving] = useState(false);
 
-  // syncing form if editingSneaker changes while component is mounted
   React.useEffect(() => {
     setForm(initial);
   }, [initial]);
@@ -43,13 +42,22 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
 
   const setField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+    // sizeUnit and size share the same error row — clear both when either changes
+    if (field === 'sizeUnit' || field === 'size') {
+      setErrors((prev) => ({ ...prev, sizeUnit: '', size: '' }));
+    } else if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!form.nickname.trim()) newErrors.nickname = 'Footwear nickname is required.';
-    if (form.images.length === 0) newErrors.images = 'Please upload at least one image.';
+    if (!form.nickname.trim())            newErrors.nickname  = 'Footwear nickname is required.';
+    if (!form.brand.trim())               newErrors.brand     = 'Brand is required.';
+    if (!form.model.trim())               newErrors.model     = 'Model is required.';
+    if (!form.colorway.trim())            newErrors.colorway  = 'Colorway is required.';
+    if (!form.sizeUnit)                   newErrors.sizeUnit  = 'Please select a size type.';
+    if (!String(form.size).trim())        newErrors.size      = 'Size is required.';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -84,7 +92,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
           />
         </FormField>
 
-        <FormField label="Brand">
+        <FormField label="Brand" required error={errors.brand}>
           <input
             className="input"
             type="text"
@@ -94,7 +102,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
           />
         </FormField>
 
-        <FormField label="Model">
+        <FormField label="Model" required error={errors.model}>
           <input
             className="input"
             type="text"
@@ -104,7 +112,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
           />
         </FormField>
 
-        <FormField label="Colorway">
+        <FormField label="Colorway" required error={errors.colorway}>
           <input
             className="input"
             type="text"
@@ -114,17 +122,16 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
           />
         </FormField>
 
-        <FormField label="Size">
+        <FormField label="Size" required error={errors.sizeUnit || errors.size}>
           <div className="size-selector">
             <select
               className="select"
               value={form.sizeUnit}
               onChange={(e) => setField('sizeUnit', e.target.value)}
             >
+              <option value="" disabled>Select Type</option>
               {SIZE_UNITS.map((unit) => (
-                <option key={unit} value={unit}>
-                  {unit}
-                </option>
+                <option key={unit} value={unit}>{unit}</option>
               ))}
             </select>
             <input
@@ -140,7 +147,7 @@ function ShoeRackSneakerStep({ editingSneaker, onSave, onCancel }) {
           </div>
         </FormField>
 
-        <FormField label="Footwear Photos" required error={errors.images}>
+        <FormField label="Footwear Photos">
           <ImageUploader
             images={form.images}
             onImagesChange={(imgs) => setField('images', imgs)}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SneakerCard.css';
 import { fetchAdminSettings } from '../../../utils/adminSettings.js';
+import { SNEAKER_PLACEHOLDER_SRC } from '../../../utils/assets.js';
 
 export let SERVICE_TIERS = [];
 export let ADD_ONS = [];
@@ -59,27 +60,37 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
               Size: {sneaker.size} ({sneaker.sizeUnit})
             </span>
           )}
-          {sneaker.images && sneaker.images.length > 0 && (
-            <div className="sneaker-card__thumbnails">
-              {sneaker.images.slice(0, 3).map((img, i) => (
-                getImageSrc(img) ? (
-                  <img
-                    key={i}
-                    src={getImageSrc(img)}
-                    alt={`${sneaker.nickname} ${i + 1}`}
-                    className="sneaker-card__thumbnail"
-                  />
-                ) : (
-                  <div key={i} className="sneaker-card__thumbnail sneaker-card__thumbnail--placeholder">
-                    Processing
-                  </div>
-                )
-              ))}
-              {sneaker.images.length > 3 && (
-                <span className="sneaker-card__more-images">+{sneaker.images.length - 3}</span>
-              )}
-            </div>
-          )}
+          <div className="sneaker-card__thumbnails">
+            {sneaker.images && sneaker.images.length > 0 ? (
+              <>
+                {sneaker.images.slice(0, 3).map((img, i) => (
+                  getImageSrc(img) ? (
+                    <img
+                      key={i}
+                      src={getImageSrc(img)}
+                      alt={`${sneaker.nickname} ${i + 1}`}
+                      className="sneaker-card__thumbnail"
+                    />
+                  ) : (
+                    <div key={i} className="sneaker-card__thumbnail sneaker-card__thumbnail--placeholder">
+                      Processing
+                    </div>
+                  )
+                ))}
+                {sneaker.images.length > 3 && (
+                  <span className="sneaker-card__more-images">+{sneaker.images.length - 3}</span>
+                )}
+              </>
+            ) : (
+              <div className="sneaker-card__thumbnail--no-photo">
+                <img
+                  src={SNEAKER_PLACEHOLDER_SRC}
+                  alt=""
+                  className="sneaker-card__no-photo-icon"
+                />
+              </div>
+            )}
+          </div>
         </div>
         {mode === 'manage' && (
           <div className="sneaker-card__actions">

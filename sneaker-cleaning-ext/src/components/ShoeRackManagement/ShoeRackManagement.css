@@ -333,6 +333,14 @@
     border: 1px dashed #d2d2d2;
 }
 
+.table-img--no-photo {
+    object-fit: contain;
+    background: #f3f4f6;
+    border-radius: 50%;
+    padding: 6px;
+    border: none;
+}
+
 @media (max-width: 600px) {
     .table-img--placeholder,
     .table-img--empty {

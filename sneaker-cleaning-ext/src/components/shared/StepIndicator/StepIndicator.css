@@ -1,95 +1,27 @@
-:root {
-    --primary-color: #1a1a1a;
-    --bg-done: #eff6ff;
-    --border-color: #e5e7eb;
-    --text-muted: #6b7280;
-    --transition-speed: 0.3s;
-}
+/* All selectors scoped under #sneaker-cleaning-ext-parent to prevent Shopify theme interference */
 
-.stepper-container {
+#sneaker-cleaning-ext-parent .stepper-container {
     width: 100%;
-    padding: 2rem 1rem;
+    padding: 1.5rem 2rem 1.75rem;
     overflow-x: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    border: 1px solid #f0f0f0;
+    box-sizing: border-box;
 }
 
-.stepper {
+#sneaker-cleaning-ext-parent .stepper {
     display: flex;
     justify-content: space-between;
     list-style: none;
     margin: 0;
     padding: 0;
-    min-width: 800px;
+    min-width: 600px;
 }
 
-@media (max-width: 768px) {
-    .stepper-container {
-        padding: 1.5rem 0.5rem;
-        margin-bottom: 16px;
-    }
-
-    .stepper {
-        min-width: 600px;
-    }
-}
-
-@media (max-width: 600px) {
-    .stepper-container {
-        padding: 1rem 0.25rem;
-        margin-bottom: 16px;
-    }
-
-    .stepper {
-        min-width: 400px;
-        gap: 1rem;
-    }
-
-    .stepper__item {
-        flex: 0 0 auto;
-    }
-
-    .stepper__item::before {
-        display: none;
-    }
-
-    .stepper__icon {
-        width: 2.4rem;
-        height: 2.4rem;
-        font-size: 0.9rem;
-    }
-
-    .stepper__label {
-        font-size: 0.8rem;
-        margin-top: 0.5rem;
-        text-align: center;
-        max-width: 120px;
-    }
-}
-
-@media (max-width: 480px) {
-    .stepper-container {
-        padding: 0.75rem 0;
-        margin-bottom: 16px;
-    }
-
-    .stepper {
-        min-width: 300px;
-        gap: 0.75rem;
-    }
-
-    .stepper__icon {
-        width: 2rem;
-        height: 2rem;
-        font-size: 0.8rem;
-    }
-
-    .stepper__label {
-        font-size: 0.75rem;
-        margin-top: 0.4rem;
-        max-width: 100px;
-    }
-}
-
-.stepper__item {
+#sneaker-cleaning-ext-parent .stepper__item {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -97,69 +29,196 @@
     flex: 1;
 }
 
-.stepper__item::before {
+/* Connector line between steps */
+#sneaker-cleaning-ext-parent .stepper__item::before {
     content: "";
     position: absolute;
-    top: 1.25rem;
-    left: -50%;
-    right: 50%;
+    top: 1.375rem;
+    left: calc(-50% + 1.375rem);
+    right: calc(50% + 1.375rem);
     height: 2px;
-    background-color: var(--border-color);
+    background-color: #e5e7eb;
     z-index: 1;
-    transition: background-color var(--transition-speed);
+    transition: background-color 0.3s;
 }
 
-.stepper__item:first-child::before {
+#sneaker-cleaning-ext-parent .stepper__item:first-child::before {
     content: none;
 }
 
-.stepper__icon {
+#sneaker-cleaning-ext-parent .stepper__icon {
     position: relative;
     z-index: 2;
-    width: 2.8rem;
-    height: 2.8rem;
-    background-color: #fff;
-    border: 2px solid var(--border-color);
+    width: 2.75rem;
+    height: 2.75rem;
+    background-color: #ffffff;
+    border: 2px solid #e5e7eb;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    color: var(--text-muted);
-    transition: all var(--transition-speed) ease;
-}
-
-.stepper__label {
-    margin-top: .75rem;
-    font-size: .95rem;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    font-weight: 500;
-    color: var(--text-muted);
-}
-
-.stepper__item.is-active .stepper__icon {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 0 0 4px var(--bg-done);
-}
-
-.stepper__item.is-active .stepper__label {
-    color: var(--primary-color);
     font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1;
+    color: #9ca3af;
+    transition: all 0.25s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-.stepper__item.is-completed .stepper__icon {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
+#sneaker-cleaning-ext-parent .stepper__label {
+    margin-top: 0.625rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    color: #9ca3af;
+    text-align: center;
+    line-height: 1.3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    white-space: nowrap;
 }
 
-.stepper__item.is-completed::before,
-.stepper__item.is-active::before {
-    background-color: var(--primary-color);
+/* ── Active State ─────────────────────────────────── */
+#sneaker-cleaning-ext-parent .stepper__item.is-active .stepper__icon {
+    border-color: #1a1a1a;
+    border-width: 2.5px;
+    color: #1a1a1a;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 5px rgba(26, 26, 26, 0.09);
 }
 
-.stepper__check {
-    font-size: 1.5rem;
+#sneaker-cleaning-ext-parent .stepper__item.is-active .stepper__label {
+    color: #1a1a1a;
+    font-weight: 800;
+}
+
+/* ── Completed State ──────────────────────────────── */
+#sneaker-cleaning-ext-parent .stepper__item.is-completed .stepper__icon {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+#sneaker-cleaning-ext-parent .stepper__item.is-completed .stepper__label {
+    color: #6b7280;
+}
+
+/* Filled connector line for completed/active steps */
+#sneaker-cleaning-ext-parent .stepper__item.is-completed::before,
+#sneaker-cleaning-ext-parent .stepper__item.is-active::before {
+    background-color: #1a1a1a;
+}
+
+#sneaker-cleaning-ext-parent .stepper__check {
+    font-size: 1.1rem;
+    line-height: 1;
+    font-style: normal;
+}
+
+/* ── Clickable / Navigable Steps ─────────────────── */
+#sneaker-cleaning-ext-parent .stepper__item.is-clickable {
+    cursor: pointer;
+}
+
+#sneaker-cleaning-ext-parent .stepper__item.is-clickable:not(.is-active):hover .stepper__icon {
+    border-color: #555555;
+    color: #555555;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+}
+
+#sneaker-cleaning-ext-parent .stepper__item.is-clickable.is-completed:hover .stepper__icon {
+    background-color: #333333;
+    border-color: #333333;
+}
+
+#sneaker-cleaning-ext-parent .stepper__item.is-clickable:not(.is-active):hover .stepper__label {
+    color: #444444;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 1024px) {
+    #sneaker-cleaning-ext-parent .stepper-container {
+        padding: 1.25rem 1.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #sneaker-cleaning-ext-parent .stepper-container {
+        padding: 1rem 1rem 1.25rem;
+        margin-bottom: 14px;
+        border-radius: 10px;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.85rem;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__item::before {
+        top: 1.25rem;
+        left: calc(-50% + 1.25rem);
+        right: calc(50% + 1.25rem);
+    }
+}
+
+@media (max-width: 600px) {
+    #sneaker-cleaning-ext-parent .stepper-container {
+        padding: 0.875rem 0.75rem 1.125rem;
+        margin-bottom: 12px;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper {
+        min-width: 420px;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 0.82rem;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__label {
+        font-size: 0.7rem;
+        margin-top: 0.5rem;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__item::before {
+        top: 1.125rem;
+        left: calc(-50% + 1.125rem);
+        right: calc(50% + 1.125rem);
+    }
+}
+
+@media (max-width: 480px) {
+    #sneaker-cleaning-ext-parent .stepper-container {
+        padding: 0.75rem 0.5rem 1rem;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper {
+        min-width: 340px;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__icon {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.78rem;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__label {
+        font-size: 0.66rem;
+        margin-top: 0.4rem;
+        letter-spacing: 0.05em;
+    }
+
+    #sneaker-cleaning-ext-parent .stepper__item::before {
+        top: 1rem;
+        left: calc(-50% + 1rem);
+        right: calc(50% + 1rem);
+    }
 }

@@ -46,6 +46,12 @@ export const action = async ({ request }) => {
 
         if (!b64OrGid) continue;
 
+        // Reject UI-only placeholder and any relative/invalid image references
+        if (typeof b64OrGid === "string") {
+          if (b64OrGid.includes("images/sneaker-placeholder.png")) continue;
+          if (!b64OrGid.startsWith("gid://shopify/") && !b64OrGid.startsWith("data:image/") && !b64OrGid.startsWith("https://")) continue;
+        }
+
         if (typeof b64OrGid === "string" && b64OrGid.startsWith("gid://shopify/")) {
           uploadedImageIds.push(b64OrGid);
           continue;

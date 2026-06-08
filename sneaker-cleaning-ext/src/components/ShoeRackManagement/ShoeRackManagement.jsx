@@ -3,6 +3,7 @@ import './ShoeRackManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import ShoeRackSneakerStep from '../steps/ShoeRackSneakerStep/ShoeRackSneakerStep.jsx';
 import AppIcon from '../shared/AppIcon/AppIcon.jsx';
+import { SNEAKER_PLACEHOLDER_SRC } from '../../utils/assets.js';
 
 const IMAGE_POLL_INTERVAL_MS = 3000;
 
@@ -205,7 +206,7 @@ function ShoeRackManagement({ customerID, onBack }) {
                                             ) : snk.images && snk.images[0]?.url ? (
                                                 <img src={snk.images[0].url} alt={snk.nickname} className="table-img" />
                                             ) : (
-                                                <div className="table-img table-img--empty">No image</div>
+                                                <img src={SNEAKER_PLACEHOLDER_SRC} alt={snk.nickname || 'Footwear'} className="table-img table-img--no-photo" />
                                             )}
                                         </td>
                                         <td><strong>{snk.nickname}</strong></td>

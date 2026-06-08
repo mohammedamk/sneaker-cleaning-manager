@@ -39,20 +39,20 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 16px;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 20px 12px;
 }
 
 @media (max-width: 768px) {
   .app {
-    padding: 16px 12px;
+    padding: 12px 8px;
   }
 }
 
 @media (max-width: 480px) {
   .app {
-    padding: 12px 8px;
+    padding: 8px 6px;
   }
 }
 
