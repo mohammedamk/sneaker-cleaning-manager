@@ -62,25 +62,17 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
           )}
           <div className="sneaker-card__thumbnails">
             {sneaker.images && sneaker.images.length > 0 ? (
-              <>
-                {sneaker.images.slice(0, 3).map((img, i) => (
-                  getImageSrc(img) ? (
-                    <img
-                      key={i}
-                      src={getImageSrc(img)}
-                      alt={`${sneaker.nickname} ${i + 1}`}
-                      className="sneaker-card__thumbnail"
-                    />
-                  ) : (
-                    <div key={i} className="sneaker-card__thumbnail sneaker-card__thumbnail--placeholder">
-                      Processing
-                    </div>
-                  )
-                ))}
-                {sneaker.images.length > 3 && (
-                  <span className="sneaker-card__more-images">+{sneaker.images.length - 3}</span>
-                )}
-              </>
+              getImageSrc(sneaker.images[0]) ? (
+                <img
+                  src={getImageSrc(sneaker.images[0])}
+                  alt={sneaker.nickname}
+                  className="sneaker-card__thumbnail"
+                />
+              ) : (
+                <div className="sneaker-card__thumbnail sneaker-card__thumbnail--placeholder">
+                  Processing
+                </div>
+              )
             ) : (
               <div className="sneaker-card__thumbnail--no-photo">
                 <img

@@ -52,14 +52,11 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
         <div className="summary-row__sneaker">
           <div className="summary-row__images">
             {sneakerImages.length > 0 ? (
-              sneakerImages.map((imageSrc, index) => (
-                <img
-                  key={`${sneaker.id || sneaker.nickname || 'footwear'}-${index}`}
-                  src={imageSrc}
-                  alt={`${sneaker.nickname || 'Footwear'} ${index + 1}`}
-                  className="summary-row__image"
-                />
-              ))
+              <img
+                src={sneakerImages[0]}
+                alt={sneaker.nickname || 'Footwear'}
+                className="summary-row__image"
+              />
             ) : (
               <img
                 src={SNEAKER_PLACEHOLDER_SRC}

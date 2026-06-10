@@ -73,7 +73,12 @@ function SneakerRegistrationStep({ editingSneaker, onSave, onPrev }) {
       onPrev={onPrev}
       nextLabel="Save Footwear"
     >
-      <FormField label="Footwear Nickname" required error={errors.nickname}>
+      <FormField
+        label="Footwear Nickname"
+        required
+        error={errors.nickname}
+        tooltip="Give this pair a nickname so you can easily recognize it later. It helps everyone identify the footwear throughout the cleaning process. This can be anything simple like 'My Favorite AF1s' or 'Work Boots'."
+      >
         <input
           className="input"
           type="text"
@@ -103,7 +108,12 @@ function SneakerRegistrationStep({ editingSneaker, onSave, onPrev }) {
         />
       </FormField>
 
-      <FormField label="Colorway" required error={errors.colorway}>
+      <FormField
+        label="Colorway"
+        required
+        error={errors.colorway}
+        tooltip="Enter the official color combination name, such as 'Concrete', or describe the main colors, such as 'Grey and White'."
+      >
         <input
           className="input"
           type="text"

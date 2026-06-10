@@ -197,7 +197,7 @@ function ShoeRackManagement({ customerID, onBack }) {
                             ) : (
                                 sneakers.map(snk => (
                                     <tr key={snk._id}>
-                                        <td>
+                                        <td data-label="">
                                             {snk.imageProcessing ? (
                                                 <div className="table-img table-img--placeholder" aria-label="Footwear image is processing">
                                                     <span className="table-img__spinner" />
@@ -209,11 +209,11 @@ function ShoeRackManagement({ customerID, onBack }) {
                                                 <img src={SNEAKER_PLACEHOLDER_SRC} alt={snk.nickname || 'Footwear'} className="table-img table-img--no-photo" />
                                             )}
                                         </td>
-                                        <td><strong>{snk.nickname}</strong></td>
-                                        <td>{snk.brand} {snk.model}</td>
-                                        <td>{snk.colorway}</td>
-                                        <td>{snk.size} {snk.sizeUnit}</td>
-                                        <td>
+                                        <td data-label="Nickname"><strong>{snk.nickname}</strong></td>
+                                        <td data-label="Brand / Model">{snk.brand} {snk.model}</td>
+                                        <td data-label="Colorway">{snk.colorway}</td>
+                                        <td data-label="Size">{snk.size} {snk.sizeUnit}</td>
+                                        <td data-label="Actions">
                                             <div className="table-actions">
                                                 <button className="btn btn--small btn--secondary" onClick={() => handleEditClick(snk)}>Edit</button>
                                                 <button className="btn btn--small btn--danger" onClick={() => handleDelete(snk._id)}>Delete</button>
