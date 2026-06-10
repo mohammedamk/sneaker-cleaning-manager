@@ -5,16 +5,19 @@ import { SNEAKER_PLACEHOLDER_SRC } from '../../../utils/assets.js';
 
 export let SERVICE_TIERS = [];
 export let ADD_ONS = [];
+export let QUOTED_SERVICES = [];
 
 function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServiceChange }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredTierId, setHoveredTierId] = useState(null);
+  const [hoveredAddOnId, setHoveredAddOnId] = useState(null);
 
   useEffect(() => {
     fetchAdminSettings()
       .then(settings => {
         SERVICE_TIERS = settings.cleaningTiers || [];
         ADD_ONS = settings.addOns || [];
+        QUOTED_SERVICES = (settings.quotedServices || []).filter(s => s.enabled !== false);
         setIsLoading(false);
       })
       .catch(error => {
@@ -38,6 +41,14 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
       ? currentAddOns.filter((id) => id !== addOnId)
       : [...currentAddOns, addOnId];
     onServiceChange(sneaker.id, { ...serviceSelection, addOns: updated });
+  };
+
+  const handleQuotedServiceToggle = (serviceId) => {
+    const currentQuoted = serviceSelection?.quotedServices || [];
+    const updated = currentQuoted.includes(serviceId)
+      ? currentQuoted.filter((id) => id !== serviceId)
+      : [...currentQuoted, serviceId];
+    onServiceChange(sneaker.id, { ...serviceSelection, quotedServices: updated });
   };
 
   const isTierSelected = Boolean(serviceSelection?.tier);
@@ -118,31 +129,44 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
                   </label>
                   {tier.description && (
                     <div
-                      className="tier-info-icon"
+                      className="tier-info-group"
                       onMouseEnter={() => setHoveredTierId(tier.id)}
                       onMouseLeave={() => setHoveredTierId(null)}
                       onClick={() => setHoveredTierId(hoveredTierId === tier.id ? null : tier.id)}
                       role="button"
                       tabIndex="0"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#000000"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="16" x2="12" y2="12" />
-                        <line x1="12" y1="8" x2="12.01" y2="8" />
-                      </svg>
+                      <div className="tier-info-icon">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#000000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="16" x2="12" y2="12" />
+                          <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                      </div>
                       {hoveredTierId === tier.id && (
-                        <div className="tier-tooltip">
+                        <div className={`tier-tooltip${tier.learnMoreUrl ? ' tier-tooltip--clickable' : ''}`}>
                           {tier.description}
+                          {tier.learnMoreUrl && (
+                            <a
+                              href={tier.learnMoreUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="tier-tooltip__learn-more"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Learn More
+                            </a>
+                          )}
                         </div>
                       )}
                     </div>
@@ -162,33 +186,92 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
               )}
             </p>
 
-            <div
-              className={`addon-options ${!isTierSelected ? 'addon-options--disabled' : ''
-                }`}
-            >
+            <div className={`addon-options ${!isTierSelected ? 'addon-options--disabled' : ''}`}>
               {ADD_ONS.map((addon) => (
-                <label
-                  key={addon.id}
-                  className={`addon-option ${!isTierSelected ? 'addon-option--disabled' : ''
-                    }`}
-                >
-                  <input
-                    type="checkbox"
-                    disabled={!isTierSelected}
-                    checked={(serviceSelection?.addOns || []).includes(addon.id)}
-                    onChange={() => handleAddOnToggle(addon.id)}
-                  />
-
-                  <span className="addon-option__label">
-                    {addon.label}
-                    <span className="addon-option__price">
-                      (+${addon.price})
+                <div key={addon.id} className="addon-option-wrapper">
+                  <label className={`addon-option ${!isTierSelected ? 'addon-option--disabled' : ''}`}>
+                    <input
+                      type="checkbox"
+                      disabled={!isTierSelected}
+                      checked={(serviceSelection?.addOns || []).includes(addon.id)}
+                      onChange={() => handleAddOnToggle(addon.id)}
+                    />
+                    <span className="addon-option__label">
+                      {addon.label}
+                      <span className="addon-option__price">
+                        (+${addon.price})
+                      </span>
                     </span>
-                  </span>
-                </label>
+                  </label>
+                  {addon.description && (
+                    <div
+                      className="addon-info-group"
+                      onMouseEnter={() => setHoveredAddOnId(addon.id)}
+                      onMouseLeave={() => setHoveredAddOnId(null)}
+                      onClick={() => setHoveredAddOnId(hoveredAddOnId === addon.id ? null : addon.id)}
+                      role="button"
+                      tabIndex="0"
+                    >
+                      <div className="tier-info-icon">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#000000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="16" x2="12" y2="12" />
+                          <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                      </div>
+                      {hoveredAddOnId === addon.id && (
+                        <div className={`tier-tooltip${addon.learnMoreUrl ? ' tier-tooltip--clickable' : ''}`}>
+                          {addon.description}
+                          {addon.learnMoreUrl && (
+                            <a
+                              href={addon.learnMoreUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="tier-tooltip__learn-more"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Learn More
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
+
+          {QUOTED_SERVICES.length > 0 && (
+            <div className="sneaker-card__quoted-services">
+              <p className="sneaker-card__section-label">Quoted Add-on Services</p>
+              <div className="quoted-services__notice">
+                Pricing for these services will be determined after inspection and will be charged separately.
+              </div>
+              <div className="addon-options">
+                {QUOTED_SERVICES.map((service) => (
+                  <label key={service.id} className="addon-option">
+                    <input
+                      type="checkbox"
+                      checked={(serviceSelection?.quotedServices || []).includes(service.id)}
+                      onChange={() => handleQuotedServiceToggle(service.id)}
+                    />
+                    <span className="addon-option__label">{service.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

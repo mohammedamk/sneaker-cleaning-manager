@@ -41,9 +41,63 @@ function SneakerImageCard({
     );
 }
 
+function ServicesSection({ services, settingsLookup }) {
+    if (!services) return null;
+
+    const tierLabel = settingsLookup?.tierMap?.[services.tier] || services.tier;
+    const addOns = (services.addOns || []).map(
+        id => settingsLookup?.addonMap?.[id] || id
+    );
+    const quotedServices = (services.quotedServices || []).map(
+        id => settingsLookup?.quotedServiceMap?.[id] || id
+    );
+
+    const hasAnything = services.tier || addOns.length > 0 || quotedServices.length > 0;
+    if (!hasAnything) return null;
+
+    return (
+        <div className="sneaker-item__services-section">
+            <span className="sneaker-item__services-heading">Selected Services</span>
+
+            {services.tier && (
+                <div className="sneaker-item__service-row">
+                    <span className="sneaker-item__service-cat-label">Cleaning Tier</span>
+                    <span className="sneaker-item__tier-badge">{tierLabel}</span>
+                </div>
+            )}
+
+            {addOns.length > 0 && (
+                <div className="sneaker-item__service-row">
+                    <span className="sneaker-item__service-cat-label">Optional Add-ons</span>
+                    <div className="sneaker-item__chips">
+                        {addOns.map((label, i) => (
+                            <span key={i} className="sneaker-item__chip">{label}</span>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {quotedServices.length > 0 && (
+                <div className="sneaker-item__service-row">
+                    <span className="sneaker-item__service-cat-label">Quoted Services</span>
+                    <div className="sneaker-item__chips">
+                        {quotedServices.map((label, i) => (
+                            <span key={i} className="sneaker-item__chip sneaker-item__chip--quoted">
+                                {label}
+                                <span className="sneaker-item__chip-tbd">Quote Pending</span>
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function BookingSneakerCard({
     sneaker,
     sneakerIndex,
+    settingsLookup,
     approvalLoadingBySneaker,
     approvalActionBySneaker,
     showRejectionNoteFormBySneaker,
@@ -60,6 +114,22 @@ export default function BookingSneakerCard({
 
     return (
         <div className="sneaker-item">
+            {/* Header: name, brand, status */}
+            <div className="sneaker-item__header">
+                <div className="sneaker-item__header-info">
+                    <span className="sneaker-item__name">{sneaker.nickname || 'Unnamed Footwear'}</span>
+                    {(sneaker.brand || sneaker.model) && (
+                        <span className="sneaker-item__brand">
+                            {[sneaker.brand, sneaker.model, sneaker.colorway].filter(Boolean).join(' · ')}
+                        </span>
+                    )}
+                </div>
+                {sneaker.status && (
+                    <span className="sneaker-item__status-pill">{sneaker.status}</span>
+                )}
+            </div>
+
+            {/* Photo galleries */}
             <div className="sneaker-item__gallery">
                 <div className="sneaker-item__gallery-section">
                     <span className="sneaker-item__gallery-title">Before cleaning</span>
@@ -178,23 +248,9 @@ export default function BookingSneakerCard({
                     </div>
                 )}
             </div>
-            <div className="sneaker-item__info">
-                <span className="sneaker-item__name">{sneaker.nickname || 'Unnamed'}</span>
-                <span className="sneaker-item__brand">
-                    {sneaker.brand} {sneaker.model} {sneaker.colorway && ` - ${sneaker.colorway}`}
-                </span>
-                {sneaker.status && (
-                    <div className="sneaker-item__status">
-                        <strong>Status:</strong> {sneaker.status}
-                    </div>
-                )}
-                {sneaker.services && (
-                    <div className="sneaker-item__service">
-                        <strong>Service:</strong> {sneaker.services.tier}
-                        {sneaker.services.addOns?.length > 0 && ` + ${sneaker.services.addOns.join(', ')}`}
-                    </div>
-                )}
-            </div>
+
+            {/* Services section */}
+            <ServicesSection services={sneaker.services} settingsLookup={settingsLookup} />
         </div>
     );
 }

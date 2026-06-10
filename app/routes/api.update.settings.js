@@ -16,6 +16,7 @@ export const action = async ({ request }) => {
       {
         saveCleaningTiers,
         saveAddOns,
+        saveQuotedServices,
         saveShippingBoxLibrary,
         saveSneakerWeight,
         saveHighValueDisclosures,
@@ -73,6 +74,17 @@ export const action = async ({ request }) => {
           success: true,
           message: "Add-ons saved successfully.",
           addOns,
+        };
+        break;
+      }
+
+      case "quotedServices": {
+        const quotedServices = body.quotedServices;
+        await saveQuotedServices(quotedServices);
+        result = {
+          success: true,
+          message: "Quoted services saved successfully.",
+          quotedServices,
         };
         break;
       }

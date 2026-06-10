@@ -680,11 +680,13 @@
 
 .sneaker-item {
   display: flex;
-  gap: 16px;
-  padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fdfdfd;
+  overflow: hidden;
 }
 
 .sneaker-item__img {
@@ -887,13 +889,351 @@
     grid-template-columns: 1fr;
   }
 
-  .sneaker-item {
-    flex-direction: column;
-  }
-
   .bookings-management__header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+}
+
+/* ── Booking Details — status banner ─────────── */
+
+.booking-details__status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.booking-details__status-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-details__id-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.booking-details__id-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  font-family: monospace;
+}
+
+@media (max-width: 480px) {
+  .booking-details__status-banner {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+}
+
+/* ── Booking Details — meta row ──────────────── */
+
+.booking-details__meta-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.booking-details__meta-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-right: 1px solid #e8e8e8;
+}
+
+.booking-details__meta-item:last-child {
+  border-right: none;
+}
+
+.booking-details__meta-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.booking-details__meta-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+@media (max-width: 600px) {
+  .booking-details__meta-row {
+    flex-direction: column;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .booking-details__meta-item {
+    border-right: none;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 12px 14px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .booking-details__meta-item:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ── Booking Details — customer row ──────────── */
+
+.booking-details__customer-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.booking-details__customer-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.booking-details__customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.booking-details__customer-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.booking-details__customer-email,
+.booking-details__customer-phone {
+  font-size: 13px;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+  .booking-details__customer-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+
+  .booking-details__customer-name {
+    font-size: 14px;
+  }
+
+  .booking-details__customer-email,
+  .booking-details__customer-phone {
+    font-size: 12px;
+  }
+}
+
+/* ── Sneaker item — header ────────────────────── */
+
+.sneaker-item__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sneaker-item__header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sneaker-item__status-pill {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f0f0f0;
+  color: #555;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .sneaker-item__header {
+    padding: 12px 14px 10px;
+  }
+}
+
+/* Override existing name/brand to remove display:block */
+.sneaker-item__name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.sneaker-item__brand {
+  font-size: 13px;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+  .sneaker-item__name {
+    font-size: 14px;
+  }
+
+  .sneaker-item__brand {
+    font-size: 12px;
+  }
+}
+
+/* ── Sneaker item — gallery padding ─────────── */
+
+.sneaker-item__gallery {
+  padding: 14px 16px;
+}
+
+@media (max-width: 480px) {
+  .sneaker-item__gallery {
+    padding: 12px 14px;
+  }
+}
+
+/* ── Sneaker item — services section ─────────── */
+
+.sneaker-item__services-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.sneaker-item__services-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sneaker-item__service-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sneaker-item__service-cat-label {
+  flex-shrink: 0;
+  min-width: 130px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  padding-top: 3px;
+}
+
+.sneaker-item__tier-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sneaker-item__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sneaker-item__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+}
+
+.sneaker-item__chip--quoted {
+  background: #fff8e1;
+  color: #5d4037;
+  border-color: #ffe082;
+}
+
+.sneaker-item__chip-tbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #ffe082;
+  color: #5d4037;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 600px) {
+  .sneaker-item__service-cat-label {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .sneaker-item__service-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sneaker-item__services-section {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .sneaker-item__chip {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .sneaker-item__tier-badge {
+    font-size: 12px;
+    padding: 3px 10px;
   }
 }

@@ -30,29 +30,37 @@ function getDefaultSettings() {
         label: 'Gold Standard',
         price: 25,
         shippingCredit: false,
-        description: 'Their premium is our standard. This is for those looking to remove everyday stains. This includes a detailed cleaning of the upper and midsole, along with a standard outsole cleaning to remove everyday dirt and buildup. A strong option for routine maintenance and keeping your footwear looking sharp.'
+        description: 'Their premium is our standard. This is for those looking to remove everyday stains. This includes a detailed cleaning of the upper and midsole, along with a standard outsole cleaning to remove everyday dirt and buildup. A strong option for routine maintenance and keeping your footwear looking sharp.',
+        learnMoreUrl: ''
       },
       {
         id: 'deep',
         label: 'Platinum Deep Clean',
         price: 45,
         shippingCredit: true,
-        description: 'A more detailed cleaning for shoes that need extra attention. This includes everything in the Gold Standard service, plus a deeper outsole cleaning, interior cleaning, and careful detail work around seams, edges, grooves, and hard-to-reach areas. Best for footwear with heavier wear, deeper buildup, or areas that need a more focused touch.'
+        description: 'A more detailed cleaning for shoes that need extra attention. This includes everything in the Gold Standard service, plus a deeper outsole cleaning, interior cleaning, and careful detail work around seams, edges, grooves, and hard-to-reach areas. Best for footwear with heavier wear, deeper buildup, or areas that need a more focused touch.',
+        learnMoreUrl: ''
       },
       {
         id: 'extreme',
         label: 'Diamond Restoration',
         price: 70,
         shippingCredit: true,
-        description: 'Our most complete cleaning package for footwear that needs the highest level of care. This includes a full deep clean, interior and exterior detailing, sanitization, deodorization, and sole whitening. Best for shoes that need a full reset, especially pairs with odor, yellowing, heavier wear, or visible aging.'
+        description: 'Our most complete cleaning package for footwear that needs the highest level of care. This includes a full deep clean, interior and exterior detailing, sanitization, deodorization, and sole whitening. Best for shoes that need a full reset, especially pairs with odor, yellowing, heavier wear, or visible aging.',
+        learnMoreUrl: ''
       },
     ],
     addOns: [
-      { id: 'deoxidation', label: 'Deoxidation', price: 15 },
-      { id: 'deodorization', label: 'Deodorization', price: 10 },
-      { id: 'waterproofing', label: 'Waterproofing', price: 12 },
-      { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
-      { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
+      { id: 'deoxidation', label: 'Deoxidation', price: 15, description: '', learnMoreUrl: '' },
+      { id: 'deodorization', label: 'Deodorization', price: 10, description: '', learnMoreUrl: '' },
+      { id: 'waterproofing', label: 'Waterproofing', price: 12, description: '', learnMoreUrl: '' },
+      { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10, description: '', learnMoreUrl: '' },
+      { id: 'lace_replacement', label: 'Lace Replacement', price: 8, description: '', learnMoreUrl: '' },
+    ],
+    quotedServices: [
+      { id: 'repaint', label: 'Repaint', description: 'Full or partial repaint of your footwear. Pricing determined after inspection.', enabled: true },
+      { id: 'reglue', label: 'Reglue', description: 'Regluing of sole or upper separations. Pricing determined after inspection.', enabled: true },
+      { id: 'customization', label: 'Customization', description: 'Custom design work on your footwear. Pricing determined after inspection.', enabled: true },
     ],
     shippingBoxLibrary: [
       { sneakerQuantity: 1, length: 17, width: 11, height: 8, boxWeightLb: 1 },

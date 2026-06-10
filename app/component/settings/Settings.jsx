@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-// Component for editing cleaning tiers with descriptions
+// Component for editing cleaning tiers with descriptions and learn-more URLs
 function EditableCleaningTiersComponent({ items, onSave }) {
     const [localItems, setLocalItems] = useState(items || []);
     const [isEditing, setIsEditing] = useState(false);
-    const [newItem, setNewItem] = useState({ id: '', label: '', price: 0, shippingCredit: false, description: '' });
+    const [newItem, setNewItem] = useState({ id: '', label: '', price: 0, shippingCredit: false, description: '', learnMoreUrl: '' });
 
     const handleAddItem = () => {
         if (!newItem.id || !newItem.label) return;
@@ -13,10 +13,11 @@ function EditableCleaningTiersComponent({ items, onSave }) {
             label: newItem.label,
             price: Number(newItem.price),
             shippingCredit: Boolean(newItem.shippingCredit),
-            description: newItem.description || ''
+            description: newItem.description || '',
+            learnMoreUrl: newItem.learnMoreUrl || ''
         };
         setLocalItems([...localItems, item]);
-        setNewItem({ id: '', label: '', price: 0, shippingCredit: false, description: '' });
+        setNewItem({ id: '', label: '', price: 0, shippingCredit: false, description: '', learnMoreUrl: '' });
     };
 
     const handleRemoveItem = (id) => {
@@ -62,6 +63,9 @@ function EditableCleaningTiersComponent({ items, onSave }) {
                                         {item.description}
                                     </div>
                                 )}
+                                {item.learnMoreUrl && (
+                                    <div style={{ marginTop: '4px' }}>Learn More URL: <a href={item.learnMoreUrl} target="_blank" rel="noopener noreferrer">{item.learnMoreUrl}</a></div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -103,8 +107,8 @@ function EditableCleaningTiersComponent({ items, onSave }) {
                                         Remove
                                     </s-button>
                                 </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9em' }}>Description</label>
+                                <div style={{ marginBottom: '10px' }}>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9em' }}>Tooltip Description</label>
                                     <textarea
                                         value={item.description || ''}
                                         onChange={(e) => handleUpdateItem(index, 'description', e.target.value)}
@@ -117,9 +121,15 @@ function EditableCleaningTiersComponent({ items, onSave }) {
                                             fontFamily: 'inherit',
                                             fontSize: '0.9em'
                                         }}
-                                        placeholder="Enter description for this cleaning tier..."
+                                        placeholder="Tooltip text shown to customers when they click the info icon..."
                                     />
                                 </div>
+                                <s-text-field
+                                    label="Learn More URL (optional)"
+                                    placeholder="https://yourstore.com/services/standard-clean"
+                                    value={item.learnMoreUrl || ''}
+                                    onInput={(e) => handleUpdateItem(index, 'learnMoreUrl', e.currentTarget.value)}
+                                />
                             </div>
                         ))}
                     </div>
@@ -160,7 +170,7 @@ function EditableCleaningTiersComponent({ items, onSave }) {
                                 </label>
                             </div>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Description</label>
+                                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Tooltip Description</label>
                                 <textarea
                                     value={newItem.description}
                                     onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
@@ -172,10 +182,333 @@ function EditableCleaningTiersComponent({ items, onSave }) {
                                         border: '1px solid #ccc',
                                         fontFamily: 'inherit'
                                     }}
-                                    placeholder="Enter description for this cleaning tier..."
+                                    placeholder="Tooltip text shown to customers when they click the info icon..."
                                 />
                             </div>
+                            <s-text-field
+                                label="Learn More URL (optional)"
+                                placeholder="https://yourstore.com/services/..."
+                                value={newItem.learnMoreUrl}
+                                onInput={(e) => setNewItem({ ...newItem, learnMoreUrl: e.currentTarget.value })}
+                            />
                             <s-button onClick={handleAddItem}>Add Tier</s-button>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                        <s-button onClick={() => setIsEditing(false)}>Cancel</s-button>
+                        <s-button variant="primary" onClick={handleSave}>Save Changes</s-button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Component for editing optional add-ons with descriptions and learn-more URLs
+function EditableAddOnsComponent({ items, onSave }) {
+    const [localItems, setLocalItems] = useState(items || []);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newItem, setNewItem] = useState({ id: '', label: '', price: 0, description: '', learnMoreUrl: '' });
+
+    const handleAddItem = () => {
+        if (!newItem.id || !newItem.label) return;
+        const item = {
+            id: newItem.id.toLowerCase().replace(/\s+/g, '_'),
+            label: newItem.label,
+            price: Number(newItem.price),
+            description: newItem.description || '',
+            learnMoreUrl: newItem.learnMoreUrl || ''
+        };
+        setLocalItems([...localItems, item]);
+        setNewItem({ id: '', label: '', price: 0, description: '', learnMoreUrl: '' });
+    };
+
+    const handleRemoveItem = (id) => {
+        setLocalItems(localItems.filter(item => item.id !== id));
+    };
+
+    const handleUpdateItem = (index, field, value) => {
+        const updated = [...localItems];
+        updated[index] = { ...updated[index], [field]: field === 'price' ? Number(value) : value };
+        setLocalItems(updated);
+    };
+
+    const handleSave = () => {
+        onSave(localItems);
+        setIsEditing(false);
+    };
+
+    return (
+        <div style={{ marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h4>Optional Add-ons</h4>
+                <s-button size="small" onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? 'Cancel' : 'Edit'}
+                </s-button>
+            </div>
+
+            {!isEditing && (
+                <div style={{ display: 'grid', gap: '10px' }}>
+                    {localItems.map(item => (
+                        <div key={item.id} style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                            <div style={{ fontWeight: 'bold' }}>{item.label}</div>
+                            <div style={{ fontSize: '0.9em', color: '#666', marginTop: '4px' }}>
+                                <div>Price: ${item.price.toFixed(2)}</div>
+                                {item.description && (
+                                    <div style={{ marginTop: '8px', fontStyle: 'italic', borderLeft: '3px solid #ddd', paddingLeft: '8px' }}>
+                                        {item.description}
+                                    </div>
+                                )}
+                                {item.learnMoreUrl && (
+                                    <div style={{ marginTop: '4px' }}>Learn More URL: <a href={item.learnMoreUrl} target="_blank" rel="noopener noreferrer">{item.learnMoreUrl}</a></div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                    {localItems.length === 0 && <s-text tone="subdued">No items configured</s-text>}
+                </div>
+            )}
+
+            {isEditing && (
+                <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                    <div style={{ display: 'grid', gap: '10px', marginBottom: '15px' }}>
+                        {localItems.map((item, index) => (
+                            <div key={item.id} style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '10px', marginBottom: '10px', alignItems: 'end' }}>
+                                    <s-text-field
+                                        label="Label"
+                                        value={item.label}
+                                        onInput={(e) => handleUpdateItem(index, 'label', e.currentTarget.value)}
+                                    />
+                                    <s-text-field
+                                        type="number"
+                                        label="Price"
+                                        value={String(item.price)}
+                                        step="0.01"
+                                        min="0"
+                                        onInput={(e) => handleUpdateItem(index, 'price', e.currentTarget.value)}
+                                    />
+                                    <s-button variant="destructive" size="small" onClick={() => handleRemoveItem(item.id)}>
+                                        Remove
+                                    </s-button>
+                                </div>
+                                <div style={{ marginBottom: '10px' }}>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9em' }}>Tooltip Description</label>
+                                    <textarea
+                                        value={item.description || ''}
+                                        onChange={(e) => handleUpdateItem(index, 'description', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            minHeight: '60px',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ccc',
+                                            fontFamily: 'inherit',
+                                            fontSize: '0.9em'
+                                        }}
+                                        placeholder="Tooltip text shown to customers when they click the info icon..."
+                                    />
+                                </div>
+                                <s-text-field
+                                    label="Learn More URL (optional)"
+                                    placeholder="https://yourstore.com/services/..."
+                                    value={item.learnMoreUrl || ''}
+                                    onInput={(e) => handleUpdateItem(index, 'learnMoreUrl', e.currentTarget.value)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ padding: '15px', backgroundColor: '#fff', borderRadius: '4px', marginBottom: '15px', border: '1px solid #ddd' }}>
+                        <h5 style={{ marginTop: 0 }}>Add New Add-on</h5>
+                        <div style={{ display: 'grid', gap: '10px' }}>
+                            <s-text-field
+                                label="ID"
+                                placeholder="e.g., waterproofing"
+                                value={newItem.id}
+                                onInput={(e) => setNewItem({ ...newItem, id: e.currentTarget.value })}
+                            />
+                            <s-text-field
+                                label="Label"
+                                placeholder="e.g., Waterproofing"
+                                value={newItem.label}
+                                onInput={(e) => setNewItem({ ...newItem, label: e.currentTarget.value })}
+                            />
+                            <s-text-field
+                                type="number"
+                                label="Price"
+                                placeholder="0.00"
+                                step="0.01"
+                                min="0"
+                                value={String(newItem.price)}
+                                onInput={(e) => setNewItem({ ...newItem, price: e.currentTarget.value })}
+                            />
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Tooltip Description</label>
+                                <textarea
+                                    value={newItem.description}
+                                    onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '60px',
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #ccc',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    placeholder="Tooltip text shown to customers when they click the info icon..."
+                                />
+                            </div>
+                            <s-text-field
+                                label="Learn More URL (optional)"
+                                placeholder="https://yourstore.com/services/..."
+                                value={newItem.learnMoreUrl}
+                                onInput={(e) => setNewItem({ ...newItem, learnMoreUrl: e.currentTarget.value })}
+                            />
+                            <s-button onClick={handleAddItem}>Add Add-on</s-button>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                        <s-button onClick={() => setIsEditing(false)}>Cancel</s-button>
+                        <s-button variant="primary" onClick={handleSave}>Save Changes</s-button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Component for editing quoted add-on services (no price — charged post-inspection)
+function EditableQuotedServicesComponent({ items, onSave }) {
+    const [localItems, setLocalItems] = useState(items || []);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newItem, setNewItem] = useState({ id: '', label: '', description: '' });
+
+    const handleAddItem = () => {
+        if (!newItem.id || !newItem.label) return;
+        const item = {
+            id: newItem.id.toLowerCase().replace(/\s+/g, '_'),
+            label: newItem.label,
+            description: newItem.description || '',
+            enabled: true
+        };
+        setLocalItems([...localItems, item]);
+        setNewItem({ id: '', label: '', description: '', enabled: true });
+    };
+
+    const handleRemoveItem = (id) => {
+        setLocalItems(localItems.filter(item => item.id !== id));
+    };
+
+    const handleUpdateItem = (index, field, value) => {
+        const updated = [...localItems];
+        updated[index] = { ...updated[index], [field]: value };
+        setLocalItems(updated);
+    };
+
+    const handleSave = () => {
+        onSave(localItems);
+        setIsEditing(false);
+    };
+
+    return (
+        <div style={{ marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <h4>Quoted Add-on Services</h4>
+                <s-button size="small" onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? 'Cancel' : 'Edit'}
+                </s-button>
+            </div>
+            <p style={{ fontSize: '0.85em', color: '#666', margin: '0 0 12px' }}>
+                These services (e.g., Repaint, Reglue, Customization) have no upfront price. The final charge is determined after inspection and billed separately.
+            </p>
+
+            {!isEditing && (
+                <div style={{ display: 'grid', gap: '10px' }}>
+                    {localItems.map(item => (
+                        <div key={item.id} style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                            <div style={{ fontWeight: 'bold' }}>{item.label}</div>
+                            {item.description && (
+                                <div style={{ fontSize: '0.9em', color: '#666', marginTop: '6px', fontStyle: 'italic', borderLeft: '3px solid #ddd', paddingLeft: '8px' }}>
+                                    {item.description}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                    {localItems.length === 0 && <s-text tone="subdued">No quoted services configured</s-text>}
+                </div>
+            )}
+
+            {isEditing && (
+                <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                    <div style={{ display: 'grid', gap: '10px', marginBottom: '15px' }}>
+                        {localItems.map((item, index) => (
+                            <div key={item.id} style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '10px', marginBottom: '10px', alignItems: 'end' }}>
+                                    <s-text-field
+                                        label="Label"
+                                        value={item.label}
+                                        onInput={(e) => handleUpdateItem(index, 'label', e.currentTarget.value)}
+                                    />
+                                    <s-button variant="destructive" size="small" onClick={() => handleRemoveItem(item.id)}>
+                                        Remove
+                                    </s-button>
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9em' }}>Description (shown as tooltip)</label>
+                                    <textarea
+                                        value={item.description || ''}
+                                        onChange={(e) => handleUpdateItem(index, 'description', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            minHeight: '60px',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ccc',
+                                            fontFamily: 'inherit',
+                                            fontSize: '0.9em'
+                                        }}
+                                        placeholder="Brief description shown to customers..."
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ padding: '15px', backgroundColor: '#fff', borderRadius: '4px', marginBottom: '15px', border: '1px solid #ddd' }}>
+                        <h5 style={{ marginTop: 0 }}>Add New Quoted Service</h5>
+                        <div style={{ display: 'grid', gap: '10px' }}>
+                            <s-text-field
+                                label="ID"
+                                placeholder="e.g., repaint"
+                                value={newItem.id}
+                                onInput={(e) => setNewItem({ ...newItem, id: e.currentTarget.value })}
+                            />
+                            <s-text-field
+                                label="Label"
+                                placeholder="e.g., Repaint"
+                                value={newItem.label}
+                                onInput={(e) => setNewItem({ ...newItem, label: e.currentTarget.value })}
+                            />
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Description (shown as tooltip)</label>
+                                <textarea
+                                    value={newItem.description}
+                                    onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '60px',
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #ccc',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    placeholder="Brief description shown to customers..."
+                                />
+                            </div>
+                            <s-button onClick={handleAddItem}>Add Service</s-button>
                         </div>
                     </div>
 
@@ -513,6 +846,9 @@ export default function Settings() {
     // Add-ons
     const [addOns, setAddOns] = useState([]);
 
+    // Quoted services
+    const [quotedServices, setQuotedServices] = useState([]);
+
     // Shipping box library
     const [shippingBoxLibrary, setShippingBoxLibrary] = useState([]);
 
@@ -547,6 +883,7 @@ export default function Settings() {
 
                 if (data.cleaningTiers) setCleaningTiers(data.cleaningTiers);
                 if (data.addOns) setAddOns(data.addOns);
+                if (data.quotedServices) setQuotedServices(data.quotedServices);
                 if (data.shippingBoxLibrary) setShippingBoxLibrary(data.shippingBoxLibrary);
 
                 if (data.highValueDisclosureLabel !== undefined) setHighValueDisclosureLabel(data.highValueDisclosureLabel);
@@ -617,6 +954,10 @@ export default function Settings() {
 
     const handleSaveAddOns = (addOnsData) => {
         submitData({ settingType: "addOns", addOns: addOnsData });
+    };
+
+    const handleSaveQuotedServices = (servicesData) => {
+        submitData({ settingType: "quotedServices", quotedServices: servicesData });
     };
 
     const handleSaveShippingBoxLibrary = (boxLibrary) => {
@@ -773,7 +1114,8 @@ export default function Settings() {
                     <s-section heading="Service Configuration">
                         <div className="settings-content">
                             <s-text tone="subdued">
-                                Manage cleaning tiers and optional add-ons available to customers.
+                                Manage cleaning tiers, optional add-ons, and quoted services available to customers.
+                                Tooltip descriptions and Learn More links are shown to customers via the info icon in the booking flow.
                             </s-text>
 
                             <div style={{ marginTop: '20px' }}>
@@ -789,14 +1131,24 @@ export default function Settings() {
                             <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
 
                             <div>
-                                <EditableItemList
+                                <EditableAddOnsComponent
                                     items={addOns}
                                     onSave={(items) => {
                                         setAddOns(items);
                                         handleSaveAddOns(items);
                                     }}
-                                    title="Optional Add-ons"
-                                    fields={['label', 'price']}
+                                />
+                            </div>
+
+                            <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+
+                            <div>
+                                <EditableQuotedServicesComponent
+                                    items={quotedServices}
+                                    onSave={(items) => {
+                                        setQuotedServices(items);
+                                        handleSaveQuotedServices(items);
+                                    }}
                                 />
                             </div>
                         </div>

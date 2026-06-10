@@ -181,12 +181,6 @@ function BookingWizard() {
 
     let actualTarget = targetInternalStep;
 
-    // "Footwear" tab (target=2): once the user has moved past the sub-steps,
-    // jump to the review list (step 5) rather than the blank registration form.
-    if (targetInternalStep === 2 && highestReachedStep >= 5) {
-      actualTarget = 5;
-    }
-
     // When landing on the review list, clear any in-progress sub-step state.
     if (actualTarget === 5) {
       setEditingSneaker(null);

@@ -9,30 +9,39 @@ const DEFAULT_CLEANING_TIERS = [
     label: 'Gold Standard',
     price: 25,
     shippingCredit: false,
-    description: 'Their premium is our standard. This is for those looking to remove everyday stains. This includes a detailed cleaning of the upper and midsole, along with a standard outsole cleaning to remove everyday dirt and buildup. A strong option for routine maintenance and keeping your footwear looking sharp.'
+    description: 'Their premium is our standard. This is for those looking to remove everyday stains. This includes a detailed cleaning of the upper and midsole, along with a standard outsole cleaning to remove everyday dirt and buildup. A strong option for routine maintenance and keeping your footwear looking sharp.',
+    learnMoreUrl: ''
   },
   {
     id: 'deep',
     label: 'Platinum Deep Clean',
     price: 45,
     shippingCredit: true,
-    description: 'A more detailed cleaning for shoes that need extra attention. This includes everything in the Gold Standard service, plus a deeper outsole cleaning, interior cleaning, and careful detail work around seams, edges, grooves, and hard-to-reach areas. Best for footwear with heavier wear, deeper buildup, or areas that need a more focused touch.'
+    description: 'A more detailed cleaning for shoes that need extra attention. This includes everything in the Gold Standard service, plus a deeper outsole cleaning, interior cleaning, and careful detail work around seams, edges, grooves, and hard-to-reach areas. Best for footwear with heavier wear, deeper buildup, or areas that need a more focused touch.',
+    learnMoreUrl: ''
   },
   {
     id: 'extreme',
     label: 'Diamond Restoration',
     price: 70,
     shippingCredit: true,
-    description: 'Our most complete cleaning package for footwear that needs the highest level of care. This includes a full deep clean, interior and exterior detailing, sanitization, deodorization, and sole whitening. Best for shoes that need a full reset, especially pairs with odor, yellowing, heavier wear, or visible aging.'
+    description: 'Our most complete cleaning package for footwear that needs the highest level of care. This includes a full deep clean, interior and exterior detailing, sanitization, deodorization, and sole whitening. Best for shoes that need a full reset, especially pairs with odor, yellowing, heavier wear, or visible aging.',
+    learnMoreUrl: ''
   },
 ];
 
 const DEFAULT_ADD_ONS = [
-  { id: 'deoxidation', label: 'Deoxidation', price: 15 },
-  { id: 'deodorization', label: 'Deodorization', price: 10 },
-  { id: 'waterproofing', label: 'Waterproofing', price: 12 },
-  { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10 },
-  { id: 'lace_replacement', label: 'Lace Replacement', price: 8 },
+  { id: 'deoxidation', label: 'Deoxidation', price: 15, description: '', learnMoreUrl: '' },
+  { id: 'deodorization', label: 'Deodorization', price: 10, description: '', learnMoreUrl: '' },
+  { id: 'waterproofing', label: 'Waterproofing', price: 12, description: '', learnMoreUrl: '' },
+  { id: 'sole_cleaning', label: 'Sole Cleaning', price: 10, description: '', learnMoreUrl: '' },
+  { id: 'lace_replacement', label: 'Lace Replacement', price: 8, description: '', learnMoreUrl: '' },
+];
+
+const DEFAULT_QUOTED_SERVICES = [
+  { id: 'repaint', label: 'Repaint', description: 'Full or partial repaint of your footwear. Pricing determined after inspection.', enabled: true },
+  { id: 'reglue', label: 'Reglue', description: 'Regluing of sole or upper separations. Pricing determined after inspection.', enabled: true },
+  { id: 'customization', label: 'Customization', description: 'Custom design work on your footwear. Pricing determined after inspection.', enabled: true },
 ];
 
 const DEFAULT_SHIPPING_BOX_LIBRARY = [
@@ -89,6 +98,7 @@ export async function getAllSettings() {
       sneakerWeightLb: 4,
       cleaningTiers: DEFAULT_CLEANING_TIERS,
       addOns: DEFAULT_ADD_ONS,
+      quotedServices: DEFAULT_QUOTED_SERVICES,
       shippingBoxLibrary: DEFAULT_SHIPPING_BOX_LIBRARY,
       highValueDisclosureLabel: 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?',
       highValueAcknowledgmentLabel: 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear. I understand that Save Our Soles does not guarantee preservation of market value, resale value, sentimental value, collectible value, authentication value, factory originality, or replacement value, and that additional shipping coverage or special handling must be requested before shipping.',
@@ -132,6 +142,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
     sneakerWeightLb: settings.sneakerWeightLb ?? 4,
     cleaningTiers: settings.cleaningTiers?.length > 0 ? settings.cleaningTiers : DEFAULT_CLEANING_TIERS,
     addOns: settings.addOns?.length > 0 ? settings.addOns : DEFAULT_ADD_ONS,
+    quotedServices: settings.quotedServices?.length > 0 ? settings.quotedServices : DEFAULT_QUOTED_SERVICES,
     shippingBoxLibrary: settings.shippingBoxLibrary?.length > 0 ? settings.shippingBoxLibrary : DEFAULT_SHIPPING_BOX_LIBRARY,
     highValueDisclosureLabel: settings.highValueDisclosureLabel || 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?',
     highValueAcknowledgmentLabel: settings.highValueAcknowledgmentLabel || 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear. I understand that Save Our Soles does not guarantee preservation of market value, resale value, sentimental value, collectible value, authentication value, factory originality, or replacement value, and that additional shipping coverage or special handling must be requested before shipping.',
@@ -222,6 +233,16 @@ export async function getAddOns() {
 
 export async function saveAddOns(addOns) {
   return updateSetting('addOns', addOns);
+}
+
+// Quoted Services
+export async function getQuotedServices() {
+  const quotedServices = await getSetting('quotedServices');
+  return quotedServices || DEFAULT_QUOTED_SERVICES;
+}
+
+export async function saveQuotedServices(quotedServices) {
+  return updateSetting('quotedServices', quotedServices);
 }
 
 // Shipping Box Library
@@ -323,6 +344,7 @@ export async function initializeDefaultSettings() {
       sneakerWeightLb: 4,
       cleaningTiers: DEFAULT_CLEANING_TIERS,
       addOns: DEFAULT_ADD_ONS,
+      quotedServices: DEFAULT_QUOTED_SERVICES,
       shippingBoxLibrary: DEFAULT_SHIPPING_BOX_LIBRARY,
       highValueDisclosureLabel: 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?',
       highValueAcknowledgmentLabel: 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear. I understand that Save Our Soles does not guarantee preservation of market value, resale value, sentimental value, collectible value, authentication value, factory originality, or replacement value, and that additional shipping coverage or special handling must be requested before shipping.',

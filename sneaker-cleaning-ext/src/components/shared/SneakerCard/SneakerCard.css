@@ -381,6 +381,17 @@
     position: relative;
 }
 
+/* Wrapper that encompasses both the icon and tooltip for seamless hover */
+.tier-info-group,
+.addon-info-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
 .tier-info-icon {
     display: flex;
     align-items: center;
@@ -388,10 +399,8 @@
     width: 18px;
     height: 18px;
     font-size: 14px;
-    cursor: pointer;
     flex-shrink: 0;
     position: relative;
-    user-select: none;
     margin-top: 2px;
 }
 
@@ -421,12 +430,32 @@
     pointer-events: none;
 }
 
+.tier-tooltip--clickable {
+    pointer-events: auto;
+}
+
+.tier-tooltip__learn-more {
+    display: block;
+    margin-top: 8px;
+    color: #7fc6ff;
+    font-size: 13px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tier-tooltip__learn-more:hover {
+    color: #aadcff;
+}
+
 @media (max-width: 768px) {
     .tier-tooltip {
         width: 200px;
         font-size: 12px;
         padding: 8px 10px;
         left: 22px;
+    }
+    .tier-tooltip__learn-more {
+        font-size: 12px;
     }
 }
 
@@ -442,5 +471,45 @@
         padding: 12px 14px;
         background: #222;
         border: 1px solid #555;
+    }
+}
+
+/* ── Add-on option wrapper (for tooltip icon alignment) ── */
+
+.addon-option-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* ── Quoted Add-on Services section ─────────────── */
+
+.sneaker-card__quoted-services {
+    padding-top: 2px;
+}
+
+.quoted-services__notice {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #5d4037;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .quoted-services__notice {
+        font-size: 11px;
+        padding: 7px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quoted-services__notice {
+        font-size: 11px;
+        padding: 6px 9px;
+        margin-bottom: 8px;
     }
 }

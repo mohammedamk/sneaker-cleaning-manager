@@ -14,14 +14,25 @@ const appSettingsSchema = mongoose.Schema({
         label: { type: String, required: true },
         price: { type: Number, required: true },
         shippingCredit: { type: Boolean, default: false },
-        description: { type: String, default: '' }
+        description: { type: String, default: '' },
+        learnMoreUrl: { type: String, default: '' }
     }],
 
     // Add-ons
     addOns: [{
         id: { type: String, required: true },
         label: { type: String, required: true },
-        price: { type: Number, required: true }
+        price: { type: Number, required: true },
+        description: { type: String, default: '' },
+        learnMoreUrl: { type: String, default: '' }
+    }],
+
+    // Quoted Add-on Services (no upfront price — charged post-inspection)
+    quotedServices: [{
+        id: { type: String, required: true },
+        label: { type: String, required: true },
+        description: { type: String, default: '' },
+        enabled: { type: Boolean, default: true }
     }],
 
     // Shipping Box Library

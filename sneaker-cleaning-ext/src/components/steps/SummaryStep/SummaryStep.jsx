@@ -20,6 +20,7 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
 
   const SERVICE_TIERS = settings?.cleaningTiers || [];
   const ADD_ONS = settings?.addOns || [];
+  const QUOTED_SERVICES = (settings?.quotedServices || []).filter(s => s.enabled !== false);
   const HIGH_VALUE_DISCLOSURE_LABEL = settings?.highValueDisclosureLabel || 'Are any items in your order luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable?';
   const HIGH_VALUE_ACKNOWLEDGMENT_LABEL = settings?.highValueAcknowledgmentLabel || 'I understand that I am submitting luxury, rare, sentimental, irreplaceable, one-of-one, custom, collectible, vintage, or unusually valuable footwear.';
 
@@ -40,6 +41,7 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
   const SneakerSummaryRow = ({ sneaker, service }) => {
     const tier = SERVICE_TIERS.find((t) => t.id === service?.tier);
     const selectedAddons = ADD_ONS.filter((a) => (service?.addOns || []).includes(a.id));
+    const selectedQuotedServices = QUOTED_SERVICES.filter((s) => (service?.quotedServices || []).includes(s.id));
     const sneakerImages = (sneaker.images || [])
       .map(getSneakerImageSrc)
       .filter(Boolean);
@@ -85,6 +87,18 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
                 </li>
               ))}
             </ul>
+          )}
+          {selectedQuotedServices.length > 0 && (
+            <div className="summary-row__quoted-services">
+              <span className="summary-row__quoted-label">Quoted Services (priced post-inspection):</span>
+              <ul className="summary-row__addons">
+                {selectedQuotedServices.map((service) => (
+                  <li key={service.id}>
+                    {service.label} <span className="summary-row__quoted-tbd">— TBD</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
           {sneaker.notes && (
             <div className="summary-row__notes">

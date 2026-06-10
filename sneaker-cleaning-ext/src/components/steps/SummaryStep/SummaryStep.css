@@ -143,6 +143,31 @@
     }
 }
 
+.summary-row__quoted-services {
+    margin-top: 4px;
+}
+
+.summary-row__quoted-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.summary-row__quoted-tbd {
+    color: #999;
+    font-style: italic;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .summary-row__quoted-label,
+    .summary-row__quoted-tbd {
+        font-size: 11px;
+    }
+}
+
 .summary-row__subtotal {
     font-size: 13px;
     font-weight: 700;

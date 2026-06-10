@@ -17,7 +17,7 @@ function StepIndicator({ currentStep, highestReachedStep = 1, onStepClick }) {
         {VISUAL_STEPS.map((vs, index) => {
           const [rangeStart, rangeEnd] = vs.internalRange;
           const isActive    = currentStep >= rangeStart && currentStep <= rangeEnd;
-          const isCompleted = currentStep > rangeEnd;
+          const isCompleted = !isActive && highestReachedStep >= rangeStart;
           const isClickable = Boolean(onStepClick) && highestReachedStep >= vs.targetStep;
 
           return (
