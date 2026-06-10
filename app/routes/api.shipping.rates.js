@@ -180,12 +180,18 @@ function calculateCustomerFacingShipping({
 }
 
 async function fetchQuotes({ customerAddress, parcel, referencePrefix }) {
-  if (process.env.EASYPOST_API_KEY) {
+  const useTestRates = process.env.USE_TEST_SHIPPING_RATES === "true";
+  console.log("process.env.USE_TEST_SHIPPING_RATES", process.env.USE_TEST_SHIPPING_RATES)
+  if (process.env.EASYPOST_API_KEY && !useTestRates) {
     return getShippingQuotes({
       customerAddress,
       parcel,
       referencePrefix,
     });
+  }
+
+  if (useTestRates) {
+    console.log("[Shipping] USE_TEST_SHIPPING_RATES=true — returning mock rates (EasyPost bypassed)");
   }
 
   return buildTestShippingQuotes({
