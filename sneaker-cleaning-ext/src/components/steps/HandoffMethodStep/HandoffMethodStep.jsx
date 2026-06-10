@@ -6,7 +6,7 @@ import './HandoffMethodStep.css';
 import { PROXY_SUB_PATH } from '../../../utils/global.js';
 import { fetchAdminSettings } from '../../../utils/adminSettings.js';
 
-const REQUIRED_ADDRESS_FIELDS = ['name', 'street1', 'city', 'state', 'zip', 'phone'];
+const REQUIRED_ADDRESS_FIELDS = ['name', 'street1', 'city', 'state', 'zip', 'phone', 'email'];
 const PICKUP_AND_RETURN_METHOD = 'pickup_delivery';
 const OUNCES_PER_POUND = 16;
 
@@ -580,7 +580,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
               <FormField label="Phone" required htmlFor="shipping-phone">
                 <input id="shipping-phone" className="input" value={shippingAddress.phone || ''} onChange={(event) => handleAddressChange('phone', event.target.value)} />
               </FormField>
-              <FormField label="Email" htmlFor="shipping-email">
+              <FormField label="Email" required htmlFor="shipping-email">
                 <input id="shipping-email" className="input" type="email" value={shippingAddress.email || ''} onChange={(event) => handleAddressChange('email', event.target.value)} />
               </FormField>
             </div>

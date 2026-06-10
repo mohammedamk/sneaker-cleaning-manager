@@ -108,8 +108,8 @@ export const action = async ({ request }) => {
         const shouldUseTestShipping = !process.env.EASYPOST_API_KEY;
         const shippingCreditPerPair = await getShippingCreditPerPair();
         const returnShippingBufferPercentage = await getReturnShippingBufferPercentage();
-        const requestedInsuranceSelection = requestBody?.handoffMethod === "shipping" 
-            ? requestBody?.shippingSelection?.insurance 
+        const requestedInsuranceSelection = requestBody?.handoffMethod === "shipping"
+            ? requestBody?.shippingSelection?.insurance
             : null;
         const body = {
             ...requestBody,
@@ -181,9 +181,9 @@ export const action = async ({ request }) => {
                 const service = body.services ? body.services[sneaker.id || sneaker._id] : null;
                 const tier = cleaningTiers.find((t) => t.id === service?.tier);
                 const isEligible = Boolean(tier?.shippingCredit);
-                
+
                 console.log(`[Backend Shipping Credit] Sneaker ${index + 1} (${sneaker.nickname || 'Unnamed'}): Tier '${tier?.label || service?.tier || 'None'}'. Eligible: ${isEligible}`);
-                
+
                 if (isEligible) {
                     return count + 1;
                 }
@@ -230,9 +230,23 @@ export const action = async ({ request }) => {
                     ? customerIdStr
                     : `gid://shopify/Customer/${customerIdStr}`
             };
+            // console.log("body.shippingSelection?.customerAddress?.email", body.shippingSelection?.customerAddress?.email)
+            // console.log("body.guestInfo?.email", body.guestInfo?.email)
+
+            // Set email explicitly so Shopify uses this instead of the customer account email.
+            // The customer account email may have an invalid domain (e.g. test stores).
+            const explicitEmail = body.shippingSelection?.customerAddress?.email
+                || body.guestInfo?.email;
+            if (explicitEmail) {
+                draftOrderInput.email = explicitEmail;
+            }
         } else if (body.guestInfo?.email) {
             draftOrderInput.email = body.guestInfo.email;
         }
+
+        // console.log("draftOrderInput.email", JSON.stringify(draftOrderInput.email))
+        // console.log("DRAFT_ORDER_CREATE_MUTATION", JSON.stringify(DRAFT_ORDER_CREATE_MUTATION))
+        // console.log("draftOrderInput", JSON.stringify(draftOrderInput))
 
         const draftRes = await admin.graphql(DRAFT_ORDER_CREATE_MUTATION, {
             variables: { input: draftOrderInput }
