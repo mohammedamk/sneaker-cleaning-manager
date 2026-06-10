@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js": {
-    "mtime": 1781075435.13704,
-    "ast_hash": "0e0803d2e9f78ce9a6be7b4542318d06",
+    "mtime": 1781079803.8265657,
+    "ast_hash": "96da5c6575bac43ad555c883fd621315",
     "semantic_hash": ""
   },
   "package.json": {
@@ -330,13 +330,13 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx": {
-    "mtime": 1780916967.9111297,
-    "ast_hash": "d435f3c86651af8db3b46c30736d1040",
+    "mtime": 1781079670.0868523,
+    "ast_hash": "fbbc2d2749ed24dbfc2a9a7979478692",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/BookingsManagement/BookingDetails.jsx": {
-    "mtime": 1779872043.4945586,
-    "ast_hash": "8a1c241affebf6afcafab9d2298a9754",
+    "mtime": 1781077767.7508593,
+    "ast_hash": "f54753e81fdbc839c0ff297abec698a6",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/BookingsManagement/BookingsManagement.jsx": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/BookingsManagement/components/BookingSneakerCard.jsx": {
-    "mtime": 1779872649.311836,
-    "ast_hash": "2bbb817b9e91be3a2c53707e307349ae",
+    "mtime": 1781077809.8485672,
+    "ast_hash": "2d2575d0cf003c059484ba2127105130",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/ShoeRackManagement/ShoeRackManagement.jsx": {
@@ -395,8 +395,8 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/shared/StepIndicator/StepIndicator.jsx": {
-    "mtime": 1780919949.0614338,
-    "ast_hash": "d29105c6cec9ecdb11adbd706f2cceea",
+    "mtime": 1781079082.1028857,
+    "ast_hash": "f300bda966fb891c61cfc3411666cbf7",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/shared/StepLayout/StepLayout.jsx": {
@@ -530,7 +530,7 @@
     "semantic_hash": ""
   },
   "extensions/sneaker-cleaning-manager/assets/vite.svg": {
-    "mtime": 1781075435.01546,
+    "mtime": 1781079803.6745636,
     "ast_hash": "8e3a10e157f75ada21ab742c022d5430",
     "semantic_hash": ""
   },
