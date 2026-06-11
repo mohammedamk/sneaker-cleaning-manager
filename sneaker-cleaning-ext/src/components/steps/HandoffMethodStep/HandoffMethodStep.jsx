@@ -73,6 +73,8 @@ function HandoffMethodStep({
   const [adminSettings, setAdminSettings] = useState(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const upsellFetchIdRef = useRef(0);
+  const shippingSelectionRef = useRef(shippingSelection);
+  useEffect(() => { shippingSelectionRef.current = shippingSelection; }, [shippingSelection]);
 
   useEffect(() => {
     fetchAdminSettings()
@@ -171,8 +173,8 @@ By shipping your footwear, you acknowledge that you are responsible for followin
   const insuranceCost = Number(insuranceConfig.cost || 0);
 
   const updateShippingSelection = useCallback((updater) => {
-    onShippingChange(typeof updater === 'function' ? updater(shippingSelection) : updater);
-  }, [onShippingChange, shippingSelection]);
+    onShippingChange(typeof updater === 'function' ? updater(shippingSelectionRef.current) : updater);
+  }, [onShippingChange]);
 
   const clearRates = (nextSelection) => ({
     ...nextSelection,
