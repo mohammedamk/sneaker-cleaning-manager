@@ -264,6 +264,63 @@ export const action = async ({ request }) => {
     console.log(`[Shipping Credit] Buffer %:                  ${returnShippingBufferPercentage}%`);
     console.log(`[Shipping Credit] Expected credit total ($): ${eligibleSneakerQuantity * shippingCreditPerPair}`);
 
+    const skipUpsell = Boolean(body.skipUpsell);
+    const upsellOnly = Boolean(body.upsellOnly);
+
+    // upsellOnly mode: compute upsell candidates only, using the current total
+    // supplied by the client from the already-completed initial rate fetch.
+    if (upsellOnly) {
+      const currentCustomerFacingTotal = Number(body.currentCustomerFacingTotal || 0);
+
+      const upsellCandidates = await Promise.all(
+        getUpsellQuantities(sneakerQuantity, maxSneakerPairs).map(async (quantity) => {
+          const parcel = getRecommendedParcelForQuantity(quantity, shippingBoxLibrary, sneakerWeightLb);
+
+          if (!parcel) {
+            return null;
+          }
+
+          const summary = await buildQuoteSummary({
+            customerAddress: body.customerAddress,
+            parcel,
+            referencePrefix: `${body.referencePrefix || "booking"}-${quantity}-pairs`,
+            eligibleSneakerQuantity,
+            returnShippingBufferPercentage,
+            shippingCreditPerPair,
+          });
+
+          if (!summary?.pricing) {
+            return null;
+          }
+
+          const savings = roundCurrencyAmount(
+            currentCustomerFacingTotal - Number(summary.pricing.customerFacingTotal || 0),
+          );
+
+          console.log(`[Shipping Upsell] Quoted rates for ${quantity} pairs:`, {
+            forwardAmount: summary.pricing.forwardAmount,
+            returnAmount: summary.pricing.returnAmount,
+            customerFacingTotal: summary.pricing.customerFacingTotal,
+            savings,
+          });
+
+          if (savings <= 0) {
+            return null;
+          }
+
+          return { quantity, savings, customerFacingTotal: summary.pricing.customerFacingTotal };
+        }),
+      );
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          upsellOptions: upsellCandidates.filter(Boolean),
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }
+
     const currentSummary = await buildQuoteSummary({
       customerAddress: body.customerAddress,
       parcel: body.parcel,
@@ -273,6 +330,25 @@ export const action = async ({ request }) => {
       shippingCreditPerPair,
     });
 
+    // skipUpsell mode: return the main rate immediately without computing upsell.
+    // The client will fire a follow-up upsellOnly request in the background.
+    if (skipUpsell) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          quotes: currentSummary.quotes,
+          selectedForwardRate: currentSummary.selectedForwardRate,
+          selectedReturnRate: currentSummary.selectedReturnRate,
+          pricing: currentSummary.pricing,
+          upsellOptions: null, // null signals "not yet fetched" to the client
+          returnShippingBufferPercentage,
+          shippingCreditPerPair,
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    // Legacy full mode: compute everything in one shot (kept for backward compat).
     const upsellCandidates = await Promise.all(
       getUpsellQuantities(sneakerQuantity, maxSneakerPairs).map(async (quantity) => {
         const parcel = getRecommendedParcelForQuantity(quantity, shippingBoxLibrary, sneakerWeightLb);
@@ -285,7 +361,7 @@ export const action = async ({ request }) => {
           customerAddress: body.customerAddress,
           parcel,
           referencePrefix: `${body.referencePrefix || "booking"}-${quantity}-pairs`,
-          eligibleSneakerQuantity: eligibleSneakerQuantity, // Upsell doesn't assume new pairs are eligible
+          eligibleSneakerQuantity,
           returnShippingBufferPercentage,
           shippingCreditPerPair,
         });
@@ -293,8 +369,7 @@ export const action = async ({ request }) => {
         if (!summary?.pricing) {
           return null;
         }
-        console.log("currentSummary?.pricing?.customerFacingTotal", currentSummary?.pricing?.customerFacingTotal);
-        console.log("summary.pricing.customerFacingTotal", summary.pricing.customerFacingTotal);
+
         const savings = roundCurrencyAmount(
           Number(currentSummary?.pricing?.customerFacingTotal || 0)
           - Number(summary.pricing.customerFacingTotal || 0),
@@ -303,9 +378,6 @@ export const action = async ({ request }) => {
         console.log(`[Shipping Upsell] Quoted rates for ${quantity} pairs:`, {
           forwardAmount: summary.pricing.forwardAmount,
           returnAmount: summary.pricing.returnAmount,
-          subtotal: summary.pricing.subtotal,
-          bufferedTotal: summary.pricing.bufferedTotal,
-          shippingCredit: summary.pricing.shippingCredit,
           customerFacingTotal: summary.pricing.customerFacingTotal,
           savings,
         });
@@ -314,11 +386,7 @@ export const action = async ({ request }) => {
           return null;
         }
 
-        return {
-          quantity,
-          savings,
-          customerFacingTotal: summary.pricing.customerFacingTotal,
-        };
+        return { quantity, savings, customerFacingTotal: summary.pricing.customerFacingTotal };
       }),
     );
 

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import StepLayout from '../../shared/StepLayout/StepLayout.jsx';
 import FormField from '../../shared/FormField/FormField.jsx';
 import './HandoffMethodStep.css';
@@ -72,6 +72,7 @@ function HandoffMethodStep({
   const [shippingError, setShippingError] = useState('');
   const [adminSettings, setAdminSettings] = useState(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const upsellFetchIdRef = useRef(0);
 
   useEffect(() => {
     fetchAdminSettings()
@@ -252,21 +253,24 @@ By shipping your footwear, you acknowledge that you are responsible for followin
       setIsFetchingRates(true);
       setShippingError('');
 
+      const addressPayload = {
+        ...shippingAddress,
+        email: shippingAddress.email || bookingData.guestInfo?.email || '',
+      };
+      const referencePrefix = bookingData.customerID || bookingData.guestInfo?.email || 'booking';
+      const sharedPayload = {
+        customerAddress: addressPayload,
+        parcel: recommendedParcel,
+        sneakerQuantity: sneakerCount,
+        eligibleSneakerQuantity: eligibleSneakerCount,
+        referencePrefix,
+      };
+
+      // Phase 1: fetch the initial rate only — skip upsell so the response is fast.
       const response = await fetch(`/apps/${PROXY_SUB_PATH}/api/shipping/rates`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customerAddress: {
-            ...shippingAddress,
-            email: shippingAddress.email || bookingData.guestInfo?.email || '',
-          },
-          parcel: recommendedParcel,
-          sneakerQuantity: sneakerCount,
-          eligibleSneakerQuantity: eligibleSneakerCount,
-          referencePrefix: bookingData.customerID || bookingData.guestInfo?.email || 'booking',
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...sharedPayload, skipUpsell: true }),
       });
 
       const result = await response.json();
@@ -279,6 +283,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         throw new Error('Unable to find a valid roundtrip shipping option for this booking.');
       }
 
+      // Display the initial rate immediately; upsellOptions: null signals "loading".
       updateShippingSelection((current) => ({
         ...current,
         rates: result.quotes,
@@ -288,12 +293,37 @@ By shipping your footwear, you acknowledge that you are responsible for followin
         selectedForwardRate: result.selectedForwardRate,
         selectedReturnRate: result.selectedReturnRate,
         customerFacingShippingTotal: result.pricing.customerFacingTotal,
-        upsellOptions: result.upsellOptions || [],
+        upsellOptions: null,
       }));
+
+      setIsFetchingRates(false);
+
+      // Phase 2: fetch upsell in the background — does not block the UI.
+      // Use a generation counter so stale responses from a previous fetch are discarded.
+      const fetchId = ++upsellFetchIdRef.current;
+      const currentCustomerFacingTotal = result.pricing.customerFacingTotal;
+
+      fetch(`/apps/${PROXY_SUB_PATH}/api/shipping/rates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...sharedPayload, upsellOnly: true, currentCustomerFacingTotal }),
+      })
+        .then((res) => res.json())
+        .then((upsellResult) => {
+          if (fetchId !== upsellFetchIdRef.current) return;
+          updateShippingSelection((current) => ({
+            ...current,
+            upsellOptions: upsellResult.success ? (upsellResult.upsellOptions || []) : [],
+          }));
+        })
+        .catch(() => {
+          if (fetchId !== upsellFetchIdRef.current) return;
+          updateShippingSelection((current) => ({ ...current, upsellOptions: [] }));
+        });
+
     } catch (error) {
       console.error('Error fetching shipping rates:', error);
       setShippingError(error.message || 'Unable to fetch shipping rates');
-    } finally {
       setIsFetchingRates(false);
     }
   };
@@ -680,7 +710,14 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 <strong>${shippingSummary.customerFacingTotal.toFixed(2)}</strong>
               </div>
 
-              {shippingSelection?.upsellOptions?.length > 0 && (
+              {shippingSelection?.upsellOptions === null ? (
+                <div className="shipping-rates__group">
+                  <div className="shipping-rates__header">
+                    <h4>Save More With More Pairs</h4>
+                  </div>
+                  <p className="shipping-upsell-loading">Checking for savings options...</p>
+                </div>
+              ) : shippingSelection?.upsellOptions?.length > 0 ? (
                 <div className="shipping-rates__group">
                   <div className="shipping-rates__header">
                     <h4>Save More With More Pairs</h4>
@@ -693,7 +730,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                     ))}
                   </div>
                 </div>
-              )}
+              ) : null}
 
               <div className="shipping-disclaimer">
                 <h4 className="shipping-section__title">Shipping Instructions & Disclaimer</h4>

@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "app/routes/api.create.booking.js": {
-    "mtime": 1779282545.8615258,
-    "ast_hash": "7d95a3fe53ab57cbd5e5799667f31339",
+    "mtime": 1781085934.9625707,
+    "ast_hash": "67af1a578781702ed431e7e2c28a0877",
     "semantic_hash": ""
   },
   "app/routes/api.create.charge.js": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "app/routes/api.shipping.rates.js": {
-    "mtime": 1780925372.782586,
-    "ast_hash": "074adc36f783b3af71222262ce597818",
+    "mtime": 1781086380.9325979,
+    "ast_hash": "1655321f5df8ecb10c1ee492447f235f",
     "semantic_hash": ""
   },
   "app/routes/api.update.settings.js": {
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js": {
-    "mtime": 1781079803.8265657,
-    "ast_hash": "96da5c6575bac43ad555c883fd621315",
+    "mtime": 1781086440.6615477,
+    "ast_hash": "83c386dfbe839873b48a6a319765911b",
     "semantic_hash": ""
   },
   "package.json": {
@@ -330,7 +330,7 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx": {
-    "mtime": 1781079670.0868523,
+    "mtime": 1781084335.4077759,
     "ast_hash": "fbbc2d2749ed24dbfc2a9a7979478692",
     "semantic_hash": ""
   },
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx": {
-    "mtime": 1780915822.1763759,
-    "ast_hash": "44a60f8487a517b1a6da1a12c6317d14",
+    "mtime": 1781086440.196889,
+    "ast_hash": "37f299a80010b982293ae7fff86cc1dc",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/steps/LandingStep/LandingStep.jsx": {
@@ -530,7 +530,7 @@
     "semantic_hash": ""
   },
   "extensions/sneaker-cleaning-manager/assets/vite.svg": {
-    "mtime": 1781079803.6745636,
+    "mtime": 1781086440.5518928,
     "ast_hash": "8e3a10e157f75ada21ab742c022d5430",
     "semantic_hash": ""
   },
