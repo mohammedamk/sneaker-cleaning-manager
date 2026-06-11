@@ -161,10 +161,7 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 12px;
-    background: #f9f9f9;
+    padding: 4px 0;
 }
 
 .shipping-rate-card input {

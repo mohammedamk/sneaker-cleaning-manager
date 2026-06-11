@@ -4,146 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "label": "api.shipping.rates.js",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates",
-      "community": 0,
-      "norm_label": "api.shipping.rates.js"
-    },
-    {
-      "label": "toAmount()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L14",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_toamount",
-      "community": 0,
-      "norm_label": "toamount()"
-    },
-    {
-      "label": "roundCurrencyAmount()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L19",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_roundcurrencyamount",
-      "community": 0,
-      "norm_label": "roundcurrencyamount()"
-    },
-    {
-      "label": "buildTestRate()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_buildtestrate",
-      "community": 0,
-      "norm_label": "buildtestrate()"
-    },
-    {
-      "label": "buildTestShippingQuotes()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L43",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_buildtestshippingquotes",
-      "community": 0,
-      "norm_label": "buildtestshippingquotes()"
-    },
-    {
-      "label": "getRecommendedParcelForQuantity()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L84",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_getrecommendedparcelforquantity",
-      "community": 0,
-      "norm_label": "getrecommendedparcelforquantity()"
-    },
-    {
-      "label": "getUpsellQuantities()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L101",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_getupsellquantities",
-      "community": 0,
-      "norm_label": "getupsellquantities()"
-    },
-    {
-      "label": "isValidRate()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L119",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_isvalidrate",
-      "community": 0,
-      "norm_label": "isvalidrate()"
-    },
-    {
-      "label": "selectLowestValidRate()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L129",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_selectlowestvalidrate",
-      "community": 0,
-      "norm_label": "selectlowestvalidrate()"
-    },
-    {
-      "label": "formatEstimatedDelivery()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L135",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_formatestimateddelivery",
-      "community": 0,
-      "norm_label": "formatestimateddelivery()"
-    },
-    {
-      "label": "calculateCustomerFacingShipping()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L147",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_calculatecustomerfacingshipping",
-      "community": 0,
-      "norm_label": "calculatecustomerfacingshipping()"
-    },
-    {
-      "label": "fetchQuotes()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L182",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_fetchquotes",
-      "community": 0,
-      "norm_label": "fetchquotes()"
-    },
-    {
-      "label": "buildQuoteSummary()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L203",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_buildquotesummary",
-      "community": 0,
-      "norm_label": "buildquotesummary()"
-    },
-    {
-      "label": "action()",
-      "file_type": "code",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L248",
-      "_origin": "ast",
-      "id": "routes_api_shipping_rates_action",
-      "community": 0,
-      "norm_label": "action()"
-    },
-    {
       "label": "sneakerCleaningExt.js",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
@@ -204,14 +64,14 @@
       "norm_label": "qc()"
     },
     {
-      "label": "je",
+      "label": "Te",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_je",
+      "id": "assets_sneakercleaningext_te",
       "community": 2,
-      "norm_label": "je"
+      "norm_label": "te"
     },
     {
       "label": "Xg()",
@@ -1064,6 +924,166 @@
       "norm_label": "handoffmethodstep()"
     },
     {
+      "label": "SummaryStep.jsx",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "summarystep_summarystep",
+      "community": 18,
+      "norm_label": "summarystep.jsx"
+    },
+    {
+      "label": "SummaryStep()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "summarystep_summarystep_summarystep",
+      "community": 18,
+      "norm_label": "summarystep()"
+    },
+    {
+      "label": "api.shipping.rates.js",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "api.shipping.rates.js",
+      "id": "routes_api_shipping_rates"
+    },
+    {
+      "label": "toAmount()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L14",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "toamount()",
+      "id": "routes_api_shipping_rates_toamount"
+    },
+    {
+      "label": "roundCurrencyAmount()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L19",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "roundcurrencyamount()",
+      "id": "routes_api_shipping_rates_roundcurrencyamount"
+    },
+    {
+      "label": "buildTestRate()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L23",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "buildtestrate()",
+      "id": "routes_api_shipping_rates_buildtestrate"
+    },
+    {
+      "label": "buildTestShippingQuotes()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L43",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "buildtestshippingquotes()",
+      "id": "routes_api_shipping_rates_buildtestshippingquotes"
+    },
+    {
+      "label": "getRecommendedParcelForQuantity()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L84",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "getrecommendedparcelforquantity()",
+      "id": "routes_api_shipping_rates_getrecommendedparcelforquantity"
+    },
+    {
+      "label": "getUpsellQuantities()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L101",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "getupsellquantities()",
+      "id": "routes_api_shipping_rates_getupsellquantities"
+    },
+    {
+      "label": "isValidRate()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L119",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "isvalidrate()",
+      "id": "routes_api_shipping_rates_isvalidrate"
+    },
+    {
+      "label": "selectLowestValidRate()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L129",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "selectlowestvalidrate()",
+      "id": "routes_api_shipping_rates_selectlowestvalidrate"
+    },
+    {
+      "label": "formatEstimatedDelivery()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L135",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "formatestimateddelivery()",
+      "id": "routes_api_shipping_rates_formatestimateddelivery"
+    },
+    {
+      "label": "calculateCustomerFacingShipping()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L147",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "calculatecustomerfacingshipping()",
+      "id": "routes_api_shipping_rates_calculatecustomerfacingshipping"
+    },
+    {
+      "label": "fetchQuotes()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L182",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "fetchquotes()",
+      "id": "routes_api_shipping_rates_fetchquotes"
+    },
+    {
+      "label": "buildQuoteSummary()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L203",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "buildquotesummary()",
+      "id": "routes_api_shipping_rates_buildquotesummary"
+    },
+    {
+      "label": "action()",
+      "file_type": "code",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L248",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "action()",
+      "id": "routes_api_shipping_rates_action"
+    },
+    {
       "label": "api.create.booking.js",
       "file_type": "code",
       "source_file": "app/routes/api.create.booking.js",
@@ -1822,26 +1842,6 @@
       "community": 13,
       "norm_label": "stepindicator()",
       "id": "stepindicator_stepindicator_stepindicator"
-    },
-    {
-      "label": "SummaryStep.jsx",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 18,
-      "norm_label": "summarystep.jsx",
-      "id": "summarystep_summarystep"
-    },
-    {
-      "label": "SummaryStep()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L8",
-      "_origin": "ast",
-      "community": 18,
-      "norm_label": "summarystep()",
-      "id": "summarystep_summarystep_summarystep"
     },
     {
       "label": "adminSettings.js",
@@ -6660,400 +6660,6 @@
   ],
   "links": [
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L248",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_action"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L203",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_buildquotesummary"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L23",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_buildtestrate"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L43",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_buildtestshippingquotes"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L147",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_calculatecustomerfacingshipping"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L182",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_fetchquotes"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L135",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_formatestimateddelivery"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L84",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_getrecommendedparcelforquantity"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L101",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_getupsellquantities"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L119",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_isvalidrate"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L19",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_roundcurrencyamount"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L129",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_selectlowestvalidrate"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L14",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "routes_api_shipping_rates_toamount"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_adminsettings_server"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_adminsettings_server_getshippingboxlibrary"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_adminsettings_server_getsneakerweight"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_easypostshipping"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_easypostshipping_getshippingquotes"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_returnshippingbuffer_server"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_returnshippingbuffer_server_getreturnshippingbufferpercentage"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "utils_returnshippingbuffer_server_getshippingcreditperpair"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_buildtestrate",
-      "target": "routes_api_shipping_rates_toamount"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L159",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_calculatecustomerfacingshipping",
-      "target": "routes_api_shipping_rates_roundcurrencyamount"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L52",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_buildtestshippingquotes",
-      "target": "routes_api_shipping_rates_buildtestrate"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L197",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_fetchquotes",
-      "target": "routes_api_shipping_rates_buildtestshippingquotes"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L277",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_action",
-      "target": "routes_api_shipping_rates_getupsellquantities"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L212",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_buildquotesummary",
-      "target": "routes_api_shipping_rates_selectlowestvalidrate"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L241",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_buildquotesummary",
-      "target": "routes_api_shipping_rates_formatestimateddelivery"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L229",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_buildquotesummary",
-      "target": "routes_api_shipping_rates_calculatecustomerfacingshipping"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L211",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_buildquotesummary",
-      "target": "routes_api_shipping_rates_fetchquotes"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L186",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_fetchquotes",
-      "target": "utils_easypostshipping_getshippingquotes"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L267",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates_action",
-      "target": "routes_api_shipping_rates_buildquotesummary"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L255",
-      "weight": 1.0,
-      "source": "routes_api_shipping_rates_action",
-      "target": "utils_adminsettings_server_getshippingboxlibrary"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L254",
-      "weight": 1.0,
-      "source": "routes_api_shipping_rates_action",
-      "target": "utils_adminsettings_server_getsneakerweight"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L252",
-      "weight": 1.0,
-      "source": "routes_api_shipping_rates_action",
-      "target": "utils_returnshippingbuffer_server_getreturnshippingbufferpercentage"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L253",
-      "weight": 1.0,
-      "source": "routes_api_shipping_rates_action",
-      "target": "utils_returnshippingbuffer_server_getshippingcreditperpair"
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
@@ -7342,16 +6948,6 @@
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
       "target": "assets_sneakercleaningext_iy"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_je"
     },
     {
       "relation": "contains",
@@ -7687,6 +7283,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext",
+      "target": "assets_sneakercleaningext_te",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7955,9 +7561,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_yg",
-      "target": "assets_sneakercleaningext_lg",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_lg"
     },
     {
       "relation": "calls",
@@ -8579,6 +8185,476 @@
       "confidence_score": 1.0,
       "source": "handoffmethodstep_handoffmethodstep_handoffmethodstep",
       "target": "utils_adminsettings_fetchadminsettings"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "summarystep_summarystep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "summarystep_summarystep",
+      "target": "steplayout_steplayout"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "summarystep_summarystep",
+      "target": "summarystep_summarystep_summarystep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "summarystep_summarystep",
+      "target": "utils_adminsettings"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "summarystep_summarystep",
+      "target": "utils_adminsettings_fetchadminsettings"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "summarystep_summarystep",
+      "target": "utils_assets"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "summarystep_summarystep_summarystep",
+      "target": "utils_adminsettings_fetchadminsettings"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L248",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_action"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L203",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_buildquotesummary"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_buildtestrate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L43",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_buildtestshippingquotes"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L147",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_calculatecustomerfacingshipping"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L182",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_fetchquotes"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L135",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_formatestimateddelivery"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L84",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_getrecommendedparcelforquantity"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L101",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_getupsellquantities"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L119",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_isvalidrate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_roundcurrencyamount"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L129",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_selectlowestvalidrate"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "routes_api_shipping_rates_toamount"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_adminsettings_server"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_adminsettings_server_getshippingboxlibrary"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_adminsettings_server_getsneakerweight"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_easypostshipping"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_easypostshipping_getshippingquotes"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_returnshippingbuffer_server"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_returnshippingbuffer_server_getreturnshippingbufferpercentage"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "utils_returnshippingbuffer_server_getshippingcreditperpair"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_buildtestrate",
+      "target": "routes_api_shipping_rates_toamount"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L159",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_calculatecustomerfacingshipping",
+      "target": "routes_api_shipping_rates_roundcurrencyamount"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_buildtestshippingquotes",
+      "target": "routes_api_shipping_rates_buildtestrate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L197",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_fetchquotes",
+      "target": "routes_api_shipping_rates_buildtestshippingquotes"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L277",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_action",
+      "target": "routes_api_shipping_rates_getupsellquantities"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L212",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_buildquotesummary",
+      "target": "routes_api_shipping_rates_selectlowestvalidrate"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L241",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_buildquotesummary",
+      "target": "routes_api_shipping_rates_formatestimateddelivery"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L229",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_buildquotesummary",
+      "target": "routes_api_shipping_rates_calculatecustomerfacingshipping"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L211",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_buildquotesummary",
+      "target": "routes_api_shipping_rates_fetchquotes"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L186",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_fetchquotes",
+      "target": "utils_easypostshipping_getshippingquotes"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L267",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates_action",
+      "target": "routes_api_shipping_rates_buildquotesummary"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L255",
+      "weight": 1.0,
+      "source": "routes_api_shipping_rates_action",
+      "target": "utils_adminsettings_server_getshippingboxlibrary"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L254",
+      "weight": 1.0,
+      "source": "routes_api_shipping_rates_action",
+      "target": "utils_adminsettings_server_getsneakerweight"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L252",
+      "weight": 1.0,
+      "source": "routes_api_shipping_rates_action",
+      "target": "utils_returnshippingbuffer_server_getreturnshippingbufferpercentage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L253",
+      "weight": 1.0,
+      "source": "routes_api_shipping_rates_action",
+      "target": "utils_returnshippingbuffer_server_getshippingcreditperpair"
     },
     {
       "relation": "imports_from",
@@ -10069,17 +10145,6 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "summarystep_summarystep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
       "source_location": "L2",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -10515,71 +10580,6 @@
       "confidence_score": 1.0,
       "source": "stepindicator_stepindicator",
       "target": "stepindicator_stepindicator_visual_steps"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "summarystep_summarystep",
-      "target": "steplayout_steplayout"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "summarystep_summarystep",
-      "target": "summarystep_summarystep_summarystep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "summarystep_summarystep",
-      "target": "utils_adminsettings"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "summarystep_summarystep",
-      "target": "utils_adminsettings_fetchadminsettings"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "summarystep_summarystep",
-      "target": "utils_assets"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "summarystep_summarystep_summarystep",
-      "target": "utils_adminsettings_fetchadminsettings"
     },
     {
       "relation": "imports_from",
@@ -17472,5 +17472,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "caa95d4d5d32dd51ff1ec3cca98653c6fce6ce87"
+  "built_at_commit": "f5e224bf60f6e7a6f606c9ddeda047b4fc07864f"
 }

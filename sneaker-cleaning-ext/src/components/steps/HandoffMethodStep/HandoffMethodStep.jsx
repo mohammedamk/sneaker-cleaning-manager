@@ -733,11 +733,16 @@ By shipping your footwear, you acknowledge that you are responsible for followin
 
               <div className="shipping-disclaimer">
                 <h4 className="shipping-section__title">Shipping Instructions & Disclaimer</h4>
-                {shippingInstructionsDisclaimer ? (
-                  shippingInstructionsDisclaimer.split('\n').map((paragraph, idx) => (
-                    paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
-                  ))
-                ) : (
+                {shippingInstructionsDisclaimer ? (() => {
+                  let count = 0;
+                  return shippingInstructionsDisclaimer.split('\n').map((paragraph, idx) => {
+                    if (!paragraph.trim()) return null;
+                    count++;
+                    return count <= 3
+                      ? <p key={idx}><strong>{paragraph}</strong></p>
+                      : <p key={idx}>{paragraph}</p>;
+                  });
+                })() : (
                   <p>No shipping instructions provided.</p>
                 )}
                 <label className="shipping-disclaimer__checkbox">
