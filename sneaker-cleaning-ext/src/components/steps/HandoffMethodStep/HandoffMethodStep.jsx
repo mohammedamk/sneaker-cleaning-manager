@@ -536,10 +536,9 @@ By shipping your footwear, you acknowledge that you are responsible for followin
             <div className="handoff-card__instructions">
               <p><strong>Shipping Instructions:</strong></p>
               <ol className="handoff-instructions-list">
-                <li>Label each pair with your booking ID (sent to your email).</li>
                 <li>Place each pair in a separate plastic bag.</li>
                 <li>Pack all pairs into one shipping box.</li>
-                <li>Ship to: <strong>123 Footwear Lane, Suite 4, New York, NY 10001</strong></li>
+                <li>Include a copy of your booking ID in your package (sent to your email)</li>
               </ol>
               <p><em>We recommend using a tracked shipping service. We are not responsible for items lost during shipping.</em></p>
             </div>
@@ -623,7 +622,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 <p><strong>Footwear pairs:</strong> {sneakerCount}</p>
                 {selectedBoxConfig ? (
                   <>
-                    <p><strong>Box size:</strong> {selectedBoxConfig.length}&quot; x {selectedBoxConfig.width}&quot; x {selectedBoxConfig.height}&quot;</p>
+                    <p><strong>Recommended box size:</strong> L: {selectedBoxConfig.length}&quot; x W: {selectedBoxConfig.width}&quot; x H: {selectedBoxConfig.height}&quot;</p>
                     {/* <p><strong>Box weight:</strong> {selectedBoxConfig.boxWeightLb} lb</p>
                     <p><strong>Estimated footwear weight:</strong> {sneakerCount * SNEAKER_WEIGHT_LB} lb</p>
                     <p><strong>Total estimated package weight:</strong> {recommendedParcel?.displayWeightLb} lb</p> */}

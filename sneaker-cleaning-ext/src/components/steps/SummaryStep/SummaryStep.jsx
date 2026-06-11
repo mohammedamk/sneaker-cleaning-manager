@@ -162,17 +162,6 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
           ))}
         </div>
 
-        <div className="summary__total">
-          <span>Estimated Total</span>
-          <span className="summary__total-price">${estimatedTotal}</span>
-        </div>
-
-        <div className="summary__disclaimer">
-          <strong>Note:</strong> The final price may change after our team inspects your
-          footwear. You will receive the confirmed price and a payment link by email before
-          the service begins.
-        </div>
-
         <div className="summary__agreements">
           <label className="summary__checkbox">
             <input
@@ -180,7 +169,7 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
               checked={Boolean(bookingAgreements?.hasHighValueItems)}
               onChange={(event) => handleHighValueToggle(event.target.checked)}
             />
-            <span>{HIGH_VALUE_DISCLOSURE_LABEL}</span>
+            <span><strong>{HIGH_VALUE_DISCLOSURE_LABEL}</strong></span>
           </label>
 
           {bookingAgreements?.hasHighValueItems && (
@@ -197,6 +186,17 @@ function SummaryStep({ sneakers, services, bookingAgreements, onBookingAgreement
               <span>{HIGH_VALUE_ACKNOWLEDGMENT_LABEL}</span>
             </label>
           )}
+        </div>
+
+        <div className="summary__total">
+          <span>Estimated Total</span>
+          <span className="summary__total-price">${estimatedTotal}</span>
+        </div>
+
+        <div className="summary__disclaimer">
+          <strong>Note:</strong> The final price may change after our team inspects your
+          footwear. You will receive the confirmed price and a payment link by email before
+          the service begins.
         </div>
       </div>
     </StepLayout>

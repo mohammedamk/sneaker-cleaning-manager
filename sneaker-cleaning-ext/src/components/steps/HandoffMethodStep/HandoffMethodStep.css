@@ -161,16 +161,10 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
     padding: 12px;
-    cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.shipping-rate-card--selected {
-    border-color: #1a1a1a;
-    background: #f7f7f7;
+    background: #f9f9f9;
 }
 
 .shipping-rate-card input {
