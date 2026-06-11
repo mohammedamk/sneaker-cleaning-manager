@@ -1,16 +1,16 @@
 # Graph Report - sneaker-cleaning-manager  (2026-06-11)
 
 ## Corpus Check
-- 107 files · ~55,358 words
+- 107 files · ~55,369 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 663 nodes · 1033 edges · 41 communities (36 shown, 5 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 26 edges (avg confidence: 0.8)
+- 663 nodes · 1034 edges · 41 communities (36 shown, 5 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 27 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f5e224bf`
+- Built from commit: `ae0e4441`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -89,7 +89,7 @@ Nodes (42): ACTION_HANDLERS, cancelShopifyOrder(), deleteCleanedImage(), getNorm
 
 ### Community 2 - "Community 2"
 Cohesion: 0.05
-Nodes (14): cm, dy(), ey(), gy(), Hc, im, ip(), jy (+6 more)
+Nodes (14): cm, dy(), ey(), gy(), Hc, im, ip(), je (+6 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.04
@@ -152,8 +152,8 @@ Cohesion: 0.29
 Nodes (7): De(), dp(), Fn(), fp(), hm(), mm(), ps()
 
 ### Community 21 - "Community 21"
-Cohesion: 0.38
-Nodes (10): Gg(), Jg(), Kg(), Lg(), Qc(), qg(), Vg(), Xg() (+2 more)
+Cohesion: 0.33
+Nodes (11): Gg(), Jg(), Kg(), Lg(), Qc(), qg(), St(), Vg() (+3 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.67
@@ -185,18 +185,18 @@ Nodes (3): Expanding the ESLint configuration, React Compiler, React + Vite
 
 ### Community 33 - "Community 33"
 Cohesion: 0.40
-Nodes (5): am(), om(), rm(), tp(), ul()
+Nodes (5): am(), cl(), om(), rm(), tp()
 
 ### Community 35 - "Community 35"
-Cohesion: 0.40
-Nodes (5): jp(), mp(), rl(), Sp(), Xp()
+Cohesion: 0.33
+Nodes (6): fl(), jp(), mp(), rl(), Sp(), Xp()
 
 ### Community 36 - "Community 36"
 Cohesion: 0.33
 Nodes (6): bm(), fy(), my(), oy(), ry(), vm()
 
 ## Knowledge Gaps
-- **208 isolated node(s):** `Te`, `kp`, `nm`, `im`, `Hc` (+203 more)
+- **208 isolated node(s):** `je`, `kp`, `nm`, `im`, `Hc` (+203 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -207,13 +207,13 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Are the 14 inferred relationships involving `action()` (e.g. with `saveAddOns()` and `saveAlterationOptions()`) actually correct?**
   _`action()` has 14 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Te`, `kp`, `nm` to the rest of the system?**
+- **What connects `je`, `kp`, `nm` to the rest of the system?**
   _208 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.05995975855130785 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.073224043715847 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.04756871035940803 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.04994192799070848 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._

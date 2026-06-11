@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js": {
-    "mtime": 1781175921.316827,
-    "ast_hash": "9a1907afc67b030430bd96ffd41bd8ae",
+    "mtime": 1781179786.0543156,
+    "ast_hash": "4995e7f26f24d8eca9bfb03f13993f3b",
     "semantic_hash": ""
   },
   "package.json": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx": {
-    "mtime": 1781175693.1267524,
-    "ast_hash": "7aaf5be64a5b091963f49c6b64e8f2b2",
+    "mtime": 1781179510.7782526,
+    "ast_hash": "aba2dd6263584e681e15e1b77439633e",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/components/steps/LandingStep/LandingStep.jsx": {
@@ -485,8 +485,8 @@
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/utils/global.js": {
-    "mtime": 1780896522.4885948,
-    "ast_hash": "077eaffa4b8049560a092aa6c3926edf",
+    "mtime": 1781178581.8708951,
+    "ast_hash": "b28addafc4c161a691b3ec571507f386",
     "semantic_hash": ""
   },
   "sneaker-cleaning-ext/src/utils/toast.js": {
@@ -530,7 +530,7 @@
     "semantic_hash": ""
   },
   "extensions/sneaker-cleaning-manager/assets/vite.svg": {
-    "mtime": 1781175921.178434,
+    "mtime": 1781179785.9219174,
     "ast_hash": "8e3a10e157f75ada21ab742c022d5430",
     "semantic_hash": ""
   },
