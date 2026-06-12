@@ -30,7 +30,7 @@
   }
 }
 
-.form-field__label {
+.shoe-rack-sneaker-form .form-field__label {
   font-size: 13px;
   font-weight: 600;
   color: #333;
@@ -39,14 +39,14 @@
 }
 
 @media (max-width: 768px) {
-  .form-field__label {
+  .shoe-rack-sneaker-form .form-field__label {
     font-size: 12px;
     margin-top: 14px;
   }
 }
 
 @media (max-width: 480px) {
-  .form-field__label {
+  .shoe-rack-sneaker-form .form-field__label {
     font-size: 11px;
     margin-top: 12px;
   }

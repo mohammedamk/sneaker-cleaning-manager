@@ -1,4 +1,22 @@
-<div id="sneaker-cleaning-ext-parent"></div>
+<style>
+  .sneaker-cleaning-section {
+    width: min(900px, 100vw - 48px);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    padding: 0 24px;
+  }
+  @media (max-width: 768px) {
+    .sneaker-cleaning-section { padding: 0 16px; }
+  }
+  @media (max-width: 480px) {
+    .sneaker-cleaning-section { padding: 0 8px; }
+  }
+</style>
+<div class="sneaker-cleaning-section">
+  <div id="sneaker-cleaning-ext-parent"></div>
+</div>
 
 {% schema %}
 {

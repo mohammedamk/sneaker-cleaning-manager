@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import './ShoeRackManagement.css';
 import { PROXY_SUB_PATH } from '../../utils/global.js';
 import ShoeRackSneakerStep from '../steps/ShoeRackSneakerStep/ShoeRackSneakerStep.jsx';
@@ -146,16 +147,19 @@ function ShoeRackManagement({ customerID, onBack }) {
     };
 
     if (showForm) {
-        return (
-            <div className="shoe-rack-form-overlay">
-                <div className="shoe-rack-form-container">
-                    <ShoeRackSneakerStep
-                        editingSneaker={tempSneaker}
-                        onSave={handleFinalSave}
-                        onCancel={() => setShowForm(false)}
-                    />
+        return createPortal(
+            <div className="sneaker-ext-overlay-root">
+                <div className="shoe-rack-form-overlay">
+                    <div className="shoe-rack-form-container">
+                        <ShoeRackSneakerStep
+                            editingSneaker={tempSneaker}
+                            onSave={handleFinalSave}
+                            onCancel={() => setShowForm(false)}
+                        />
+                    </div>
                 </div>
-            </div>
+            </div>,
+            document.body
         );
     }
 
