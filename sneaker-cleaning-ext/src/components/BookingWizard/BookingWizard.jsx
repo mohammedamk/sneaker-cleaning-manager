@@ -130,10 +130,40 @@ function BookingWizard() {
     wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [step, currentView]);
 
+  // Sync the React state with browser history properly
+  useEffect(() => {
+    if (currentView !== 'wizard') return;
+
+    const currentHistoryState = window.history.state;
+    // Push a new history entry for every step change if it doesn't match the current history state.
+    // This allows the browser's native Back button to work step-by-step.
+    if (!currentHistoryState || currentHistoryState.step !== step) {
+      window.history.pushState({ wizard: true, step }, '');
+    }
+
+    const handlePopState = (event) => {
+      const state = event.state;
+      if (state && state.wizard) {
+        // The user navigated in browser history to a valid wizard step
+        setStep(state.step);
+      } else {
+        // The user navigated back to before the wizard started
+        setCurrentView('landing');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [step, currentView]);
+
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const goPrev = () => {
     if (step === 1) {
-      setCurrentView('landing');
+      if (window.history.state?.wizard) {
+        window.history.back();
+      } else {
+        setCurrentView('landing');
+      }
     } else {
       setStep((s) => Math.max(s - 1, 1));
     }
@@ -463,7 +493,7 @@ function BookingWizard() {
                 guestInfo={guestInfo}
                 onGuestInfoChange={setGuestInfo}
                 onNext={goNext}
-                onPrev={() => setCurrentView('landing')}
+                onPrev={goPrev}
               />
             )}
 
