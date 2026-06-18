@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchAdminSettings } from '../../utils/adminSettings.js';
 import StepIndicator from '../shared/StepIndicator/StepIndicator.jsx';
 import React from 'react';
@@ -100,6 +100,7 @@ const FOOTWEAR_SUB_STEPS = [
 ];
 
 function BookingWizard() {
+  const wizardRef = useRef(null);
   const [customerID] = useState(() => getCustomerID());
   const [hasSecureBookingParams] = useState(() => {
     try {
@@ -123,6 +124,11 @@ function BookingWizard() {
   useEffect(() => {
     setHighestReachedStep(prev => Math.max(prev, step));
   }, [step]);
+
+  // Scroll to the top of the wizard on every step change and when entering the wizard
+  useEffect(() => {
+    wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [step, currentView]);
 
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const goPrev = () => {
@@ -386,7 +392,7 @@ function BookingWizard() {
   }
 
   return (
-    <div className="booking-wizard">
+    <div className="booking-wizard" ref={wizardRef}>
       {showIndicator && (
         <StepIndicator
           currentStep={step}
