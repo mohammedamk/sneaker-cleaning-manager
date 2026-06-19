@@ -16,6 +16,19 @@
     box-sizing: inherit;
 }
 
+/* Table layout protection from Shopify theme overrides */
+.shoe-rack-management .shoe-rack-table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    table-layout: auto !important;
+}
+
+.shoe-rack-management .shoe-rack-table th,
+.shoe-rack-management .shoe-rack-table td {
+    box-sizing: border-box !important;
+    vertical-align: middle !important;
+}
+
 /* Isolate button styles from Shopify theme */
 .shoe-rack-management button {
     font-family: inherit !important;
@@ -59,15 +72,6 @@
     background: #f0f0f0 !important;
 }
 
-.shoe-rack-management .btn--danger {
-    background: #fff !important;
-    color: #c62828 !important;
-    border-color: #c62828 !important;
-}
-
-.shoe-rack-management .btn--danger:hover {
-    background: #fdecea !important;
-}
 
 @media (max-width: 768px) {
     .shoe-rack-management {
@@ -130,7 +134,6 @@
 .shoe-rack-management__actions {
     display: flex;
     gap: 12px;
-    /* width: 100%; */
 }
 
 @media (max-width: 768px) {
@@ -246,21 +249,22 @@
         background: #fff;
         margin-bottom: 16px;
         border-radius: 12px;
-        padding: 14px;
+        padding: 14px 14px 0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         border: 1px solid #eee;
+        overflow: hidden;
     }
 
     .shoe-rack-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 9px 0;
-        border-bottom: 1px solid #f5f5f5;
-        text-align: right;
-        white-space: normal;
-        max-width: unset;
-        word-break: break-word;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 9px 0 !important;
+        border-bottom: 1px solid #f5f5f5 !important;
+        text-align: right !important;
+        white-space: normal !important;
+        max-width: unset !important;
+        word-break: break-word !important;
     }
 
     .shoe-rack-table td::before {
@@ -276,47 +280,93 @@
 
     /* Image cell — no label, centered */
     .shoe-rack-table td[data-label=""] {
-        justify-content: center;
-        padding-bottom: 14px;
-        border-bottom: 2px solid #f0f0f0;
-        margin-bottom: 4px;
+        justify-content: center !important;
+        padding-bottom: 14px !important;
+        border-bottom: 2px solid #f0f0f0 !important;
+        margin-bottom: 4px !important;
     }
 
     .shoe-rack-table td[data-label=""]::before {
-        display: none;
+        display: none !important;
     }
 
-    /* Size value stays right-aligned on one line */
+    /* Size row — explicit flex layout, consistent with other info rows */
     .shoe-rack-table td[data-label="Size"] {
-        white-space: nowrap;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        white-space: nowrap !important;
     }
 
-    /* Actions row — full-width side-by-side buttons, no label */
+    /* Actions row — full-bleed integrated action bar */
     .shoe-rack-table td[data-label="Actions"] {
-        display: block;
-        border-bottom: none;
-        padding-top: 14px;
-        margin-top: 6px;
+        display: block !important;
+        border: none !important;
+        border-top: 1px solid #ebebeb !important;
+        margin: 6px -14px 0 !important;
+        padding: 0 !important;
     }
 
     .shoe-rack-table td[data-label="Actions"]::before {
-        display: none;
+        display: none !important;
     }
 
+    /* Two-column equal action bar */
     .table-actions {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 10px;
-        width: 100%;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0 !important;
+        width: 100% !important;
     }
 
-    .table-actions .btn {
-        display: inline-flex !important;
-        flex: 1;
-        min-width: 0;
-        justify-content: center;
-        text-align: center;
+    /* Card-view action buttons — full-bleed, large touch targets */
+    .shoe-rack-action-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        min-height: 52px !important;
+        padding: 14px 10px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        width: 100% !important;
+        cursor: pointer !important;
+        font-family: inherit !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        transition: background 0.12s !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+    }
+
+    .shoe-rack-action-btn--edit {
+        background: #f7f8f9 !important;
+        color: #1a1a1a !important;
+        border-right: 1px solid #ebebeb !important;
+    }
+
+    .shoe-rack-action-btn--edit:hover,
+    .shoe-rack-action-btn--edit:active {
+        background: #ececee !important;
+    }
+
+    .shoe-rack-action-btn--delete {
+        background: #fff8f8 !important;
+        color: #c62828 !important;
+    }
+
+    .shoe-rack-action-btn--delete:hover,
+    .shoe-rack-action-btn--delete:active {
+        background: #fdecea !important;
+    }
+
+    .shoe-rack-action-btn__icon {
+        flex-shrink: 0 !important;
+        display: block !important;
+        pointer-events: none !important;
     }
 }
 
@@ -358,7 +408,7 @@
 
 @media (max-width: 480px) {
     .shoe-rack-table tr {
-        padding: 12px;
+        padding: 12px 12px 0;
         margin-bottom: 10px;
     }
 
@@ -370,6 +420,23 @@
     .shoe-rack-table td::before {
         font-size: 10px;
         margin-right: 10px;
+    }
+
+    /* Adjust bleed margin to match 12px card padding */
+    .shoe-rack-table td[data-label="Actions"] {
+        margin: 6px -12px 0 !important;
+    }
+
+    .shoe-rack-action-btn {
+        min-height: 48px !important;
+        font-size: 13px !important;
+        gap: 6px !important;
+        padding: 12px 8px !important;
+    }
+
+    .shoe-rack-action-btn__icon {
+        width: 13px !important;
+        height: 13px !important;
     }
 }
 
@@ -402,8 +469,7 @@
     }
 }
 
-.table-img--placeholder,
-.table-img--empty {
+.table-img--placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -423,15 +489,13 @@
 }
 
 @media (max-width: 600px) {
-    .table-img--placeholder,
-    .table-img--empty {
+    .table-img--placeholder {
         font-size: 12px;
     }
 }
 
 @media (max-width: 480px) {
-    .table-img--placeholder,
-    .table-img--empty {
+    .table-img--placeholder {
         font-size: 11px;
     }
 }
@@ -462,9 +526,11 @@
     letter-spacing: 0.2px;
 }
 
+/* Desktop: action cell flex wrapper */
 .table-actions {
     display: flex;
     gap: 8px;
+    align-items: center;
 }
 
 @media (max-width: 768px) {
@@ -473,11 +539,53 @@
     }
 }
 
+/* Desktop action buttons (table view) */
+.shoe-rack-action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px;
+    padding: 7px 12px !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    transition: background 0.15s, border-color 0.15s !important;
+    width: auto !important;
+}
 
-@media (max-width: 480px) {
-    .table-actions {
-        gap: 8px;
-    }
+.shoe-rack-action-btn--edit {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    border: 1.5px solid #d4d4d4 !important;
+}
+
+.shoe-rack-action-btn--edit:hover {
+    background: #f5f5f5 !important;
+    border-color: #aaa !important;
+}
+
+.shoe-rack-action-btn--delete {
+    background: #fff !important;
+    color: #c62828 !important;
+    border: 1.5px solid #f0c4c4 !important;
+}
+
+.shoe-rack-action-btn--delete:hover {
+    background: #fdecea !important;
+    border-color: #d98080 !important;
+}
+
+.shoe-rack-action-btn__icon {
+    flex-shrink: 0;
+    display: block;
+    pointer-events: none;
 }
 
 .empty-row {

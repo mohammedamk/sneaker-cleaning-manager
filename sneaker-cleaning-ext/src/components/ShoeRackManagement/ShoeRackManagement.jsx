@@ -219,8 +219,19 @@ function ShoeRackManagement({ customerID, onBack }) {
                                         <td data-label="Size">{snk.size} {snk.sizeUnit}</td>
                                         <td data-label="Actions">
                                             <div className="table-actions">
-                                                <button className="btn btn--small btn--secondary" onClick={() => handleEditClick(snk)}>Edit</button>
-                                                <button className="btn btn--small btn--danger" onClick={() => handleDelete(snk._id)}>Delete</button>
+                                                <button className="shoe-rack-action-btn shoe-rack-action-btn--edit" onClick={() => handleEditClick(snk)}>
+                                                    <svg className="shoe-rack-action-btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                                                    </svg>
+                                                    <span>Edit</span>
+                                                </button>
+                                                <button className="shoe-rack-action-btn shoe-rack-action-btn--delete" onClick={() => handleDelete(snk._id)}>
+                                                    <svg className="shoe-rack-action-btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                        <polyline points="3 6 5 6 21 6"/>
+                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                                    </svg>
+                                                    <span>Delete</span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
