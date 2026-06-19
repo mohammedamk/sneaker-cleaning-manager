@@ -131,6 +131,7 @@ Refunds do not include shipping costs. Shipping charges are nonrefundable once a
 
 By shipping your footwear, you acknowledge that you are responsible for following the packaging instructions and providing accurate shipment contents.`,
       bookingStatuses: DEFAULT_BOOKING_STATUSES,
+      handoffMethods: { dropoff: true, shipping: true, pickup_delivery: true },
     };
   }
 
@@ -175,6 +176,7 @@ Refunds do not include shipping costs. Shipping charges are nonrefundable once a
 
 By shipping your footwear, you acknowledge that you are responsible for following the packaging instructions and providing accurate shipment contents.`,
     bookingStatuses: settings.bookingStatuses?.length > 0 ? settings.bookingStatuses : DEFAULT_BOOKING_STATUSES,
+    handoffMethods: settings.handoffMethods ?? { dropoff: true, shipping: true, pickup_delivery: true },
   };
 }
 
@@ -330,6 +332,10 @@ export async function getBookingStatuses() {
 
 export async function saveBookingStatuses(statuses) {
   return updateSetting('bookingStatuses', statuses);
+}
+
+export async function saveHandoffMethods(handoffMethods) {
+  return updateSetting('handoffMethods', handoffMethods);
 }
 
 // Initialize default settings if they don't exist

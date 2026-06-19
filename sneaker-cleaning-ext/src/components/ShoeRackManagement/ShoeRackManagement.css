@@ -3,6 +3,70 @@
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    box-sizing: border-box;
+}
+
+.shoe-rack-management *,
+.shoe-rack-management *::before,
+.shoe-rack-management *::after {
+    box-sizing: inherit;
+}
+
+/* Isolate button styles from Shopify theme */
+.shoe-rack-management button {
+    font-family: inherit !important;
+    cursor: pointer !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 6px !important;
+    border: 1.5px solid transparent !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+    padding: 7px 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    transition: background 0.15s, border-color 0.15s !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.shoe-rack-management .btn--primary {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border-color: #1a1a1a !important;
+}
+
+.shoe-rack-management .btn--primary:hover {
+    background: #333 !important;
+    border-color: #333 !important;
+}
+
+.shoe-rack-management .btn--secondary {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    border-color: #1a1a1a !important;
+}
+
+.shoe-rack-management .btn--secondary:hover {
+    background: #f0f0f0 !important;
+}
+
+.shoe-rack-management .btn--danger {
+    background: #fff !important;
+    color: #c62828 !important;
+    border-color: #c62828 !important;
+}
+
+.shoe-rack-management .btn--danger:hover {
+    background: #fdecea !important;
 }
 
 @media (max-width: 768px) {
@@ -199,12 +263,6 @@
         word-break: break-word;
     }
 
-    .shoe-rack-table td:last-child {
-        border-bottom: none;
-        margin-top: 6px;
-        white-space: nowrap;
-    }
-
     .shoe-rack-table td::before {
         content: attr(data-label);
         font-weight: 700;
@@ -228,9 +286,37 @@
         display: none;
     }
 
+    /* Size value stays right-aligned on one line */
+    .shoe-rack-table td[data-label="Size"] {
+        white-space: nowrap;
+    }
+
+    /* Actions row — full-width side-by-side buttons, no label */
+    .shoe-rack-table td[data-label="Actions"] {
+        display: block;
+        border-bottom: none;
+        padding-top: 14px;
+        margin-top: 6px;
+    }
+
+    .shoe-rack-table td[data-label="Actions"]::before {
+        display: none;
+    }
+
     .table-actions {
-        justify-content: flex-end;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 10px;
         width: 100%;
+    }
+
+    .table-actions .btn {
+        display: inline-flex !important;
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+        text-align: center;
     }
 }
 
@@ -387,28 +473,10 @@
     }
 }
 
-@media (max-width: 600px) {
-    .table-actions {
-        flex-wrap: wrap;
-        gap: 8px;
-        width: 100%;
-    }
-    
-    .table-actions .btn {
-        flex: 1;
-        min-width: 0;
-    }
-}
 
 @media (max-width: 480px) {
     .table-actions {
-        flex-direction: column;
-        gap: 6px;
-        width: 100%;
-    }
-    
-    .table-actions .btn {
-        width: 100%;
+        gap: 8px;
     }
 }
 

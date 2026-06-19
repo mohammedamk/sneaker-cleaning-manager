@@ -107,8 +107,8 @@
 }
 
 .shipping-rates {
-    padding-top: 16px;
-    border-top: 1px solid #e0e0e0;
+    padding-top: 0;
+    border-top: none;
 }
 
 .shipping-rates__button {
@@ -284,6 +284,27 @@
     font-weight: 600;
 }
 
+.shipping-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    background: #fff8e1;
+    border: 1px solid #f9a825;
+    border-left: 4px solid #f9a825;
+    border-radius: 8px;
+    color: #7a4f00;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.shipping-warning__icon {
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
 @media (max-width: 768px) {
     .handoff-options {
         gap: 12px;
@@ -387,5 +408,106 @@
     .shipping-total {
         padding: 10px 12px;
         font-size: 12px;
+    }
+}
+
+/* ── Shipping panel card layout ────────────────────── */
+.handoff-shipping-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.shipping-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.shipping-card__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.shipping-card--disclaimer .shipping-disclaimer__content {
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.shipping-card--disclaimer .shipping-disclaimer__content p {
+    margin: 0;
+}
+
+.shipping-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.shipping-upsell-loading {
+    color: #888;
+    font-size: 13px;
+    font-style: italic;
+    margin: 0;
+}
+
+.shipping-upsell-none {
+    color: #888;
+    font-size: 13px;
+    margin: 0;
+}
+
+.shipping-rates__group + .shipping-rates__group {
+    padding-top: 14px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+    .shipping-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .shipping-card--disclaimer .shipping-disclaimer__content {
+        max-height: 180px;
+    }
+
+    .handoff-shipping-panel {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .shipping-card {
+        padding: 14px;
+    }
+
+    .handoff-shipping-panel {
+        gap: 10px;
+        margin-top: 16px;
     }
 }

@@ -14,14 +14,14 @@
       "norm_label": "sneakercleaningext.js"
     },
     {
-      "label": "Lg()",
+      "label": "qg()",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_lg",
-      "community": 21,
-      "norm_label": "lg()"
+      "id": "assets_sneakercleaningext_qg",
+      "community": 20,
+      "norm_label": "qg()"
     },
     {
       "label": "Yg()",
@@ -30,7 +30,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "assets_sneakercleaningext_yg",
-      "community": 21,
+      "community": 20,
       "norm_label": "yg()"
     },
     {
@@ -40,38 +40,28 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "assets_sneakercleaningext_gg",
-      "community": 21,
+      "community": 20,
       "norm_label": "gg()"
     },
     {
-      "label": "Qg()",
+      "label": "Xc()",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_qg",
+      "id": "assets_sneakercleaningext_xc",
       "community": 21,
-      "norm_label": "qg()"
+      "norm_label": "xc()"
     },
     {
-      "label": "Qc()",
+      "label": "Te",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_qc",
-      "community": 21,
-      "norm_label": "qc()"
-    },
-    {
-      "label": "je",
-      "file_type": "code",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "assets_sneakercleaningext_je",
+      "id": "assets_sneakercleaningext_te",
       "community": 2,
-      "norm_label": "je"
+      "norm_label": "te"
     },
     {
       "label": "Xg()",
@@ -110,7 +100,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "assets_sneakercleaningext_om",
-      "community": 21,
+      "community": 33,
       "norm_label": "om()"
     },
     {
@@ -240,7 +230,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "assets_sneakercleaningext_hm",
-      "community": 20,
+      "community": 2,
       "norm_label": "hm()"
     },
     {
@@ -314,14 +304,14 @@
       "norm_label": "dp()"
     },
     {
-      "label": "Fn()",
+      "label": "$n()",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_fn",
+      "id": "assets_sneakercleaningext_n",
       "community": 20,
-      "norm_label": "fn()"
+      "norm_label": "$n()"
     },
     {
       "label": "ps()",
@@ -524,16 +514,6 @@
       "norm_label": "ze()"
     },
     {
-      "label": "qp()",
-      "file_type": "code",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L839",
-      "_origin": "ast",
-      "id": "assets_sneakercleaningext_qp",
-      "community": 2,
-      "norm_label": "qp()"
-    },
-    {
       "label": "bm()",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
@@ -542,6 +522,16 @@
       "id": "assets_sneakercleaningext_bm",
       "community": 36,
       "norm_label": "bm()"
+    },
+    {
+      "label": "qp",
+      "file_type": "code",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L839",
+      "_origin": "ast",
+      "id": "assets_sneakercleaningext_qp",
+      "community": 2,
+      "norm_label": "qp"
     },
     {
       "label": "Xp()",
@@ -574,24 +564,24 @@
       "norm_label": "im"
     },
     {
-      "label": "Hc",
+      "label": "Lc",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L839",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_hc",
+      "id": "assets_sneakercleaningext_lc",
       "community": 2,
-      "norm_label": "hc"
+      "norm_label": "lc"
     },
     {
-      "label": "Vc()",
+      "label": "Zc()",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L839",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_vc",
+      "id": "assets_sneakercleaningext_zc",
       "community": 2,
-      "norm_label": "vc()"
+      "norm_label": "zc()"
     },
     {
       "label": "sm",
@@ -854,14 +844,114 @@
       "norm_label": "zy()"
     },
     {
+      "label": "BookingWizard.jsx",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard",
+      "community": 13,
+      "norm_label": "bookingwizard.jsx"
+    },
+    {
+      "label": "EMPTY_HISTORY",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_empty_history",
+      "community": 13,
+      "norm_label": "empty_history"
+    },
+    {
+      "label": "createLocalSneakerId()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_createlocalsneakerid",
+      "community": 13,
+      "norm_label": "createlocalsneakerid()"
+    },
+    {
+      "label": "getSneakerKey()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_getsneakerkey",
+      "community": 13,
+      "norm_label": "getsneakerkey()"
+    },
+    {
+      "label": "normalizeHistory()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_normalizehistory",
+      "community": 13,
+      "norm_label": "normalizehistory()"
+    },
+    {
+      "label": "getCustomerID()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_getcustomerid",
+      "community": 13,
+      "norm_label": "getcustomerid()"
+    },
+    {
+      "label": "DEFAULT_BOOKING_AGREEMENTS",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L49",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_default_booking_agreements",
+      "community": 13,
+      "norm_label": "default_booking_agreements"
+    },
+    {
+      "label": "DEFAULT_SHIPPING_SELECTION",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_default_shipping_selection",
+      "community": 13,
+      "norm_label": "default_shipping_selection"
+    },
+    {
+      "label": "FOOTWEAR_SUB_STEPS",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L96",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_footwear_sub_steps",
+      "community": 13,
+      "norm_label": "footwear_sub_steps"
+    },
+    {
+      "label": "BookingWizard()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "bookingwizard_bookingwizard_bookingwizard",
+      "community": 18,
+      "norm_label": "bookingwizard()"
+    },
+    {
       "label": "ShoeRackManagement.jsx",
       "file_type": "code",
       "source_file": "sneaker-cleaning-ext/src/components/ShoeRackManagement/ShoeRackManagement.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "shoerackmanagement_shoerackmanagement",
       "community": 15,
-      "norm_label": "shoerackmanagement.jsx"
+      "norm_label": "shoerackmanagement.jsx",
+      "id": "shoerackmanagement_shoerackmanagement"
     },
     {
       "label": "convertToBase64()",
@@ -869,9 +959,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/ShoeRackManagement/ShoeRackManagement.jsx",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "shoerackmanagement_shoerackmanagement_converttobase64",
       "community": 15,
-      "norm_label": "converttobase64()"
+      "norm_label": "converttobase64()",
+      "id": "shoerackmanagement_shoerackmanagement_converttobase64"
     },
     {
       "label": "ShoeRackManagement()",
@@ -879,9 +969,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/ShoeRackManagement/ShoeRackManagement.jsx",
       "source_location": "L21",
       "_origin": "ast",
-      "id": "shoerackmanagement_shoerackmanagement_shoerackmanagement",
       "community": 15,
-      "norm_label": "shoerackmanagement()"
+      "norm_label": "shoerackmanagement()",
+      "id": "shoerackmanagement_shoerackmanagement_shoerackmanagement"
     },
     {
       "label": "LandingStep.jsx",
@@ -889,9 +979,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/LandingStep/LandingStep.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "landingstep_landingstep",
       "community": 15,
-      "norm_label": "landingstep.jsx"
+      "norm_label": "landingstep.jsx",
+      "id": "landingstep_landingstep"
     },
     {
       "label": "LandingStep()",
@@ -899,9 +989,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/LandingStep/LandingStep.jsx",
       "source_location": "L5",
       "_origin": "ast",
-      "id": "landingstep_landingstep_landingstep",
       "community": 15,
-      "norm_label": "landingstep()"
+      "norm_label": "landingstep()",
+      "id": "landingstep_landingstep_landingstep"
     },
     {
       "label": "HandoffMethodStep.jsx",
@@ -1662,106 +1752,6 @@
       "community": 0,
       "norm_label": "initializedefaultsettings()",
       "id": "utils_adminsettings_server_initializedefaultsettings"
-    },
-    {
-      "label": "BookingWizard.jsx",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "bookingwizard.jsx",
-      "id": "bookingwizard_bookingwizard"
-    },
-    {
-      "label": "EMPTY_HISTORY",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L23",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "empty_history",
-      "id": "bookingwizard_bookingwizard_empty_history"
-    },
-    {
-      "label": "createLocalSneakerId()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L28",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "createlocalsneakerid()",
-      "id": "bookingwizard_bookingwizard_createlocalsneakerid"
-    },
-    {
-      "label": "getSneakerKey()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L31",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "getsneakerkey()",
-      "id": "bookingwizard_bookingwizard_getsneakerkey"
-    },
-    {
-      "label": "normalizeHistory()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L33",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "normalizehistory()",
-      "id": "bookingwizard_bookingwizard_normalizehistory"
-    },
-    {
-      "label": "getCustomerID()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L39",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "getcustomerid()",
-      "id": "bookingwizard_bookingwizard_getcustomerid"
-    },
-    {
-      "label": "DEFAULT_BOOKING_AGREEMENTS",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L49",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "default_booking_agreements",
-      "id": "bookingwizard_bookingwizard_default_booking_agreements"
-    },
-    {
-      "label": "DEFAULT_SHIPPING_SELECTION",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L55",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "default_shipping_selection",
-      "id": "bookingwizard_bookingwizard_default_shipping_selection"
-    },
-    {
-      "label": "FOOTWEAR_SUB_STEPS",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L96",
-      "_origin": "ast",
-      "community": 13,
-      "norm_label": "footwear_sub_steps",
-      "id": "bookingwizard_bookingwizard_footwear_sub_steps"
-    },
-    {
-      "label": "BookingWizard()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L102",
-      "_origin": "ast",
-      "community": 18,
-      "norm_label": "bookingwizard()",
-      "id": "bookingwizard_bookingwizard_bookingwizard"
     },
     {
       "label": "BookingDetails.jsx",
@@ -2763,7 +2753,7 @@
       "source_file": "app/routes/_index/route.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 17,
+      "community": 39,
       "norm_label": "route.jsx",
       "id": "index_route"
     },
@@ -2773,7 +2763,7 @@
       "source_file": "app/routes/_index/route.jsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 17,
+      "community": 39,
       "norm_label": "loader()",
       "id": "index_route_loader"
     },
@@ -2783,7 +2773,7 @@
       "source_file": "app/routes/_index/route.jsx",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 17,
+      "community": 39,
       "norm_label": "app()",
       "id": "index_route_app"
     },
@@ -2893,7 +2883,7 @@
       "source_file": "app/routes/api.create.sneaker.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 24,
+      "community": 1,
       "norm_label": "api.create.sneaker.js",
       "id": "routes_api_create_sneaker"
     },
@@ -2903,7 +2893,7 @@
       "source_file": "app/routes/api.create.sneaker.js",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 24,
+      "community": 1,
       "norm_label": "action()",
       "id": "routes_api_create_sneaker_action"
     },
@@ -3063,7 +3053,7 @@
       "source_file": "app/routes/api.get.sneakers.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 39,
+      "community": 24,
       "norm_label": "api.get.sneakers.js",
       "id": "routes_api_get_sneakers"
     },
@@ -3073,7 +3063,7 @@
       "source_file": "app/routes/api.get.sneakers.js",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 39,
+      "community": 24,
       "norm_label": "getimageurls()",
       "id": "routes_api_get_sneakers_getimageurls"
     },
@@ -3083,7 +3073,7 @@
       "source_file": "app/routes/api.get.sneakers.js",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 39,
+      "community": 24,
       "norm_label": "loader()",
       "id": "routes_api_get_sneakers_loader"
     },
@@ -3253,7 +3243,7 @@
       "source_file": "app/routes/api.update.sneaker.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 24,
+      "community": 1,
       "norm_label": "api.update.sneaker.js",
       "id": "routes_api_update_sneaker"
     },
@@ -3263,7 +3253,7 @@
       "source_file": "app/routes/api.update.sneaker.js",
       "source_location": "L18",
       "_origin": "ast",
-      "community": 24,
+      "community": 1,
       "norm_label": "action()",
       "id": "routes_api_update_sneaker_action"
     },
@@ -3453,7 +3443,7 @@
       "source_file": "app/routes/auth.$.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 42,
+      "community": 17,
       "norm_label": "auth.$.jsx",
       "id": "routes_auth"
     },
@@ -3463,7 +3453,7 @@
       "source_file": "app/routes/auth.$.jsx",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 42,
+      "community": 17,
       "norm_label": "loader()",
       "id": "routes_auth_loader"
     },
@@ -3473,7 +3463,7 @@
       "source_file": "app/routes/auth.$.jsx",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 42,
+      "community": 17,
       "norm_label": "headers()",
       "id": "routes_auth_headers"
     },
@@ -4343,7 +4333,7 @@
       "source_file": "app/utils/shopifyImages.server.js",
       "source_location": "L108",
       "_origin": "ast",
-      "community": 24,
+      "community": 1,
       "norm_label": "uploadimagetoshopify()",
       "id": "utils_shopifyimages_server_uploadimagetoshopify"
     },
@@ -6815,19 +6805,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_fm",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L9",
-      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_fn"
+      "target": "assets_sneakercleaningext_fm"
     },
     {
       "relation": "contains",
@@ -6903,16 +6883,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L864",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_hc"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -6983,16 +6953,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_je"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7033,11 +6993,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
+      "source_location": "L839",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_lg"
+      "target": "assets_sneakercleaningext_lc",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -7055,9 +7015,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_m",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_m"
     },
     {
       "relation": "contains",
@@ -7078,6 +7038,16 @@
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
       "target": "assets_sneakercleaningext_my"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext",
+      "target": "assets_sneakercleaningext_n",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -7155,9 +7125,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_pm",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_pm"
     },
     {
       "relation": "contains",
@@ -7188,16 +7158,6 @@
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
       "target": "assets_sneakercleaningext_py"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_qc"
     },
     {
       "relation": "contains",
@@ -7303,6 +7263,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext",
+      "target": "assets_sneakercleaningext_te",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7343,16 +7313,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L839",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_vc"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7385,6 +7345,16 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
+      "source": "assets_sneakercleaningext",
+      "target": "assets_sneakercleaningext_xc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
       "target": "assets_sneakercleaningext_xg"
@@ -7405,9 +7375,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_xy",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_xy"
     },
     {
       "relation": "contains",
@@ -7455,8 +7425,18 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_yy",
+      "target": "assets_sneakercleaningext_yy"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L839",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext",
+      "target": "assets_sneakercleaningext_zc",
       "confidence_score": 1.0
     },
     {
@@ -7495,9 +7475,20 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_zy",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_zy"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext_qg",
+      "target": "assets_sneakercleaningext_de"
     },
     {
       "relation": "calls",
@@ -7508,7 +7499,29 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_qg",
-      "target": "assets_sneakercleaningext_lg"
+      "target": "assets_sneakercleaningext_gg"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext_xc",
+      "target": "assets_sneakercleaningext_qg"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext_xg",
+      "target": "assets_sneakercleaningext_qg"
     },
     {
       "relation": "calls",
@@ -7519,18 +7532,18 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_yg",
-      "target": "assets_sneakercleaningext_lg"
+      "target": "assets_sneakercleaningext_qg"
     },
     {
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
-      "source": "assets_sneakercleaningext_gg",
-      "target": "assets_sneakercleaningext_yg",
-      "confidence_score": 1.0
+      "source": "assets_sneakercleaningext_zg",
+      "target": "assets_sneakercleaningext_qg"
     },
     {
       "relation": "calls",
@@ -7540,7 +7553,7 @@
       "source_location": "L1",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_qc",
+      "source": "assets_sneakercleaningext_gg",
       "target": "assets_sneakercleaningext_yg"
     },
     {
@@ -7561,119 +7574,20 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_yg",
-      "target": "assets_sneakercleaningext_qg"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_qc",
-      "target": "assets_sneakercleaningext_gg"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_qg",
-      "target": "assets_sneakercleaningext_gg"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "assets_sneakercleaningext_qc",
-      "target": "assets_sneakercleaningext_qg",
+      "source": "assets_sneakercleaningext_kg",
+      "target": "assets_sneakercleaningext_xc",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "assets_sneakercleaningext_xg",
-      "target": "assets_sneakercleaningext_qg"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
+      "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
       "source": "assets_sneakercleaningext_zg",
-      "target": "assets_sneakercleaningext_qg"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "assets_sneakercleaningext_hm",
-      "target": "assets_sneakercleaningext_qc"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_kg",
-      "target": "assets_sneakercleaningext_qc"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_vg",
-      "target": "assets_sneakercleaningext_qc"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_xg",
-      "target": "assets_sneakercleaningext_qc"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_zg",
-      "target": "assets_sneakercleaningext_qc"
+      "target": "assets_sneakercleaningext_xc",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -7704,9 +7618,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_kg",
-      "target": "assets_sneakercleaningext_vg",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_vg"
     },
     {
       "relation": "calls",
@@ -7737,9 +7651,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_om",
-      "target": "assets_sneakercleaningext_zg",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_zg"
     },
     {
       "relation": "calls",
@@ -7770,9 +7684,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_kg",
-      "target": "assets_sneakercleaningext_om",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_om"
     },
     {
       "relation": "calls",
@@ -7814,9 +7728,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_cl",
-      "target": "assets_sneakercleaningext_rm",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_rm"
     },
     {
       "relation": "calls",
@@ -7836,9 +7750,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_am",
-      "target": "assets_sneakercleaningext_fm",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_fm"
     },
     {
       "relation": "calls",
@@ -7859,17 +7773,6 @@
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext_fn",
-      "target": "assets_sneakercleaningext_hm"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_hp",
       "target": "assets_sneakercleaningext_up"
     },
@@ -7880,7 +7783,7 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
-      "source": "assets_sneakercleaningext_fn",
+      "source": "assets_sneakercleaningext_n",
       "target": "assets_sneakercleaningext_gm",
       "confidence_score": 1.0
     },
@@ -7957,9 +7860,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L9",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_de",
-      "target": "assets_sneakercleaningext_fn"
+      "target": "assets_sneakercleaningext_n",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -8078,9 +7981,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_m",
-      "target": "assets_sneakercleaningext_fy",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_fy"
     },
     {
       "relation": "calls",
@@ -8111,9 +8014,9 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_m",
-      "target": "assets_sneakercleaningext_dy",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_dy"
     },
     {
       "relation": "calls",
@@ -8122,9 +8025,209 @@
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L864",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_py",
-      "target": "assets_sneakercleaningext_my",
-      "confidence_score": 1.0
+      "target": "assets_sneakercleaningext_my"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "additionalnotesstep_additionalnotesstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "addmoresneakersstep_addmoresneakersstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "agreementstep_agreementstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingsmanagement_bookingsmanagement"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingsmanagement_guestbookinglookup"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L102",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_bookingwizard"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_createlocalsneakerid"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L49",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_default_booking_agreements"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_default_shipping_selection"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_empty_history"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L96",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_footwear_sub_steps"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_getcustomerid"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_getsneakerkey"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L33",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "bookingwizard_bookingwizard_normalizehistory"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "confirmationstep_confirmationstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "customercheckstep_customercheckstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "handoffmethodstep_handoffmethodstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "landingstep_landingstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "serviceselectionstep_serviceselectionstep"
     },
     {
       "relation": "imports_from",
@@ -8136,6 +8239,116 @@
       "confidence_score": 1.0,
       "source": "bookingwizard_bookingwizard",
       "target": "shoerackmanagement_shoerackmanagement"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "shoerackselectionstep_shoerackselectionstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "sneakerhistorystep_sneakerhistorystep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "sneakerregistrationstep_sneakerregistrationstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "stepindicator_stepindicator"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "summarystep_summarystep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "utils_adminsettings"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "utils_adminsettings_fetchadminsettings"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "utils_toast"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/App.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app",
+      "target": "bookingwizard_bookingwizard"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L160",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard_bookingwizard",
+      "target": "utils_adminsettings_fetchadminsettings"
     },
     {
       "relation": "imports_from",
@@ -8205,17 +8418,6 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "landingstep_landingstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "sneaker-cleaning-ext/src/components/steps/LandingStep/LandingStep.jsx",
       "source_location": "L3",
       "weight": 1.0,
@@ -8232,17 +8434,6 @@
       "confidence_score": 1.0,
       "source": "landingstep_landingstep",
       "target": "landingstep_landingstep_landingstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "handoffmethodstep_handoffmethodstep"
     },
     {
       "relation": "imports_from",
@@ -8435,17 +8626,6 @@
       "confidence_score": 1.0,
       "source": "utils_adminsettings",
       "target": "utils_global"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "summarystep_summarystep"
     },
     {
       "relation": "imports_from",
@@ -10145,283 +10325,6 @@
       "weight": 1.0,
       "source": "routes_app_bookings_loader",
       "target": "utils_adminsettings_server_getbookingstatuses"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "additionalnotesstep_additionalnotesstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "addmoresneakersstep_addmoresneakersstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "agreementstep_agreementstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L20",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingsmanagement_bookingsmanagement"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L21",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingsmanagement_guestbookinglookup"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L102",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_bookingwizard"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L28",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_createlocalsneakerid"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L49",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_default_booking_agreements"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L55",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_default_shipping_selection"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L23",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_empty_history"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L96",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_footwear_sub_steps"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L39",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_getcustomerid"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L31",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_getsneakerkey"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L33",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "bookingwizard_bookingwizard_normalizehistory"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "confirmationstep_confirmationstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "customercheckstep_customercheckstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "serviceselectionstep_serviceselectionstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L18",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "shoerackselectionstep_shoerackselectionstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "sneakerhistorystep_sneakerhistorystep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "sneakerregistrationstep_sneakerregistrationstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "stepindicator_stepindicator"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "utils_adminsettings"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "utils_adminsettings_fetchadminsettings"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L22",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "utils_toast"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/App.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_app",
-      "target": "bookingwizard_bookingwizard"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L160",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard_bookingwizard",
-      "target": "utils_adminsettings_fetchadminsettings"
     },
     {
       "relation": "imports_from",
@@ -17560,5 +17463,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "526c587af8b0a12e5537ff8fcedac98c81db7e32"
+  "built_at_commit": "f0150f037ae3fdec8ead2475b960e1328524ae9f"
 }

@@ -89,6 +89,7 @@ function HandoffMethodStep({
   const SNEAKER_WEIGHT_LB = adminSettings?.sneakerWeightLb || 4;
   console.log("SNEAKER_WEIGHT_LB", SNEAKER_WEIGHT_LB)
   const DEFAULT_SHIPPING_CREDIT_PER_PAIR = adminSettings?.shippingCreditPerPair || 10;
+  const enabledHandoffMethods = adminSettings?.handoffMethods ?? { dropoff: true, shipping: true, pickup_delivery: true };
   const shippingInstructionsDisclaimer = adminSettings?.shippingInstructionsDisclaimer || `To help keep shipping costs accurate and avoid delays, please package your footwear according to the box size recommended during checkout. You may use the recommended box size or a smaller box, as long as all footwear fits safely without forcing, bending, or damaging the shoes.
 
 If you do not have an appropriately sized box, we recommend asking your shipping carrier for assistance with selecting the correct box size before sending your items. Oversized packages may result in carrier price adjustments, shipping delays, or additional charges. Carrier measurements, weights, and rate adjustments may differ from the website estimate. Any additional charges caused by carrier remeasurement, oversized packaging, or incorrect packaging may be the customer’s responsibility.
@@ -482,108 +483,114 @@ By shipping your footwear, you acknowledge that you are responsible for followin
       isLoading={isSubmitting}
     >
       <div className="handoff-options">
-        <div
-          className={`handoff-card ${handoffMethod === 'dropoff' ? 'handoff-card--selected' : ''}`}
-          onClick={() => {
-            setShippingError('');
-            onHandoffChange('dropoff');
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
+        {enabledHandoffMethods.dropoff && (
+          <div
+            className={`handoff-card ${handoffMethod === 'dropoff' ? 'handoff-card--selected' : ''}`}
+            onClick={() => {
               setShippingError('');
               onHandoffChange('dropoff');
-            }
-          }}
-        >
-          <div className="handoff-card__icon">📍</div>
-          <h3 className="handoff-card__title">Drop-Off</h3>
-          <p className="handoff-card__desc">Bring your footwear directly to our location.</p>
-          {handoffMethod === 'dropoff' && (
-            <div className="handoff-card__instructions">
-              <p><strong>Drop-off Location:</strong></p>
-              <p>123 Footwear Lane, Suite 4<br />New York, NY 10001</p>
-              <p><strong>Hours:</strong> Mon-Sat, 9 AM - 6 PM</p>
-              <div className="handoff-policy-info">
-                <p><strong>Time Window:</strong> Please drop off your footwear within 48 hours of booking. <b>Orders not completed within this window will be automatically canceled.</b></p>
-                <p><strong>Pickup Policy:</strong> Once cleaned, footwear must be picked up by the customer from our location. <b>Items will be held for up to 6 months before being disposed of.</b></p>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setShippingError('');
+                onHandoffChange('dropoff');
+              }
+            }}
+          >
+            <div className="handoff-card__icon">📍</div>
+            <h3 className="handoff-card__title">Drop-Off</h3>
+            <p className="handoff-card__desc">Bring your footwear directly to our location.</p>
+            {handoffMethod === 'dropoff' && (
+              <div className="handoff-card__instructions">
+                <p><strong>Drop-off Location:</strong></p>
+                <p>123 Footwear Lane, Suite 4<br />New York, NY 10001</p>
+                <p><strong>Hours:</strong> Mon-Sat, 9 AM - 6 PM</p>
+                <div className="handoff-policy-info">
+                  <p><strong>Time Window:</strong> Please drop off your footwear within 48 hours of booking. <b>Orders not completed within this window will be automatically canceled.</b></p>
+                  <p><strong>Pickup Policy:</strong> Once cleaned, footwear must be picked up by the customer from our location. <b>Items will be held for up to 6 months before being disposed of.</b></p>
+                </div>
+                <p><strong>Next Steps:</strong> Bring your footwear in any bag and mention your booking reference at the counter. <b>No scheduling is required;</b> just drop by during our opening hours.</p>
               </div>
-              <p><strong>Next Steps:</strong> Bring your footwear in any bag and mention your booking reference at the counter. <b>No scheduling is required;</b> just drop by during our opening hours.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
-        <div
-          className={`handoff-card ${handoffMethod === 'shipping' ? 'handoff-card--selected' : ''}`}
-          onClick={() => {
-            setShippingError('');
-            onHandoffChange('shipping');
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
+        {enabledHandoffMethods.shipping && (
+          <div
+            className={`handoff-card ${handoffMethod === 'shipping' ? 'handoff-card--selected' : ''}`}
+            onClick={() => {
               setShippingError('');
               onHandoffChange('shipping');
-            }
-          }}
-        >
-          <div className="handoff-card__icon">📦</div>
-          <h3 className="handoff-card__title">Shipping</h3>
-          <p className="handoff-card__desc">Ship your footwear with EasyPost-backed USPS and UPS options.</p>
-          {handoffMethod === 'shipping' && (
-            <div className="handoff-card__instructions">
-              <p><strong>Shipping Instructions:</strong></p>
-              <ol className="handoff-instructions-list">
-                <li>Place each pair in a separate plastic bag.</li>
-                <li>Pack all pairs into one shipping box.</li>
-                <li>Include a copy of your booking ID in your package (sent to your email)</li>
-              </ol>
-              <p><em>We recommend using a tracked shipping service. We are not responsible for items lost during shipping.</em></p>
-            </div>
-          )}
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setShippingError('');
+                onHandoffChange('shipping');
+              }
+            }}
+          >
+            <div className="handoff-card__icon">📦</div>
+            <h3 className="handoff-card__title">Shipping</h3>
+            <p className="handoff-card__desc">Ship your footwear with EasyPost-backed USPS and UPS options.</p>
+            {handoffMethod === 'shipping' && (
+              <div className="handoff-card__instructions">
+                <p><strong>Shipping Instructions:</strong></p>
+                <ol className="handoff-instructions-list">
+                  <li>Place each pair in a separate plastic bag.</li>
+                  <li>Pack all pairs into one shipping box.</li>
+                  <li>Include a copy of your booking ID in your package (sent to your email)</li>
+                </ol>
+                <p><em>You must ship your footwear outside of the original shoebox. Footwear should be packed inside a standard shipping box.</em></p>
+              </div>
+            )}
+          </div>
+        )}
 
-        <div
-          className={`handoff-card ${handoffMethod === PICKUP_AND_RETURN_METHOD ? 'handoff-card--selected' : ''}`}
-          onClick={() => {
-            setShippingError('');
-            onHandoffChange(PICKUP_AND_RETURN_METHOD);
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
+        {enabledHandoffMethods.pickup_delivery && (
+          <div
+            className={`handoff-card ${handoffMethod === PICKUP_AND_RETURN_METHOD ? 'handoff-card--selected' : ''}`}
+            onClick={() => {
               setShippingError('');
               onHandoffChange(PICKUP_AND_RETURN_METHOD);
-            }
-          }}
-        >
-          <div className="handoff-card__icon">🚚</div>
-          <h3 className="handoff-card__title">Pickup & Return</h3>
-          <p className="handoff-card__desc">A store employee will collect your footwear and deliver them back after cleaning.</p>
-          {handoffMethod === PICKUP_AND_RETURN_METHOD && (
-            <div className="handoff-card__instructions">
-              <p><strong>How it works:</strong></p>
-              <ol className="handoff-instructions-list">
-                <li>Enter the address where our team should pick up your footwear.</li>
-                <li>Keep all pairs together and ready for collection.</li>
-                <li>After cleaning, we will return the footwear to the same address unless arranged otherwise.</li>
-              </ol>
-              <p><em>We will use your submitted address and phone number to coordinate pickup and return.</em></p>
-            </div>
-          )}
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setShippingError('');
+                onHandoffChange(PICKUP_AND_RETURN_METHOD);
+              }
+            }}
+          >
+            <div className="handoff-card__icon">🚚</div>
+            <h3 className="handoff-card__title">Pickup & Return</h3>
+            <p className="handoff-card__desc">A store employee will collect your footwear and deliver them back after cleaning.</p>
+            {handoffMethod === PICKUP_AND_RETURN_METHOD && (
+              <div className="handoff-card__instructions">
+                <p><strong>How it works:</strong></p>
+                <ol className="handoff-instructions-list">
+                  <li>Enter the address where our team should pick up your footwear.</li>
+                  <li>Keep all pairs together and ready for collection.</li>
+                  <li>After cleaning, we will return the footwear to the same address unless arranged otherwise.</li>
+                </ol>
+                <p><em>We will use your submitted address and phone number to coordinate pickup and return.</em></p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {requiresCustomerAddress && (
-        <div className="handoff-card__instructions handoff-card__instructions--shipping handoff-shipping-panel">
-          <div className="shipping-section">
-            <h4 className="shipping-section__title">
+        <div className="handoff-shipping-panel">
+          <div className="shipping-card">
+            <h4 className="shipping-card__title">
               {handoffMethod === 'shipping' ? 'Customer Shipping Address' : 'Pickup & Return Address'}
             </h4>
             <div className="shipping-grid">
@@ -618,16 +625,13 @@ By shipping your footwear, you acknowledge that you are responsible for followin
           </div>
 
           {handoffMethod === 'shipping' && (
-            <div className="shipping-section">
-              <h4 className="shipping-section__title">Recommended Package Details</h4>
+            <div className="shipping-card">
+              <h4 className="shipping-card__title">Recommended Package Details</h4>
               <div className="shipping-box-summary">
                 <p><strong>Footwear pairs:</strong> {sneakerCount}</p>
                 {selectedBoxConfig ? (
                   <>
                     <p><strong>Recommended box size:</strong> L: {selectedBoxConfig.length}&quot; x W: {selectedBoxConfig.width}&quot; x H: {selectedBoxConfig.height}&quot;</p>
-                    {/* <p><strong>Box weight:</strong> {selectedBoxConfig.boxWeightLb} lb</p>
-                    <p><strong>Estimated footwear weight:</strong> {sneakerCount * SNEAKER_WEIGHT_LB} lb</p>
-                    <p><strong>Total estimated package weight:</strong> {recommendedParcel?.displayWeightLb} lb</p> */}
                   </>
                 ) : (
                   <p>Please keep footwear quantity between 1 and 10 to calculate shipping.</p>
@@ -639,90 +643,94 @@ By shipping your footwear, you acknowledge that you are responsible for followin
             </div>
           )}
 
-          {handoffMethod === 'shipping' && (
-            <div className="shipping-section">
-              <h4 className="shipping-section__title">Optional Shipping Insurance</h4>
-              <p className="shipping-insurance__note">
-                Add coverage for your shipment in case of damage or loss during transit.
-              </p>
-              <label className="shipping-insurance__option">
-                <input
-                  type="checkbox"
-                  checked={insuranceEnabled}
-                  onChange={(event) => {
-                    updateShippingSelection((current) => ({
-                      ...current,
-                      insurance: {
-                        enabled: event.target.checked,
-                        coverageAmount: event.target.checked ? current.insurance?.coverageAmount || 0 : 0,
-                        cost: event.target.checked ? current.insurance?.cost || 0 : 0,
-                      },
-                    }));
-                  }}
-                />
-                <span>Add Shipping Insurance to this shipping order</span>
-              </label>
-
-              {insuranceEnabled && (
-                <div className="shipping-insurance__coverage-input">
-                  <FormField label="Coverage Amount ($)" htmlFor="insurance-coverage">
-                    <input
-                      id="insurance-coverage"
-                      className="input"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="Enter desired coverage amount"
-                      value={insuranceCoverageAmount > 0 ? insuranceCoverageAmount : ''}
-                      onChange={(event) => {
-                        const amount = Number(event.target.value) || 0;
-                        // Calculate insurance cost as ~1% of coverage
-                        const estimatedCost = amount > 0 ? Number((amount * 0.01).toFixed(2)) : 0;
-                        updateShippingSelection((current) => ({
-                          ...current,
-                          insurance: {
-                            enabled: true,
-                            coverageAmount: amount,
-                            cost: estimatedCost,
-                          },
-                        }));
-                      }}
-                    />
-                  </FormField>
-                  {insuranceCost > 0 && (
-                    <p className="shipping-insurance__cost">
-                      Estimated insurance cost: {formatCurrency(insuranceCost * 2)} (Forward & Return)
-                    </p>
-                  )}
-                </div>
-              )}
+          {shippingError && !(shippingRates && shippingSelection?.selectedForwardRate && shippingSelection?.selectedReturnRate) && (
+            <div className="shipping-warning">
+              <span className="shipping-warning__icon">⚠️</span>
+              <span>{shippingError}</span>
             </div>
           )}
 
-          {shippingError && <p className="shipping-error">{shippingError}</p>}
-
           {handoffMethod === 'shipping' && shippingRates && shippingSelection?.selectedForwardRate && shippingSelection?.selectedReturnRate && (
-            <div className="shipping-section shipping-rates">
-              {renderSelectedShippingSummary('Inbound Shipping (Customer → Store)', shippingSelection.selectedForwardRate)}
-              {renderSelectedShippingSummary('Return Shipping (Store → Customer)', shippingSelection.selectedReturnRate)}
+            <>
+              <div className="shipping-card">
+                <h4 className="shipping-card__title">Shipping Rates</h4>
+                {renderSelectedShippingSummary('Inbound Shipping (Customer → Store)', shippingSelection.selectedForwardRate)}
+                {renderSelectedShippingSummary('Return Shipping (Store → Customer)', shippingSelection.selectedReturnRate)}
+              </div>
+
+              {shippingError && (
+                <div className="shipping-warning">
+                  <span className="shipping-warning__icon">⚠️</span>
+                  <span>{shippingError}</span>
+                </div>
+              )}
+
+              <div className="shipping-card">
+                <h4 className="shipping-card__title">Optional Shipping Insurance</h4>
+                <p className="shipping-insurance__note">
+                  Add coverage for your shipment in case of damage or loss during transit.
+                </p>
+                <label className="shipping-insurance__option">
+                  <input
+                    type="checkbox"
+                    checked={insuranceEnabled}
+                    onChange={(event) => {
+                      updateShippingSelection((current) => ({
+                        ...current,
+                        insurance: {
+                          enabled: event.target.checked,
+                          coverageAmount: event.target.checked ? current.insurance?.coverageAmount || 0 : 0,
+                          cost: event.target.checked ? current.insurance?.cost || 0 : 0,
+                        },
+                      }));
+                    }}
+                  />
+                  <span>Add Shipping Insurance to this shipping order</span>
+                </label>
+                {insuranceEnabled && (
+                  <div className="shipping-insurance__coverage-input">
+                    <FormField label="Coverage Amount ($)" htmlFor="insurance-coverage">
+                      <input
+                        id="insurance-coverage"
+                        className="input"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="Enter desired coverage amount"
+                        value={insuranceCoverageAmount > 0 ? insuranceCoverageAmount : ''}
+                        onChange={(event) => {
+                          const amount = Number(event.target.value) || 0;
+                          const estimatedCost = amount > 0 ? Number((amount * 0.01).toFixed(2)) : 0;
+                          updateShippingSelection((current) => ({
+                            ...current,
+                            insurance: {
+                              enabled: true,
+                              coverageAmount: amount,
+                              cost: estimatedCost,
+                            },
+                          }));
+                        }}
+                      />
+                    </FormField>
+                    {insuranceCost > 0 && (
+                      <p className="shipping-insurance__cost">
+                        Estimated insurance cost: {formatCurrency(insuranceCost * 2)} (Forward & Return)
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="shipping-total">
                 <span>Customer-Facing Shipping Total</span>
                 <strong>${shippingSummary.customerFacingTotal.toFixed(2)}</strong>
               </div>
 
-              {shippingSelection?.upsellOptions === null ? (
-                <div className="shipping-rates__group">
-                  <div className="shipping-rates__header">
-                    <h4>Save More With More Pairs</h4>
-                  </div>
+              <div className="shipping-card">
+                <h4 className="shipping-card__title">Save More With More Pairs</h4>
+                {shippingSelection?.upsellOptions === null ? (
                   <p className="shipping-upsell-loading">Checking for savings options...</p>
-                </div>
-              ) : shippingSelection?.upsellOptions?.length > 0 ? (
-                <div className="shipping-rates__group">
-                  <div className="shipping-rates__header">
-                    <h4>Save More With More Pairs</h4>
-                  </div>
+                ) : shippingSelection?.upsellOptions?.length > 0 ? (
                   <div className="shipping-box-summary">
                     {shippingSelection.upsellOptions.map((option) => (
                       <p key={option.quantity}>
@@ -730,23 +738,27 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                       </p>
                     ))}
                   </div>
-                </div>
-              ) : null}
-
-              <div className="shipping-disclaimer">
-                <h4 className="shipping-section__title">Shipping Instructions & Disclaimer</h4>
-                {shippingInstructionsDisclaimer ? (() => {
-                  let count = 0;
-                  return shippingInstructionsDisclaimer.split('\n').map((paragraph, idx) => {
-                    if (!paragraph.trim()) return null;
-                    count++;
-                    return count <= 3
-                      ? <p key={idx}><strong>{paragraph}</strong></p>
-                      : <p key={idx}>{paragraph}</p>;
-                  });
-                })() : (
-                  <p>No shipping instructions provided.</p>
+                ) : (
+                  <p className="shipping-upsell-none">No additional savings found for this shipment.</p>
                 )}
+              </div>
+
+              <div className="shipping-card shipping-card--disclaimer">
+                <h4 className="shipping-card__title">Shipping Instructions & Disclaimer</h4>
+                <div className="shipping-disclaimer__content">
+                  {shippingInstructionsDisclaimer ? (() => {
+                    let count = 0;
+                    return shippingInstructionsDisclaimer.split('\n').map((paragraph, idx) => {
+                      if (!paragraph.trim()) return null;
+                      count++;
+                      return count <= 3
+                        ? <p key={idx}><strong>{paragraph}</strong></p>
+                        : <p key={idx}>{paragraph}</p>;
+                    });
+                  })() : (
+                    <p>No shipping instructions provided.</p>
+                  )}
+                </div>
                 <label className="shipping-disclaimer__checkbox">
                   <input
                     type="checkbox"
@@ -762,7 +774,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                   <span>I agree to the shipping instructions and disclaimer.</span>
                 </label>
               </div>
-            </div>
+            </>
           )}
         </div>
       )}

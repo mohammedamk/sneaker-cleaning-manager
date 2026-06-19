@@ -1,16 +1,16 @@
-# Graph Report - sneaker-cleaning-manager  (2026-06-12)
+# Graph Report - sneaker-cleaning-manager  (2026-06-18)
 
 ## Corpus Check
-- 107 files · ~55,383 words
+- 107 files · ~55,547 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 663 nodes · 1041 edges · 48 communities (39 shown, 9 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 26 edges (avg confidence: 0.8)
+- 662 nodes · 1033 edges · 47 communities (39 shown, 8 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 27 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `526c587a`
+- Built from commit: `f0150f03`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -51,7 +51,6 @@
 - [[_COMMUNITY_Community 36|Community 36]]
 - [[_COMMUNITY_Community 37|Community 37]]
 - [[_COMMUNITY_Community 38|Community 38]]
-- [[_COMMUNITY_Community 39|Community 39]]
 - [[_COMMUNITY_Community 40|Community 40]]
 - [[_COMMUNITY_Community 48|Community 48]]
 
@@ -70,31 +69,31 @@
 ## Surprising Connections (you probably didn't know these)
 - `action()` --calls--> `saveBookingAcknowledgments()`  [INFERRED]
   app/routes/api.update.settings.js → app/utils/adminSettings.server.js
+- `BookingWizard()` --calls--> `fetchAdminSettings()`  [EXTRACTED]
+  sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx → sneaker-cleaning-ext/src/utils/adminSettings.js
 - `HandoffMethodStep()` --calls--> `fetchAdminSettings()`  [EXTRACTED]
   sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx → sneaker-cleaning-ext/src/utils/adminSettings.js
 - `SummaryStep()` --calls--> `fetchAdminSettings()`  [EXTRACTED]
   sneaker-cleaning-ext/src/components/steps/SummaryStep/SummaryStep.jsx → sneaker-cleaning-ext/src/utils/adminSettings.js
 - `fetchQuotes()` --calls--> `getShippingQuotes()`  [EXTRACTED]
   app/routes/api.shipping.rates.js → app/utils/easyPostShipping.js
-- `action()` --calls--> `getShippingInsuranceLineItem()`  [EXTRACTED]
-  app/routes/api.create.booking.js → app/utils/shippingInsurance.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (48 total, 9 thin omitted)
+## Communities (47 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
 Nodes (58): appSettingsSchema, action(), calculateCustomerFacingShippingAmount(), getShippingLineItems(), getTierPrice(), loader(), loader(), action() (+50 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
-Nodes (39): ACTION_HANDLERS, cancelShopifyOrder(), deleteCleanedImage(), getNormalizedBooking(), sendCleanedEmail(), updateBookingStatus(), updateCleaningApproval(), updateSneakerStatus() (+31 more)
+Cohesion: 0.07
+Nodes (42): ACTION_HANDLERS, cancelShopifyOrder(), deleteCleanedImage(), getNormalizedBooking(), sendCleanedEmail(), updateBookingStatus(), updateCleaningApproval(), updateSneakerStatus() (+34 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.05
-Nodes (11): cm, ey(), Hc, im, ip(), iy, je, kp (+3 more)
+Nodes (12): cm, ey(), im, ip(), iy, kp, Lc, nm (+4 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.04
@@ -149,12 +148,12 @@ Cohesion: 0.20
 Nodes (10): AgreementStep(), BookingWizard(), ADD_ONS, QUOTED_SERVICES, SERVICE_TIERS, SneakerCard(), SneakerHistoryStep(), SummaryStep() (+2 more)
 
 ### Community 20 - "Community 20"
-Cohesion: 0.29
-Nodes (7): De(), dp(), Fn(), fp(), gm(), hm(), ps()
+Cohesion: 0.28
+Nodes (9): De(), dp(), fp(), Gg(), gm(), $n(), ps(), qg() (+1 more)
 
 ### Community 21 - "Community 21"
-Cohesion: 0.35
-Nodes (12): Gg(), Jg(), Kg(), Lg(), om(), Qc(), Qg(), St() (+4 more)
+Cohesion: 0.43
+Nodes (7): Jg(), Kg(), St(), Vg(), Xc(), Xg(), Zg()
 
 ### Community 22 - "Community 22"
 Cohesion: 0.67
@@ -165,8 +164,8 @@ Cohesion: 0.33
 Nodes (3): formatCurrency(), HandoffMethodStep(), REQUIRED_ADDRESS_FIELDS
 
 ### Community 24 - "Community 24"
-Cohesion: 0.19
-Nodes (4): sneakerSchema, action(), action(), uploadImageToShopify()
+Cohesion: 0.20
+Nodes (3): sneakerSchema, getImageUrls(), loader()
 
 ### Community 25 - "Community 25"
 Cohesion: 0.29
@@ -194,7 +193,7 @@ Nodes (3): Expanding the ESLint configuration, React Compiler, React + Vite
 
 ### Community 33 - "Community 33"
 Cohesion: 0.40
-Nodes (5): am(), cl(), fm(), rm(), tp()
+Nodes (6): am(), cl(), fm(), om(), rm(), tp()
 
 ### Community 35 - "Community 35"
 Cohesion: 0.33
@@ -205,9 +204,9 @@ Cohesion: 0.25
 Nodes (8): bm(), dy(), fy(), gy(), _m(), my(), py(), ry()
 
 ## Knowledge Gaps
-- **207 isolated node(s):** `je`, `kp`, `nm`, `im`, `Hc` (+202 more)
+- **208 isolated node(s):** `Te`, `kp`, `qp`, `nm`, `im` (+203 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -216,13 +215,13 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Are the 14 inferred relationships involving `action()` (e.g. with `saveAddOns()` and `saveAlterationOptions()`) actually correct?**
   _`action()` has 14 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `je`, `kp`, `nm` to the rest of the system?**
-  _207 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Te`, `kp`, `qp` to the rest of the system?**
+  _208 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.05995975855130785 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.07987012987012987 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.073224043715847 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.05263157894736842 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._

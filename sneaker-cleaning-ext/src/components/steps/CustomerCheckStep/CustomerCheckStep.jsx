@@ -85,8 +85,8 @@ function CustomerCheckStep({
       <StepLayout
         title="Welcome Back!"
         onNext={onNext}
-        onPrev={onPrev}
         nextLabel="Continue"
+        isFirstStep={true}
       >
         <p className="customer-check__message">
           You are signed in. We&apos;ll use your account details for this booking.

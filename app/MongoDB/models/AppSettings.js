@@ -94,6 +94,13 @@ By shipping your footwear, you acknowledge that you are responsible for followin
     // Booking Statuses
     bookingStatuses: [{ type: String }],
 
+    // Handoff Method Visibility
+    handoffMethods: {
+        dropoff: { type: Boolean, default: true },
+        shipping: { type: Boolean, default: true },
+        pickup_delivery: { type: Boolean, default: true },
+    },
+
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });

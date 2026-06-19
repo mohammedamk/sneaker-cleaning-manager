@@ -24,6 +24,7 @@ export const action = async ({ request }) => {
         savePolicyReferences,
         saveBookingAcknowledgments,
         saveBookingStatuses,
+        saveHandoffMethods,
       },
     ] = await Promise.all([
       import("../utils/returnShippingBuffer.server.js"),
@@ -153,6 +154,17 @@ export const action = async ({ request }) => {
           success: true,
           message: "Booking statuses saved successfully.",
           statuses,
+        };
+        break;
+      }
+
+      case "handoffMethods": {
+        const handoffMethods = body.handoffMethods;
+        await saveHandoffMethods(handoffMethods);
+        result = {
+          success: true,
+          message: "Handoff methods saved successfully.",
+          handoffMethods,
         };
         break;
       }

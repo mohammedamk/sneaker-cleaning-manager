@@ -830,7 +830,7 @@ function ShippingBoxLibraryEditor({ boxes, onSave }) {
 }
 
 export default function Settings() {
-    const [isLoading, setIsLoading] = useState(false);
+    const [loadingType, setLoadingType] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const [activeTab, setActiveTab] = useState('shipping');
 
@@ -873,6 +873,10 @@ export default function Settings() {
     const [newStatus, setNewStatus] = useState('');
     const [isStatusesDirty, setIsStatusesDirty] = useState(false);
 
+    // Handoff method visibility toggles
+    const [handoffMethods, setHandoffMethods] = useState({ dropoff: true, shipping: true, pickup_delivery: true });
+    const [isHandoffMethodsDirty, setIsHandoffMethodsDirty] = useState(false);
+
     useEffect(() => {
         fetch("/api/get/settings")
             .then(res => res.json())
@@ -896,6 +900,7 @@ export default function Settings() {
                 if (data.shippingInstructionsDisclaimer !== undefined) setShippingInstructionsDisclaimer(data.shippingInstructionsDisclaimer);
 
                 if (data.bookingStatuses) setBookingStatuses(data.bookingStatuses);
+                if (data.handoffMethods) setHandoffMethods(prev => ({ ...prev, ...data.handoffMethods }));
 
                 setIsFetching(false);
             })
@@ -917,12 +922,13 @@ export default function Settings() {
             if (data.message.includes('Booking questions')) setIsQuestionsDirty(false);
             if (data.message.includes('Acknowledgments')) setIsAcknowledgmentsDirty(false);
             if (data.message.includes('Booking statuses')) setIsStatusesDirty(false);
+            if (data.message.includes('Handoff methods')) setIsHandoffMethodsDirty(false);
         }
-        setIsLoading(false);
+        setLoadingType(null);
     };
 
     const submitData = (body) => {
-        setIsLoading(true);
+        setLoadingType(body.settingType);
         fetch("/api/update/settings", {
             method: "POST",
             headers: {
@@ -935,7 +941,7 @@ export default function Settings() {
             .catch(err => {
                 console.error("Failed to update settings:", err);
                 shopify.toast.show("Failed to update settings", { isError: true });
-                setIsLoading(false);
+                setLoadingType(null);
             });
     };
 
@@ -992,6 +998,10 @@ export default function Settings() {
 
     const handleSaveBookingStatuses = () => {
         submitData({ settingType: "bookingStatuses", statuses: bookingStatuses });
+    };
+
+    const handleSaveHandoffMethods = () => {
+        submitData({ settingType: "handoffMethods", handoffMethods });
     };
 
     const handleAddBookingStatus = () => {
@@ -1098,12 +1108,49 @@ export default function Settings() {
                             <div className="settings-actions" style={{ marginTop: '20px' }}>
                                 <s-button
                                     variant="primary"
-                                    loading={isLoading ? true : undefined}
-                                    disabled={isLoading || !isShippingDirty ? true : undefined}
+                                    loading={loadingType === 'shipping' ? true : undefined}
+                                    disabled={loadingType !== null || !isShippingDirty ? true : undefined}
                                     onClick={handleSaveShippingSettings}
                                 >
                                     Save Shipping Settings
                                 </s-button>
+                            </div>
+
+                            <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+
+                            <div>
+                                <h4 style={{ marginBottom: '6px' }}>Handoff Methods</h4>
+                                <p style={{ fontSize: '0.85em', color: '#666', margin: '0 0 14px' }}>
+                                    Choose which delivery options are shown to customers during the booking flow.
+                                </p>
+                                {[
+                                    { key: 'dropoff', label: 'Drop-Off' },
+                                    { key: 'shipping', label: 'Shipping' },
+                                    { key: 'pickup_delivery', label: 'Pickup & Return' },
+                                ].map(({ key, label }) => (
+                                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                                        <input
+                                            type="checkbox"
+                                            id={`handoff-${key}`}
+                                            checked={handoffMethods[key] !== false}
+                                            onChange={(e) => {
+                                                setHandoffMethods(prev => ({ ...prev, [key]: e.target.checked }));
+                                                setIsHandoffMethodsDirty(true);
+                                            }}
+                                        />
+                                        <label htmlFor={`handoff-${key}`} style={{ margin: 0, cursor: 'pointer' }}>{label}</label>
+                                    </div>
+                                ))}
+                                <div className="settings-actions" style={{ marginTop: '12px' }}>
+                                    <s-button
+                                        variant="primary"
+                                        loading={loadingType === 'handoffMethods' ? true : undefined}
+                                        disabled={loadingType !== null || !isHandoffMethodsDirty ? true : undefined}
+                                        onClick={handleSaveHandoffMethods}
+                                    >
+                                        Save Handoff Methods
+                                    </s-button>
+                                </div>
                             </div>
                         </div>
                     </s-section>
@@ -1227,8 +1274,8 @@ export default function Settings() {
                             <div className="settings-actions" style={{ marginTop: '20px' }}>
                                 <s-button
                                     variant="primary"
-                                    loading={isLoading ? true : undefined}
-                                    disabled={isLoading || !isQuestionsDirty ? true : undefined}
+                                    loading={loadingType === 'bookingQuestions' ? true : undefined}
+                                    disabled={loadingType !== null || !isQuestionsDirty ? true : undefined}
                                     onClick={handleSaveBookingQuestions}
                                 >
                                     Save Booking Questions
@@ -1300,8 +1347,8 @@ export default function Settings() {
                             <div className="settings-actions" style={{ marginTop: '20px' }}>
                                 <s-button
                                     variant="primary"
-                                    loading={isLoading ? true : undefined}
-                                    disabled={isLoading || !isAcknowledgmentsDirty ? true : undefined}
+                                    loading={loadingType === 'acknowledgments' ? true : undefined}
+                                    disabled={loadingType !== null || !isAcknowledgmentsDirty ? true : undefined}
                                     onClick={handleSaveAcknowledgments}
                                 >
                                     Save Acknowledgments
@@ -1359,8 +1406,8 @@ export default function Settings() {
                             <div className="settings-actions">
                                 <s-button
                                     variant="primary"
-                                    loading={isLoading ? true : undefined}
-                                    disabled={isLoading || !isStatusesDirty ? true : undefined}
+                                    loading={loadingType === 'bookingStatuses' ? true : undefined}
+                                    disabled={loadingType !== null || !isStatusesDirty ? true : undefined}
                                     onClick={handleSaveBookingStatuses}
                                 >
                                     Save Booking Statuses

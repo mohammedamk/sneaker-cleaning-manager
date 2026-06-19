@@ -128,6 +128,7 @@ By shipping your footwear, you acknowledge that you are responsible for followin
       'Completed',
       'Canceled',
     ],
+    handoffMethods: { dropoff: true, shipping: true, pickup_delivery: true },
   };
 }
 
