@@ -26,12 +26,18 @@ function CustomerCheckStep({
 }) {
   const [mode, setMode] = useState(customerID ? 'logged-in' : null);
   const [errors, setErrors] = useState({});
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   const validate = () => {
     const newErrors = {};
 
-    if (!guestInfo.name.trim()) {
-      newErrors.name = 'Full name is required.';
+    if (!firstName.trim()) {
+      newErrors.firstName = 'First name is required.';
+    }
+
+    if (!lastName.trim()) {
+      newErrors.lastName = 'Last name is required.';
     }
 
     if (!guestInfo.email.trim()) {
@@ -140,13 +146,32 @@ function CustomerCheckStep({
       onNext={handleNext}
       onPrev={() => setMode(null)}
     >
-      <FormField label="Full Name" required error={errors.name}>
+      <FormField label="First Name" required error={errors.firstName}>
         <input
           className="input"
           type="text"
-          placeholder="John Doe"
-          value={guestInfo.name}
-          onChange={(e) => handleFieldChange('name', e.target.value)}
+          placeholder="John"
+          value={firstName}
+          onChange={(e) => {
+            const val = e.target.value;
+            setFirstName(val);
+            onGuestInfoChange({ ...guestInfo, name: `${val} ${lastName}`.trim() });
+            if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: '' }));
+          }}
+        />
+      </FormField>
+      <FormField label="Last Name" required error={errors.lastName}>
+        <input
+          className="input"
+          type="text"
+          placeholder="Doe"
+          value={lastName}
+          onChange={(e) => {
+            const val = e.target.value;
+            setLastName(val);
+            onGuestInfoChange({ ...guestInfo, name: `${firstName} ${val}`.trim() });
+            if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: '' }));
+          }}
         />
       </FormField>
       <FormField label="Email Address" required error={errors.email}>
