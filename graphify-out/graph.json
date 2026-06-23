@@ -4,166 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "label": "Settings.jsx",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "settings_settings",
-      "community": 19,
-      "norm_label": "settings.jsx"
-    },
-    {
-      "label": "EditableCleaningTiersComponent()",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L4",
-      "_origin": "ast",
-      "id": "settings_settings_editablecleaningtierscomponent",
-      "community": 19,
-      "norm_label": "editablecleaningtierscomponent()"
-    },
-    {
-      "label": "EditableAddOnsComponent()",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L209",
-      "_origin": "ast",
-      "id": "settings_settings_editableaddonscomponent",
-      "community": 19,
-      "norm_label": "editableaddonscomponent()"
-    },
-    {
-      "label": "EditableQuotedServicesComponent()",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L384",
-      "_origin": "ast",
-      "id": "settings_settings_editablequotedservicescomponent",
-      "community": 19,
-      "norm_label": "editablequotedservicescomponent()"
-    },
-    {
-      "label": "EditableItemList()",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L526",
-      "_origin": "ast",
-      "id": "settings_settings_editableitemlist",
-      "community": 19,
-      "norm_label": "editableitemlist()"
-    },
-    {
-      "label": "ShippingBoxLibraryEditor()",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L682",
-      "_origin": "ast",
-      "id": "settings_settings_shippingboxlibraryeditor",
-      "community": 19,
-      "norm_label": "shippingboxlibraryeditor()"
-    },
-    {
-      "label": "Settings()",
-      "file_type": "code",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L832",
-      "_origin": "ast",
-      "id": "settings_settings_settings",
-      "community": 19,
-      "norm_label": "settings()"
-    },
-    {
-      "label": "api.update.settings.js",
-      "file_type": "code",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "routes_api_update_settings",
-      "community": 17,
-      "norm_label": "api.update.settings.js"
-    },
-    {
-      "label": "action()",
-      "file_type": "code",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "routes_api_update_settings_action",
-      "community": 0,
-      "norm_label": "action()"
-    },
-    {
-      "label": "shopify.server.js",
-      "file_type": "code",
-      "source_file": "app/shopify.server.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "app_shopify_server",
-      "community": 17,
-      "norm_label": "shopify.server.js"
-    },
-    {
-      "label": "shopify",
-      "file_type": "code",
-      "source_file": "app/shopify.server.js",
-      "source_location": "L14",
-      "_origin": "ast",
-      "id": "app_shopify_server_shopify",
-      "community": 17,
-      "norm_label": "shopify"
-    },
-    {
-      "label": "menuSync.server.js",
-      "file_type": "code",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "utils_menusync_server",
-      "community": 0,
-      "norm_label": "menusync.server.js"
-    },
-    {
-      "label": "HANDOFF_MENU_MAP",
-      "file_type": "code",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "utils_menusync_server_handoff_menu_map",
-      "community": 0,
-      "norm_label": "handoff_menu_map"
-    },
-    {
-      "label": "HANDOFF_PAGE_LINKS",
-      "file_type": "code",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "utils_menusync_server_handoff_page_links",
-      "community": 0,
-      "norm_label": "handoff_page_links"
-    },
-    {
-      "label": "itemToInput()",
-      "file_type": "code",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L55",
-      "_origin": "ast",
-      "id": "utils_menusync_server_itemtoinput",
-      "community": 0,
-      "norm_label": "itemtoinput()"
-    },
-    {
-      "label": "syncMenuWithHandoffMethods()",
-      "file_type": "code",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L66",
-      "_origin": "ast",
-      "id": "utils_menusync_server_syncmenuwithhandoffmethods",
-      "community": 0,
-      "norm_label": "syncmenuwithhandoffmethods()"
-    },
-    {
       "label": "sneakerCleaningExt.js",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
@@ -214,14 +54,14 @@
       "norm_label": "xu()"
     },
     {
-      "label": "Te",
+      "label": "Ne",
       "file_type": "code",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "assets_sneakercleaningext_te",
+      "id": "assets_sneakercleaningext_ne",
       "community": 2,
-      "norm_label": "te"
+      "norm_label": "ne"
     },
     {
       "label": "Xg()",
@@ -1014,14 +854,194 @@
       "norm_label": "zy()"
     },
     {
+      "label": "CustomerCheckStep.jsx",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "customercheckstep_customercheckstep",
+      "community": 12,
+      "norm_label": "customercheckstep.jsx"
+    },
+    {
+      "label": "CustomerCheckStep()",
+      "file_type": "code",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "customercheckstep_customercheckstep_customercheckstep",
+      "community": 12,
+      "norm_label": "customercheckstep()"
+    },
+    {
+      "label": "Settings.jsx",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "settings.jsx",
+      "id": "settings_settings"
+    },
+    {
+      "label": "EditableCleaningTiersComponent()",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "editablecleaningtierscomponent()",
+      "id": "settings_settings_editablecleaningtierscomponent"
+    },
+    {
+      "label": "EditableAddOnsComponent()",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L209",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "editableaddonscomponent()",
+      "id": "settings_settings_editableaddonscomponent"
+    },
+    {
+      "label": "EditableQuotedServicesComponent()",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L384",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "editablequotedservicescomponent()",
+      "id": "settings_settings_editablequotedservicescomponent"
+    },
+    {
+      "label": "EditableItemList()",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L526",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "editableitemlist()",
+      "id": "settings_settings_editableitemlist"
+    },
+    {
+      "label": "ShippingBoxLibraryEditor()",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L682",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "shippingboxlibraryeditor()",
+      "id": "settings_settings_shippingboxlibraryeditor"
+    },
+    {
+      "label": "Settings()",
+      "file_type": "code",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L832",
+      "_origin": "ast",
+      "community": 19,
+      "norm_label": "settings()",
+      "id": "settings_settings_settings"
+    },
+    {
+      "label": "api.update.settings.js",
+      "file_type": "code",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 17,
+      "norm_label": "api.update.settings.js",
+      "id": "routes_api_update_settings"
+    },
+    {
+      "label": "action()",
+      "file_type": "code",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L3",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "action()",
+      "id": "routes_api_update_settings_action"
+    },
+    {
+      "label": "shopify.server.js",
+      "file_type": "code",
+      "source_file": "app/shopify.server.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 17,
+      "norm_label": "shopify.server.js",
+      "id": "app_shopify_server"
+    },
+    {
+      "label": "shopify",
+      "file_type": "code",
+      "source_file": "app/shopify.server.js",
+      "source_location": "L14",
+      "_origin": "ast",
+      "community": 17,
+      "norm_label": "shopify",
+      "id": "app_shopify_server_shopify"
+    },
+    {
+      "label": "menuSync.server.js",
+      "file_type": "code",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "menusync.server.js",
+      "id": "utils_menusync_server"
+    },
+    {
+      "label": "HANDOFF_MENU_MAP",
+      "file_type": "code",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L3",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "handoff_menu_map",
+      "id": "utils_menusync_server_handoff_menu_map"
+    },
+    {
+      "label": "HANDOFF_PAGE_LINKS",
+      "file_type": "code",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L9",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "handoff_page_links",
+      "id": "utils_menusync_server_handoff_page_links"
+    },
+    {
+      "label": "itemToInput()",
+      "file_type": "code",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L55",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "itemtoinput()",
+      "id": "utils_menusync_server_itemtoinput"
+    },
+    {
+      "label": "syncMenuWithHandoffMethods()",
+      "file_type": "code",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L66",
+      "_origin": "ast",
+      "community": 0,
+      "norm_label": "syncmenuwithhandoffmethods()",
+      "id": "utils_menusync_server_syncmenuwithhandoffmethods"
+    },
+    {
       "label": "HandoffMethodStep.jsx",
       "file_type": "code",
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep",
       "community": 23,
-      "norm_label": "handoffmethodstep.jsx"
+      "norm_label": "handoffmethodstep.jsx",
+      "id": "handoffmethodstep_handoffmethodstep"
     },
     {
       "label": "REQUIRED_ADDRESS_FIELDS",
@@ -1029,9 +1049,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep_required_address_fields",
       "community": 23,
-      "norm_label": "required_address_fields"
+      "norm_label": "required_address_fields",
+      "id": "handoffmethodstep_handoffmethodstep_required_address_fields"
     },
     {
       "label": "calculateShippingSummary()",
@@ -1039,9 +1059,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L13",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep_calculateshippingsummary",
       "community": 23,
-      "norm_label": "calculateshippingsummary()"
+      "norm_label": "calculateshippingsummary()",
+      "id": "handoffmethodstep_handoffmethodstep_calculateshippingsummary"
     },
     {
       "label": "getEstimatedDelivery()",
@@ -1049,9 +1069,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L38",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep_getestimateddelivery",
       "community": 23,
-      "norm_label": "getestimateddelivery()"
+      "norm_label": "getestimateddelivery()",
+      "id": "handoffmethodstep_handoffmethodstep_getestimateddelivery"
     },
     {
       "label": "formatCurrency()",
@@ -1059,9 +1079,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L50",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep_formatcurrency",
       "community": 23,
-      "norm_label": "formatcurrency()"
+      "norm_label": "formatcurrency()",
+      "id": "handoffmethodstep_handoffmethodstep_formatcurrency"
     },
     {
       "label": "getInsuranceConfig()",
@@ -1069,9 +1089,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L57",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep_getinsuranceconfig",
       "community": 23,
-      "norm_label": "getinsuranceconfig()"
+      "norm_label": "getinsuranceconfig()",
+      "id": "handoffmethodstep_handoffmethodstep_getinsuranceconfig"
     },
     {
       "label": "HandoffMethodStep()",
@@ -1079,9 +1099,9 @@
       "source_file": "sneaker-cleaning-ext/src/components/steps/HandoffMethodStep/HandoffMethodStep.jsx",
       "source_location": "L61",
       "_origin": "ast",
-      "id": "handoffmethodstep_handoffmethodstep_handoffmethodstep",
       "community": 23,
-      "norm_label": "handoffmethodstep()"
+      "norm_label": "handoffmethodstep()",
+      "id": "handoffmethodstep_handoffmethodstep_handoffmethodstep"
     },
     {
       "label": "AppSettings.js",
@@ -1452,26 +1472,6 @@
       "community": 0,
       "norm_label": "initializedefaultsettings()",
       "id": "utils_adminsettings_server_initializedefaultsettings"
-    },
-    {
-      "label": "CustomerCheckStep.jsx",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 12,
-      "norm_label": "customercheckstep.jsx",
-      "id": "customercheckstep_customercheckstep"
-    },
-    {
-      "label": "CustomerCheckStep()",
-      "file_type": "code",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
-      "source_location": "L20",
-      "_origin": "ast",
-      "community": 12,
-      "norm_label": "customercheckstep()",
-      "id": "customercheckstep_customercheckstep_customercheckstep"
     },
     {
       "label": "adminSettings.js",
@@ -6720,643 +6720,6 @@
   ],
   "links": [
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/app.settings.jsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_app_settings",
-      "target": "settings_settings"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L209",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "settings_settings",
-      "target": "settings_settings_editableaddonscomponent"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "settings_settings",
-      "target": "settings_settings_editablecleaningtierscomponent"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L193",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "settings_settings",
-      "target": "settings_settings_editableitemlist"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L384",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "settings_settings",
-      "target": "settings_settings_editablequotedservicescomponent"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L499",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "settings_settings",
-      "target": "settings_settings_settings"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/component/settings/Settings.jsx",
-      "source_location": "L349",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "settings_settings",
-      "target": "settings_settings_shippingboxlibraryeditor"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_update_settings",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_update_settings",
-      "target": "routes_api_update_settings_action"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L29",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L71",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_saveaddons"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L106",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savealterationoptions"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L128",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savebookingacknowledgments"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L139",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savebookingstatuses"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L60",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savecleaningtiers"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L163",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savehandoffmethods"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L94",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savehighvaluedisclosures"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L117",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savepolicyreferences"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L83",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savequotedservices"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L82",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_saveshippingboxlibrary"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L46",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_adminsettings_server_savesneakerweight"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L164",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_menusync_server",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L165",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_menusync_server_syncmenuwithhandoffmethods"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L28",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_returnshippingbuffer_server"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L36",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_returnshippingbuffer_server_normalizereturnshippingbufferpercentage"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L39",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_returnshippingbuffer_server_normalizeshippingcreditperpair"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L44",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_returnshippingbuffer_server_savereturnshippingbufferpercentage"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/routes/api.update.settings.js",
-      "source_location": "L45",
-      "weight": 1.0,
-      "source": "routes_api_update_settings_action",
-      "target": "utils_returnshippingbuffer_server_saveshippingcreditperpair"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/entry.server.jsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_entry_server",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/shopify.server.js",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_shopify_server",
-      "target": "app_db_server"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/shopify.server.js",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_shopify_server",
-      "target": "app_db_server_dbconnection"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/shopify.server.js",
-      "source_location": "L14",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_shopify_server",
-      "target": "app_shopify_server_shopify"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/auth.login/route.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "auth_login_route",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/_index/route.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "index_route",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.admin.bookings.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_admin_bookings",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.buy.return-shipping.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_buy_return_shipping",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.create.booking.js",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_create_booking",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.create.charge.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_create_charge",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.create.sneaker.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_create_sneaker",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.delete.booking.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_delete_booking",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.delete.sneaker.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_delete_sneaker",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.get.booking.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_get_booking",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.get.bookings.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_get_bookings",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.get.settings.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_get_settings",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.get.sneakers.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_get_sneakers",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.refund.booking.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_refund_booking",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.shipping.rates.js",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_shipping_rates",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/api.update.sneaker.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_api_update_sneaker",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/app.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_app",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/app.bookings.jsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_app_bookings",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/app._index.jsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_app_index",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/auth.$.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_auth",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/webhooks.app.scopes_update.jsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_webhooks_app_scopes_update",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/webhooks.app.uninstalled.jsx",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_webhooks_app_uninstalled",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "app/routes/webhooks.orders.create.jsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "routes_webhooks_orders_create",
-      "target": "app_shopify_server"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "utils_menusync_server",
-      "target": "utils_menusync_server_handoff_menu_map",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "utils_menusync_server",
-      "target": "utils_menusync_server_handoff_page_links",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L55",
-      "weight": 1.0,
-      "source": "utils_menusync_server",
-      "target": "utils_menusync_server_itemtoinput",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/utils/menuSync.server.js",
-      "source_location": "L66",
-      "weight": 1.0,
-      "source": "utils_menusync_server",
-      "target": "utils_menusync_server_syncmenuwithhandoffmethods",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
@@ -7740,6 +7103,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "assets_sneakercleaningext",
+      "target": "assets_sneakercleaningext_ne",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
       "source_location": "L839",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7945,16 +7318,6 @@
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext",
       "target": "assets_sneakercleaningext_sy"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "extensions/sneaker-cleaning-manager/assets/sneakerCleaningExt.js",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_sneakercleaningext",
-      "target": "assets_sneakercleaningext_te"
     },
     {
       "relation": "contains",
@@ -8778,6 +8141,686 @@
       "confidence_score": 1.0,
       "source": "assets_sneakercleaningext_py",
       "target": "assets_sneakercleaningext_my"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bookingwizard_bookingwizard",
+      "target": "customercheckstep_customercheckstep"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "customercheckstep_customercheckstep",
+      "target": "customercheckstep_customercheckstep_customercheckstep"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "customercheckstep_customercheckstep",
+      "target": "formfield_formfield"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "customercheckstep_customercheckstep",
+      "target": "steplayout_steplayout"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/app.settings.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_app_settings",
+      "target": "settings_settings"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L209",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "settings_settings",
+      "target": "settings_settings_editableaddonscomponent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "settings_settings",
+      "target": "settings_settings_editablecleaningtierscomponent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L193",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "settings_settings",
+      "target": "settings_settings_editableitemlist"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L384",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "settings_settings",
+      "target": "settings_settings_editablequotedservicescomponent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L499",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "settings_settings",
+      "target": "settings_settings_settings"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/component/settings/Settings.jsx",
+      "source_location": "L349",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "settings_settings",
+      "target": "settings_settings_shippingboxlibraryeditor"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_update_settings",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_update_settings",
+      "target": "routes_api_update_settings_action"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_saveaddons"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L106",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savealterationoptions"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savebookingacknowledgments"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savebookingstatuses"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savecleaningtiers"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L163",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savehandoffmethods"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savehighvaluedisclosures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savepolicyreferences"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savequotedservices"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_saveshippingboxlibrary"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_adminsettings_server_savesneakerweight"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L164",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_menusync_server"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L165",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_menusync_server_syncmenuwithhandoffmethods"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_returnshippingbuffer_server"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_returnshippingbuffer_server_normalizereturnshippingbufferpercentage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_returnshippingbuffer_server_normalizeshippingcreditperpair"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_returnshippingbuffer_server_savereturnshippingbufferpercentage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/routes/api.update.settings.js",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "routes_api_update_settings_action",
+      "target": "utils_returnshippingbuffer_server_saveshippingcreditperpair"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/entry.server.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_entry_server",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shopify.server.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_shopify_server",
+      "target": "app_db_server"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shopify.server.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_shopify_server",
+      "target": "app_db_server_dbconnection"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shopify.server.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_shopify_server",
+      "target": "app_shopify_server_shopify"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/auth.login/route.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "auth_login_route",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/_index/route.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "index_route",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.admin.bookings.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_admin_bookings",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.buy.return-shipping.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_buy_return_shipping",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.create.booking.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_create_booking",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.create.charge.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_create_charge",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.create.sneaker.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_create_sneaker",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.delete.booking.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_delete_booking",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.delete.sneaker.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_delete_sneaker",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.get.booking.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_get_booking",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.get.bookings.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_get_bookings",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.get.settings.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_get_settings",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.get.sneakers.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_get_sneakers",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.refund.booking.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_refund_booking",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.shipping.rates.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_shipping_rates",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/api.update.sneaker.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_api_update_sneaker",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/app.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_app",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/app.bookings.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_app_bookings",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/app._index.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_app_index",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/auth.$.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_auth",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/webhooks.app.scopes_update.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_webhooks_app_scopes_update",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/webhooks.app.uninstalled.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_webhooks_app_uninstalled",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/routes/webhooks.orders.create.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "routes_webhooks_orders_create",
+      "target": "app_shopify_server"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utils_menusync_server",
+      "target": "utils_menusync_server_handoff_menu_map"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utils_menusync_server",
+      "target": "utils_menusync_server_handoff_page_links"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L55",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utils_menusync_server",
+      "target": "utils_menusync_server_itemtoinput"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/utils/menuSync.server.js",
+      "source_location": "L66",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utils_menusync_server",
+      "target": "utils_menusync_server_syncmenuwithhandoffmethods"
     },
     {
       "relation": "imports_from",
@@ -9771,49 +9814,6 @@
       "weight": 1.0,
       "source": "routes_app_bookings_loader",
       "target": "utils_adminsettings_server_getbookingstatuses"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/BookingWizard/BookingWizard.jsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "bookingwizard_bookingwizard",
-      "target": "customercheckstep_customercheckstep"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
-      "source_location": "L20",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "customercheckstep_customercheckstep",
-      "target": "customercheckstep_customercheckstep_customercheckstep"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "customercheckstep_customercheckstep",
-      "target": "formfield_formfield"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "sneaker-cleaning-ext/src/components/steps/CustomerCheckStep/CustomerCheckStep.jsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "customercheckstep_customercheckstep",
-      "target": "steplayout_steplayout"
     },
     {
       "relation": "imports_from",
@@ -17670,5 +17670,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b784d69f21e529e751144dde3b60283b3fab2277"
+  "built_at_commit": "aa608a1167e3d65b27532280d5e208f42beeef5a"
 }

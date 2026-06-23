@@ -1,7 +1,7 @@
 # Graph Report - sneaker-cleaning-manager  (2026-06-23)
 
 ## Corpus Check
-- 108 files · ~56,306 words
+- 108 files · ~56,388 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b784d69f`
+- Built from commit: `aa608a11`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -93,7 +93,7 @@ Nodes (42): ACTION_HANDLERS, cancelShopifyOrder(), deleteCleanedImage(), getNorm
 
 ### Community 2 - "Community 2"
 Cohesion: 0.05
-Nodes (12): ey(), im, ip(), iy, kp, Lu, nm, ny (+4 more)
+Nodes (12): ey(), im, ip(), iy, kp, Lu, Ne, nm (+4 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.04
@@ -204,7 +204,7 @@ Cohesion: 0.25
 Nodes (8): bm(), dy(), fy(), gy(), _m(), my(), py(), ry()
 
 ## Knowledge Gaps
-- **210 isolated node(s):** `shopify`, `HANDOFF_MENU_MAP`, `HANDOFF_PAGE_LINKS`, `Te`, `kp` (+205 more)
+- **210 isolated node(s):** `Ne`, `kp`, `qp`, `nm`, `im` (+205 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -217,7 +217,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Are the 16 inferred relationships involving `action()` (e.g. with `saveAddOns()` and `saveAlterationOptions()`) actually correct?**
   _`action()` has 16 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `shopify`, `HANDOFF_MENU_MAP`, `HANDOFF_PAGE_LINKS` to the rest of the system?**
+- **What connects `Ne`, `kp`, `qp` to the rest of the system?**
   _210 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.053998632946001365 - nodes in this community are weakly interconnected._
