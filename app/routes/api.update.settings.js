@@ -2,7 +2,7 @@ import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }) => {
   try {
-    await authenticate.admin(request);
+    const { admin } = await authenticate.admin(request);
     const body = await request.json();
     const settingType = body.settingType;
 
@@ -161,6 +161,8 @@ export const action = async ({ request }) => {
       case "handoffMethods": {
         const handoffMethods = body.handoffMethods;
         await saveHandoffMethods(handoffMethods);
+        const { syncMenuWithHandoffMethods } = await import("../utils/menuSync.server.js");
+        await syncMenuWithHandoffMethods(admin, handoffMethods);
         result = {
           success: true,
           message: "Handoff methods saved successfully.",

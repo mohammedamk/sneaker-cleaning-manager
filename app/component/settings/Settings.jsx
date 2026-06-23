@@ -1116,42 +1116,6 @@ export default function Settings() {
                                 </s-button>
                             </div>
 
-                            <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
-
-                            <div>
-                                <h4 style={{ marginBottom: '6px' }}>Handoff Methods</h4>
-                                <p style={{ fontSize: '0.85em', color: '#666', margin: '0 0 14px' }}>
-                                    Choose which delivery options are shown to customers during the booking flow.
-                                </p>
-                                {[
-                                    { key: 'dropoff', label: 'Drop-Off' },
-                                    { key: 'shipping', label: 'Shipping' },
-                                    { key: 'pickup_delivery', label: 'Pickup & Return' },
-                                ].map(({ key, label }) => (
-                                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                                        <input
-                                            type="checkbox"
-                                            id={`handoff-${key}`}
-                                            checked={handoffMethods[key] !== false}
-                                            onChange={(e) => {
-                                                setHandoffMethods(prev => ({ ...prev, [key]: e.target.checked }));
-                                                setIsHandoffMethodsDirty(true);
-                                            }}
-                                        />
-                                        <label htmlFor={`handoff-${key}`} style={{ margin: 0, cursor: 'pointer' }}>{label}</label>
-                                    </div>
-                                ))}
-                                <div className="settings-actions" style={{ marginTop: '12px' }}>
-                                    <s-button
-                                        variant="primary"
-                                        loading={loadingType === 'handoffMethods' ? true : undefined}
-                                        disabled={loadingType !== null || !isHandoffMethodsDirty ? true : undefined}
-                                        onClick={handleSaveHandoffMethods}
-                                    >
-                                        Save Handoff Methods
-                                    </s-button>
-                                </div>
-                            </div>
                         </div>
                     </s-section>
                 )}
@@ -1197,6 +1161,43 @@ export default function Settings() {
                                         handleSaveQuotedServices(items);
                                     }}
                                 />
+                            </div>
+
+                            <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+
+                            <div>
+                                <h4 style={{ marginBottom: '6px' }}>Handoff Methods</h4>
+                                <p style={{ fontSize: '0.85em', color: '#666', margin: '0 0 14px' }}>
+                                    Choose which delivery options are shown to customers during the booking flow.
+                                </p>
+                                {[
+                                    { key: 'dropoff', label: 'Drop-Off' },
+                                    { key: 'shipping', label: 'Shipping' },
+                                    { key: 'pickup_delivery', label: 'Pickup & Return' },
+                                ].map(({ key, label }) => (
+                                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                                        <input
+                                            type="checkbox"
+                                            id={`handoff-${key}`}
+                                            checked={handoffMethods[key] !== false}
+                                            onChange={(e) => {
+                                                setHandoffMethods(prev => ({ ...prev, [key]: e.target.checked }));
+                                                setIsHandoffMethodsDirty(true);
+                                            }}
+                                        />
+                                        <label htmlFor={`handoff-${key}`} style={{ margin: 0, cursor: 'pointer' }}>{label}</label>
+                                    </div>
+                                ))}
+                                <div className="settings-actions" style={{ marginTop: '12px' }}>
+                                    <s-button
+                                        variant="primary"
+                                        loading={loadingType === 'handoffMethods' ? true : undefined}
+                                        disabled={loadingType !== null || !isHandoffMethodsDirty ? true : undefined}
+                                        onClick={handleSaveHandoffMethods}
+                                    >
+                                        Save Handoff Methods
+                                    </s-button>
+                                </div>
                             </div>
                         </div>
                     </s-section>

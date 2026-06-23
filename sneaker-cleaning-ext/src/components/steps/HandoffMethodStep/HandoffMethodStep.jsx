@@ -665,6 +665,28 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 </div>
               )}
 
+              <div className="shipping-total">
+                <span>Customer-Facing Shipping Total</span>
+                <strong>${shippingSummary.customerFacingTotal.toFixed(2)}</strong>
+              </div>
+
+              <div className="shipping-card">
+                <h4 className="shipping-card__title">Save More With More Pairs</h4>
+                {shippingSelection?.upsellOptions === null ? (
+                  <p className="shipping-upsell-loading">Checking for savings options...</p>
+                ) : shippingSelection?.upsellOptions?.length > 0 ? (
+                  <div className="shipping-box-summary">
+                    {shippingSelection.upsellOptions.map((option) => (
+                      <p key={option.quantity}>
+                        <strong>{option.quantity} pairs:</strong> Save ${Number(option.savings || 0).toFixed(2)}
+                      </p>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="shipping-upsell-none">No additional savings found for this shipment.</p>
+                )}
+              </div>
+
               <div className="shipping-card">
                 <h4 className="shipping-card__title">Optional Shipping Insurance</h4>
                 <p className="shipping-insurance__note">
@@ -721,27 +743,6 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 )}
               </div>
 
-              <div className="shipping-total">
-                <span>Customer-Facing Shipping Total</span>
-                <strong>${shippingSummary.customerFacingTotal.toFixed(2)}</strong>
-              </div>
-
-              <div className="shipping-card">
-                <h4 className="shipping-card__title">Save More With More Pairs</h4>
-                {shippingSelection?.upsellOptions === null ? (
-                  <p className="shipping-upsell-loading">Checking for savings options...</p>
-                ) : shippingSelection?.upsellOptions?.length > 0 ? (
-                  <div className="shipping-box-summary">
-                    {shippingSelection.upsellOptions.map((option) => (
-                      <p key={option.quantity}>
-                        <strong>{option.quantity} pairs:</strong> Save ${Number(option.savings || 0).toFixed(2)}
-                      </p>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="shipping-upsell-none">No additional savings found for this shipment.</p>
-                )}
-              </div>
 
               <div className="shipping-card shipping-card--disclaimer">
                 <h4 className="shipping-card__title">Shipping Instructions & Disclaimer</h4>

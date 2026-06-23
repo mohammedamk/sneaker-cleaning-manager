@@ -22,7 +22,7 @@ api_version = "2026-07"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_orders,write_draft_orders,write_files,write_orders,write_products"
+scopes = "read_orders,write_draft_orders,write_files,write_orders,write_products,write_content,write_online_store_navigation"
 
 [auth]
 redirect_urls = [ "https://app.saveoursolesfr.com/api/auth" ]
