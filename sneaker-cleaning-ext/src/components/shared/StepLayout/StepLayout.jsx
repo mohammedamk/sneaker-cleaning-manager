@@ -1,7 +1,7 @@
 import React from 'react';
 import './StepLayout.css';
 
-function StepLayout({ title, children, onNext, onPrev, nextLabel, prevLabel, isFirstStep, isLastStep, isLoading }) {
+function StepLayout({ title, children, onNext, onPrev, nextLabel, prevLabel, isFirstStep, isLastStep, isLoading, navActions }) {
   return (
     <div className="step-layout">
       {title && <h2 className="step-layout__title">{title}</h2>}
@@ -12,6 +12,7 @@ function StepLayout({ title, children, onNext, onPrev, nextLabel, prevLabel, isF
             {prevLabel || 'Previous'}
           </button>
         )}
+        {navActions}
         {onNext && (
           <button className="btn btn--primary" onClick={onNext} disabled={isLoading}>
             {isLoading ? 'Processing...' : (nextLabel || (isLastStep ? 'Finish' : 'Next'))}

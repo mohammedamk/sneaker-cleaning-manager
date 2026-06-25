@@ -5,9 +5,6 @@ name = "Footwear Cleaning Manager "
 application_url = "https://mixture-solution-polyphonic-hart.trycloudflare.com"
 embedded = true
 
-[build]
-automatically_update_urls_on_dev = true
-
 [webhooks]
 api_version = "2026-04"
 
@@ -25,7 +22,7 @@ api_version = "2026-04"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_orders,write_draft_orders,write_files,write_orders,write_products,write_content,write_online_store_navigation"
+scopes = "read_orders,write_content,write_draft_orders,write_files,write_online_store_navigation,write_orders,write_products"
 
 [auth]
 redirect_urls = [
@@ -36,3 +33,6 @@ redirect_urls = [
 url = "https://mixture-solution-polyphonic-hart.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"
+
+[build]
+automatically_update_urls_on_dev = true

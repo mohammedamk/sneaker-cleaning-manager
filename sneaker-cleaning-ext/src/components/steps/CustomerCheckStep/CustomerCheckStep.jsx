@@ -85,6 +85,10 @@ function CustomerCheckStep({
     window.location.href = SHOPIFY_REGISTER_URL;
   };
 
+  const handleLogout = () => {
+    window.location.href = '/account/logout';
+  };
+
   // already logged in
   if (customerID) {
     return (
@@ -93,6 +97,15 @@ function CustomerCheckStep({
         onNext={onNext}
         nextLabel="Continue"
         isFirstStep={true}
+        navActions={
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        }
       >
         <p className="customer-check__message">
           You are signed in. We&apos;ll use your account details for this booking.
