@@ -5,6 +5,9 @@ name = "Footwear Cleaning Manager "
 application_url = "https://mixture-solution-polyphonic-hart.trycloudflare.com"
 embedded = true
 
+[build]
+automatically_update_urls_on_dev = true
+
 [webhooks]
 api_version = "2026-04"
 
@@ -33,6 +36,3 @@ redirect_urls = [
 url = "https://mixture-solution-polyphonic-hart.trycloudflare.com"
 subpath = "sneaker-cleaning-dev"
 prefix = "apps"
-
-[build]
-automatically_update_urls_on_dev = true

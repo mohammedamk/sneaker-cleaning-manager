@@ -94,17 +94,33 @@ function CustomerCheckStep({
     return (
       <StepLayout
         title="Welcome Back!"
-        onNext={onNext}
-        nextLabel="Continue"
         isFirstStep={true}
         navActions={
-          <button
-            type="button"
-            className="btn btn--ghost"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <div className="customer-check__logged-in-nav">
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={onPrev}
+            >
+              Back
+            </button>
+            <div className="customer-check__logged-in-nav-right">
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={onNext}
+              >
+                Continue
+              </button>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         }
       >
         <p className="customer-check__message">

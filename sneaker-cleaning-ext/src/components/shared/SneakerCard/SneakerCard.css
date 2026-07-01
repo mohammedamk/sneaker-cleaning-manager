@@ -213,6 +213,51 @@
     }
 }
 
+/* ── Delete confirmation panel ──────────────────── */
+.sneaker-card__delete-confirm {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: #fff5f5;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sneaker-card__delete-confirm-msg {
+    font-size: 13px;
+    color: #7f1d1d;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.sneaker-card__delete-confirm-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+@media (max-width: 480px) {
+    .sneaker-card__delete-confirm {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .sneaker-card__delete-confirm-msg {
+        font-size: 12px;
+    }
+
+    .sneaker-card__delete-confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .sneaker-card__delete-confirm-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 /* ── service selection inside sneakercard ──────── */
 .sneaker-card__services {
     margin-top: 14px;

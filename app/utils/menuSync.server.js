@@ -6,6 +6,9 @@ const HANDOFF_MENU_MAP = {
   dropoff: "Footwear Drop-Off",
 };
 
+// Order in which enabled handoff items are inserted after the "Home" nav item
+const HANDOFF_INSERT_ORDER = ["shipping", "dropoff", "pickup_delivery"];
+
 const HANDOFF_PAGE_LINKS = {
   "Book Footwear Pick-Up": "/pages/book-sneaker-pick-up",
   "Mail-In Footwear": "/pages/book-sneaker-pick-up",
@@ -74,25 +77,30 @@ export async function syncMenuWithHandoffMethods(admin, handoffMethods) {
   }
 
   const managedTitles = new Set(Object.values(HANDOFF_MENU_MAP));
-  const enabledTitles = new Set(
-    Object.entries(HANDOFF_MENU_MAP)
-      .filter(([key]) => handoffMethods[key] !== false)
-      .map(([, title]) => title)
-  );
 
+  // Build enabled handoff items in the required insertion order, reusing existing item IDs when available
   const existingByTitle = new Map(menu.items.map((i) => [i.title, i]));
+  const enabledHandoffItems = HANDOFF_INSERT_ORDER
+    .filter((key) => handoffMethods[key] !== false)
+    .map((key) => {
+      const title = HANDOFF_MENU_MAP[key];
+      const existing = existingByTitle.get(title);
+      return existing ? itemToInput(existing) : { title, type: "HTTP", url: HANDOFF_PAGE_LINKS[title] };
+    });
 
-  // Keep non-managed items and any enabled managed items already in the menu
-  const newItems = menu.items
-    .filter((item) => !managedTitles.has(item.title) || enabledTitles.has(item.title))
+  // Strip all managed items, then splice enabled ones in right after "Home"
+  const nonManagedItems = menu.items
+    .filter((item) => !managedTitles.has(item.title))
     .map(itemToInput);
 
-  // Add enabled managed items that are missing from the menu
-  for (const title of enabledTitles) {
-    if (!existingByTitle.has(title)) {
-      newItems.push({ title, type: "HTTP", url: HANDOFF_PAGE_LINKS[title] });
-    }
-  }
+  const homeIndex = nonManagedItems.findIndex((item) => item.title?.toLowerCase() === "home");
+  const insertAt = homeIndex === -1 ? 0 : homeIndex + 1;
+
+  const newItems = [
+    ...nonManagedItems.slice(0, insertAt),
+    ...enabledHandoffItems,
+    ...nonManagedItems.slice(insertAt),
+  ];
 
   const updateRes = await admin.graphql(MENU_UPDATE_MUTATION, {
     variables: { id: menu.id, title: menu.title, items: newItems },

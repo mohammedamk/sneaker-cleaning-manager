@@ -11,6 +11,7 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredTierId, setHoveredTierId] = useState(null);
   const [hoveredAddOnId, setHoveredAddOnId] = useState(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
     fetchAdminSettings()
@@ -100,12 +101,34 @@ function SneakerCard({ sneaker, mode, onEdit, onRemove, serviceSelection, onServ
             <button className="btn btn--small btn--secondary" onClick={() => onEdit(sneaker)}>
               Edit
             </button>
-            <button className="btn btn--small btn--danger" onClick={() => onRemove(sneaker.id)}>
-              Remove
+            <button className="btn btn--small btn--danger" onClick={() => setConfirmingDelete(true)}>
+              Delete
             </button>
           </div>
         )}
       </div>
+
+      {mode === 'manage' && confirmingDelete && (
+        <div className="sneaker-card__delete-confirm">
+          <p className="sneaker-card__delete-confirm-msg">
+            This will permanently delete this shoe from your Shoe Rack. Are you sure you want to proceed?
+          </p>
+          <div className="sneaker-card__delete-confirm-actions">
+            <button
+              className="btn btn--small btn--secondary"
+              onClick={() => setConfirmingDelete(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn--small btn--danger"
+              onClick={() => { setConfirmingDelete(false); onRemove(sneaker.id); }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
 
       {mode === 'service' && serviceSelection !== undefined && (
         <div className="sneaker-card__services">

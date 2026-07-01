@@ -30,6 +30,27 @@ function ShoeRackSelectionStep({ customerID, sneakers, maxSneakers, onAddExistin
         }
     };
 
+    const handleDeleteSneaker = async (sneakerId) => {
+        try {
+            const res = await fetch(`/apps/${PROXY_SUB_PATH}/api/delete/sneaker`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: sneakerId }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                // Deselect from current order if it was selected
+                const sneaker = savedSneakers.find(s => s._id === sneakerId);
+                if (sneaker && sneakers.some(s => s._id === sneakerId)) {
+                    onAddExisting(sneaker);
+                }
+                setSavedSneakers(prev => prev.filter(s => s._id !== sneakerId));
+            }
+        } catch (err) {
+            console.error('Error deleting sneaker:', err);
+        }
+    };
+
     const handleAddNewClick = () => {
         onAddNew();
     };
@@ -58,7 +79,7 @@ function ShoeRackSelectionStep({ customerID, sneakers, maxSneakers, onAddExistin
                                 sneaker={{ ...snk, id: snk._id }}
                                 mode="manage"
                                 onEdit={() => onEditExisting(snk)}
-                                onRemove={() => {/* maybe hide from this view */ }}
+                                onRemove={handleDeleteSneaker}
                             />
                             <button
                                 className={`btn ${sneakers.some(s => s._id === snk._id) ? 'btn--danger' : 'btn--primary'}`}
