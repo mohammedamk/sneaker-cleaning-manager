@@ -643,13 +643,6 @@ By shipping your footwear, you acknowledge that you are responsible for followin
             </div>
           )}
 
-          {shippingError && !(shippingRates && shippingSelection?.selectedForwardRate && shippingSelection?.selectedReturnRate) && (
-            <div className="shipping-warning">
-              <span className="shipping-warning__icon">⚠️</span>
-              <span>{shippingError}</span>
-            </div>
-          )}
-
           {handoffMethod === 'shipping' && shippingRates && shippingSelection?.selectedForwardRate && shippingSelection?.selectedReturnRate && (
             <>
               <div className="shipping-card">
@@ -657,13 +650,6 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 {renderSelectedShippingSummary('Inbound Shipping (Customer → Store)', shippingSelection.selectedForwardRate)}
                 {renderSelectedShippingSummary('Return Shipping (Store → Customer)', shippingSelection.selectedReturnRate)}
               </div>
-
-              {shippingError && (
-                <div className="shipping-warning">
-                  <span className="shipping-warning__icon">⚠️</span>
-                  <span>{shippingError}</span>
-                </div>
-              )}
 
               <div className="shipping-total">
                 <span>Customer-Facing Shipping Total</span>
@@ -776,6 +762,13 @@ By shipping your footwear, you acknowledge that you are responsible for followin
                 </label>
               </div>
             </>
+          )}
+
+          {shippingError && (
+            <div className="shipping-warning">
+              <span className="shipping-warning__icon">⚠️</span>
+              <span>{shippingError}</span>
+            </div>
           )}
         </div>
       )}
