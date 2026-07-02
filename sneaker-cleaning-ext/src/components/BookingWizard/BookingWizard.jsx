@@ -159,11 +159,13 @@ function BookingWizard() {
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const goPrev = () => {
     if (step === 1) {
-      if (window.history.state?.wizard) {
-        window.history.back();
-      } else {
-        setCurrentView('landing');
-      }
+      // Step 1 (Account) is always the first step of the wizard, so Back always
+      // exits to the landing page. We can't rely on window.history.state here:
+      // backward step changes elsewhere in the wizard push additional history
+      // entries (see the sync effect above), so by the time the user cycles
+      // back down to step 1 the "previous" browser history entry may be a
+      // stale wizard step rather than the pre-wizard landing page.
+      setCurrentView('landing');
     } else {
       setStep((s) => Math.max(s - 1, 1));
     }
